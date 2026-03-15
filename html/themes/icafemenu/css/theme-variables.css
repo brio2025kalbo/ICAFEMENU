@@ -112,7 +112,7 @@
   /* ============================================================
    * BADGE – "HEAT" / HOT INDICATOR
    * ============================================================ */
-  --theme-badge-heat-bg:       var(--theme-accent);  /* defaults to accent color */
+  --theme-badge-heat-bg:       var(--theme-accent);  /* uses the accent color */
   --theme-badge-heat-radius:   var(--theme-radius-pill);
 
   /* ============================================================
