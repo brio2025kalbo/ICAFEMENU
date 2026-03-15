@@ -1,0 +1,353 @@
+<div class="events-container mb-5 flex-grow-1" :class="[vueGlobal.pageType != 'Event' ? 'd-none' : 'd-flex flex-column']">
+	<div class="cover"></div>
+	<div class="h-100 w-100 p-4 d-flex flex-column container flex-shrink-1 events-content-wrapper">
+		<!-- Events 标题 -->
+		<h2 class="text-white events-title text-center mb-5 lang">Events</h2>
+		
+		<!-- 事件列表 -->
+		<div class="events-list-wrapper">
+			<div class="d-flex flex-wrap events-list" id="all-events-list">
+				<!-- My Events -->
+				<div v-for="event in vueEventsMy.events" :key="event.event_id" class="event-card d-flex flex-row align-items-stretch position-relative" :class="'event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+					<div class="event-card-image">
+						<div class="icon"></div>
+					</div>
+					<div class="event-card-content d-flex flex-column">
+						<div class="event-card-title">{{event.event_name}}</div>
+						<div class="event-card-details d-flex flex-column">
+							<!-- 时间和状态 -->
+							<div class="event-time-wrapper d-flex flex-row align-items-center flex-wrap">
+								<div class="event-time d-flex flex-row justify-content-center align-items-center">
+									{{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+								</div>
+								<div v-if="event.event_status == 'past'" class="event-status event-status-end d-flex flex-row justify-content-center align-items-center lang">END</div>
+								<div v-else-if="event.event_status == 'active'" class="event-status event-status-going d-flex flex-row justify-content-center align-items-center lang">GOING</div>
+							</div>
+							
+							<!-- 游戏名称 -->
+							<div class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<g clip-path="url(#clip0_gamepad)">
+										<path d="M11.25 5.625V1.5H6.75V5.625L9 7.875L11.25 5.625ZM5.625 6.75H1.5V11.25H5.625L7.875 9L5.625 6.75ZM6.75 12.375V16.5H11.25V12.375L9 10.125L6.75 12.375ZM12.375 6.75L10.125 9L12.375 11.25H16.5V6.75H12.375Z" fill="#576081"/>
+									</g>
+									<defs>
+										<clipPath id="clip0_gamepad">
+											<rect width="18" height="18" fill="white"/>
+										</clipPath>
+									</defs>
+								</svg>
+								<span>{{event.game_name}}{{ event.event_game_mode.length > 0 ? '/ ' + event.event_game_mode : ''}}</span>
+							</div>
+							
+							<!-- 计分方式 -->
+							<div class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<g clip-path="url(#clip0_info)">
+										<path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9C1.5 13.14 4.86 16.5 9 16.5C13.14 16.5 16.5 13.14 16.5 9C16.5 4.86 13.14 1.5 9 1.5ZM9.75 12.75H8.25V8.25H9.75V12.75ZM9.75 6.75H8.25V5.25H9.75V6.75Z" fill="#576081"/>
+									</g>
+									<defs>
+										<clipPath id="clip0_info">
+											<rect width="18" height="18" fill="white"/>
+										</clipPath>
+									</defs>
+								</svg>
+								<span>
+									{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+									{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+									{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+								</span>
+							</div>
+							
+							<!-- 奖励 -->
+							<div v-if="event.event_bonus_amount > 0" class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M11.5125 15L10.05 16.4438C9.7625 16.7313 9.4125 16.875 9 16.875C8.5875 16.875 8.2375 16.7313 7.95 16.4438L6.4875 15H4.5C4.0875 15 3.73438 14.8531 3.44063 14.5594C3.14688 14.2656 3 13.9125 3 13.5V11.5125L1.55625 10.05C1.26875 9.7625 1.125 9.4125 1.125 9C1.125 8.5875 1.26875 8.2375 1.55625 7.95L3 6.4875V4.5C3 4.0875 3.14688 3.73438 3.44063 3.44063C3.73438 3.14688 4.0875 3 4.5 3H6.4875L7.95 1.55625C8.2375 1.26875 8.5875 1.125 9 1.125C9.4125 1.125 9.7625 1.26875 10.05 1.55625L11.5125 3H13.5C13.9125 3 14.2656 3.14688 14.5594 3.44063C14.8531 3.73438 15 4.0875 15 4.5V6.4875L16.4438 7.95C16.7313 8.2375 16.875 8.5875 16.875 9C16.875 9.4125 16.7313 9.7625 16.4438 10.05L15 11.5125V13.5C15 13.9125 14.8531 14.2656 14.5594 14.5594C14.2656 14.8531 13.9125 15 13.5 15H11.5125ZM9 10.8563L10.4438 11.7188C10.5813 11.8063 10.7156 11.8031 10.8469 11.7094C10.9781 11.6156 11.025 11.4875 10.9875 11.325L10.6125 9.69375L11.8875 8.5875C12.0125 8.475 12.05 8.34063 12 8.18438C11.95 8.02813 11.8375 7.94375 11.6625 7.93125L9.99375 7.8L9.3375 6.24375C9.275 6.09375 9.1625 6.01875 9 6.01875C8.8375 6.01875 8.725 6.09375 8.6625 6.24375L8.00625 7.8L6.3375 7.93125C6.1625 7.94375 6.05 8.02813 6 8.18438C5.95 8.34063 5.9875 8.475 6.1125 8.5875L7.3875 9.69375L7.0125 11.325C6.975 11.4875 7.02188 11.6156 7.15313 11.7094C7.28438 11.8031 7.41875 11.8063 7.55625 11.7188L9 10.8563Z" fill="#576081"/>
+								</svg>
+								<span>{{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="event-card-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; justify-content: center; align-items: center;">
+						<button 
+							type="button"
+							class="btn btn-sm d-flex align-items-center justify-content-center lang" 
+							@click.stop="theEvents.open(event.event_id)" 
+							data-placement="bottom" 
+							data-toggle="tooltip" 
+							data-container="body" 
+							title="Detail"
+							style="width: 32px; height: 32px; border-radius: 50%; padding: 0; font-size: 14px; border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); color: #FFFFFF;">
+							<i class="fal fa-ellipsis-h text-white"></i>
+						</button>
+					</div>
+					<div class="event-card-decoration"></div>
+				</div>
+				
+				<!-- Active Events -->
+				<div v-for="event in vueEventsActive.events" :key="event.event_id" class="event-card d-flex flex-row align-items-stretch position-relative" :class="'event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+					<div class="event-card-image">
+						<div class="icon"></div>
+					</div>
+					<div class="event-card-content d-flex flex-column">
+						<div class="event-card-title">{{event.event_name}}</div>
+						<div class="event-card-details d-flex flex-column">
+							<!-- 时间和状态 -->
+							<div class="event-time-wrapper d-flex flex-row align-items-center flex-wrap">
+								<div class="event-time d-flex flex-row justify-content-center align-items-center">
+									{{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+								</div>
+								<div v-if="event.event_status == 'past'" class="event-status event-status-end d-flex flex-row justify-content-center align-items-center lang">END</div>
+								<div v-else-if="event.event_status == 'active'" class="event-status event-status-going d-flex flex-row justify-content-center align-items-center lang">GOING</div>
+							</div>
+							
+							<!-- 游戏名称 -->
+							<div class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<g clip-path="url(#clip0_gamepad)">
+										<path d="M11.25 5.625V1.5H6.75V5.625L9 7.875L11.25 5.625ZM5.625 6.75H1.5V11.25H5.625L7.875 9L5.625 6.75ZM6.75 12.375V16.5H11.25V12.375L9 10.125L6.75 12.375ZM12.375 6.75L10.125 9L12.375 11.25H16.5V6.75H12.375Z" fill="#576081"/>
+									</g>
+									<defs>
+										<clipPath id="clip0_gamepad">
+											<rect width="18" height="18" fill="white"/>
+										</clipPath>
+									</defs>
+								</svg>
+								<span>{{event.game_name}}{{ event.event_game_mode.length > 0 ? '/ ' + event.event_game_mode : ''}}</span>
+							</div>
+							
+							<!-- 计分方式 -->
+							<div class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<g clip-path="url(#clip0_info)">
+										<path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9C1.5 13.14 4.86 16.5 9 16.5C13.14 16.5 16.5 13.14 16.5 9C16.5 4.86 13.14 1.5 9 1.5ZM9.75 12.75H8.25V8.25H9.75V12.75ZM9.75 6.75H8.25V5.25H9.75V6.75Z" fill="#576081"/>
+									</g>
+									<defs>
+										<clipPath id="clip0_info">
+											<rect width="18" height="18" fill="white"/>
+										</clipPath>
+									</defs>
+								</svg>
+								<span>
+									{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+									{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+									{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+								</span>
+							</div>
+							
+							<!-- 奖励 -->
+							<div v-if="event.event_bonus_amount > 0" class="event-info-row d-flex flex-row align-items-center">
+								<svg class="event-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M11.5125 15L10.05 16.4438C9.7625 16.7313 9.4125 16.875 9 16.875C8.5875 16.875 8.2375 16.7313 7.95 16.4438L6.4875 15H4.5C4.0875 15 3.73438 14.8531 3.44063 14.5594C3.14688 14.2656 3 13.9125 3 13.5V11.5125L1.55625 10.05C1.26875 9.7625 1.125 9.4125 1.125 9C1.125 8.5875 1.26875 8.2375 1.55625 7.95L3 6.4875V4.5C3 4.0875 3.14688 3.73438 3.44063 3.44063C3.73438 3.14688 4.0875 3 4.5 3H6.4875L7.95 1.55625C8.2375 1.26875 8.5875 1.125 9 1.125C9.4125 1.125 9.7625 1.26875 10.05 1.55625L11.5125 3H13.5C13.9125 3 14.2656 3.14688 14.5594 3.44063C14.8531 3.73438 15 4.0875 15 4.5V6.4875L16.4438 7.95C16.7313 8.2375 16.875 8.5875 16.875 9C16.875 9.4125 16.7313 9.7625 16.4438 10.05L15 11.5125V13.5C15 13.9125 14.8531 14.2656 14.5594 14.5594C14.2656 14.8531 13.9125 15 13.5 15H11.5125ZM9 10.8563L10.4438 11.7188C10.5813 11.8063 10.7156 11.8031 10.8469 11.7094C10.9781 11.6156 11.025 11.4875 10.9875 11.325L10.6125 9.69375L11.8875 8.5875C12.0125 8.475 12.05 8.34063 12 8.18438C11.95 8.02813 11.8375 7.94375 11.6625 7.93125L9.99375 7.8L9.3375 6.24375C9.275 6.09375 9.1625 6.01875 9 6.01875C8.8375 6.01875 8.725 6.09375 8.6625 6.24375L8.00625 7.8L6.3375 7.93125C6.1625 7.94375 6.05 8.02813 6 8.18438C5.95 8.34063 5.9875 8.475 6.1125 8.5875L7.3875 9.69375L7.0125 11.325C6.975 11.4875 7.02188 11.6156 7.15313 11.7094C7.28438 11.8031 7.41875 11.8063 7.55625 11.7188L9 10.8563Z" fill="#576081"/>
+								</svg>
+								<span>{{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}</span>
+							</div>
+						</div>
+					</div>
+					<div class="event-card-actions" style="position: absolute; right: 16px; bottom: 16px; display: flex; justify-content: center; align-items: center;">
+						<button 
+							v-if="event.event_status == 'active'"
+							type="button"
+							class="btn btn-sm d-flex align-items-center justify-content-center lang" 
+							@click.stop="theEvents.play(event.event_id);theEvents.open(event.event_id)" 
+							data-placement="bottom" 
+							data-toggle="tooltip" 
+							data-container="body" 
+							title="Join game"
+							style="width: 32px; height: 32px; border-radius: 50%; padding: 0; font-size: 14px; border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.04); color: #FFFFFF;">
+							<i class="fal fa-plus text-white"></i>
+						</button>
+					</div>
+					<div class="event-card-decoration"></div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 当没有事件时显示提示 -->
+		<div v-if="vueEventsMy.events.length === 0 && vueEventsActive.events.length === 0" class="d-flex flex-column align-items-center justify-content-center" style="flex-grow: 1; min-height: 300px;">
+			<i class="fal fa-calendar-times fa-4x text-white mb-3" style="opacity: 0.5;"></i>
+			<p class="text-white lang" style="font-size: 1.2rem; opacity: 0.7;">No events available</p>
+		</div>
+	</div>
+</div>
+
+<div class="event-detail-container event-detail mb-5 flex-grow-1 w-100" :class="[vueGlobal.pageType != 'EventDetail' ? 'd-none' : 'd-flex flex-column']">
+	<div class="rounded-top d-flex flex-column w-100">
+		<div class="d-flex" style="gap: 20px;">
+			<!-- 左侧：事件信息卡片 -->
+			<div class="info align-top col-4 px-0">
+				<div class="events event-detail-main" id='detail-events'>
+					<div v-for="event in vueEventsDetail.events" :key="event.event_id" :class="'border-block border-0 event event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+						<div class="d-flex">
+							<div class="icon"></div>
+							<div class="info">
+								<div class="p-2">
+									<label class="name">{{event.event_name}}</label>
+
+									<div class="event-detail-time-wrapper d-flex flex-row align-items-center">
+										<div class="event-detail-time d-flex flex-row justify-content-center align-items-center">
+											{{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+										</div>
+										<div v-if="event.event_status == 'past'" class="event-status event-status-end d-flex flex-row justify-content-center align-items-center lang">END</div>
+										<div v-else-if="event.event_status == 'active'" class="event-status event-status-going d-flex flex-row justify-content-center align-items-center lang">GOING</div>
+									</div>
+
+									<label>
+										<svg class="mr-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-placement="bottom" title="Games">
+											<g clip-path="url(#clip0_gamepad_detail)">
+												<path d="M11.25 5.625V1.5H6.75V5.625L9 7.875L11.25 5.625ZM5.625 6.75H1.5V11.25H5.625L7.875 9L5.625 6.75ZM6.75 12.375V16.5H11.25V12.375L9 10.125L6.75 12.375ZM12.375 6.75L10.125 9L12.375 11.25H16.5V6.75H12.375Z" fill="#576081"/>
+											</g>
+											<defs>
+												<clipPath id="clip0_gamepad_detail">
+													<rect width="18" height="18" fill="white"/>
+												</clipPath>
+											</defs>
+										</svg>
+										<span class="game-name-text">{{event.game_name}}{{ event.event_game_mode.length > 0 ? ' / ' + event.event_game_mode : ''}}</span>
+									</label>
+
+									<label>
+										<svg class="mr-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-placement="bottom" title="Score count way">
+											<g clip-path="url(#clip0_info_detail)">
+												<path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9C1.5 13.14 4.86 16.5 9 16.5C13.14 16.5 16.5 13.14 16.5 9C16.5 4.86 13.14 1.5 9 1.5ZM9.75 12.75H8.25V8.25H9.75V12.75ZM9.75 6.75H8.25V5.25H9.75V6.75Z" fill="#576081"/>
+											</g>
+											<defs>
+												<clipPath id="clip0_info_detail">
+													<rect width="18" height="18" fill="white"/>
+												</clipPath>
+											</defs>
+										</svg>
+										<span>
+											{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+											{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+											{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+										</span>
+									</label>
+
+									<label v-if="event.event_bonus_amount > 0">
+										<svg class="mr-1" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" data-toggle="tooltip" data-placement="bottom" title="Event bonus">
+											<path d="M11.5125 15L10.05 16.4438C9.7625 16.7313 9.4125 16.875 9 16.875C8.5875 16.875 8.2375 16.7313 7.95 16.4438L6.4875 15H4.5C4.0875 15 3.73438 14.8531 3.44063 14.5594C3.14688 14.2656 3 13.9125 3 13.5V11.5125L1.55625 10.05C1.26875 9.7625 1.125 9.4125 1.125 9C1.125 8.5875 1.26875 8.2375 1.55625 7.95L3 6.4875V4.5C3 4.0875 3.14688 3.73438 3.44063 3.44063C3.73438 3.14688 4.0875 3 4.5 3H6.4875L7.95 1.55625C8.2375 1.26875 8.5875 1.125 9 1.125C9.4125 1.125 9.7625 1.26875 10.05 1.55625L11.5125 3H13.5C13.9125 3 14.2656 3.14688 14.5594 3.44063C14.8531 3.73438 15 4.0875 15 4.5V6.4875L16.4438 7.95C16.7313 8.2375 16.875 8.5875 16.875 9C16.875 9.4125 16.7313 9.7625 16.4438 10.05L15 11.5125V13.5C15 13.9125 14.8531 14.2656 14.5594 14.5594C14.2656 14.8531 13.9125 15 13.5 15H11.5125ZM9 10.8563L10.4438 11.7188C10.5813 11.8063 10.7156 11.8031 10.8469 11.7094C10.9781 11.6156 11.025 11.4875 10.9875 11.325L10.6125 9.69375L11.8875 8.5875C12.0125 8.475 12.05 8.34063 12 8.18438C11.95 8.02813 11.8375 7.94375 11.6625 7.93125L9.99375 7.8L9.3375 6.24375C9.275 6.09375 9.1625 6.01875 9 6.01875C8.8375 6.01875 8.725 6.09375 8.6625 6.24375L8.00625 7.8L6.3375 7.93125C6.1625 7.94375 6.05 8.02813 6 8.18438C5.95 8.34063 5.9875 8.475 6.1125 8.5875L7.3875 9.69375L7.0125 11.325C6.975 11.4875 7.02188 11.6156 7.15313 11.7094C7.28438 11.8031 7.41875 11.8063 7.55625 11.7188L9 10.8563Z" fill="#576081"/>
+										</svg> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 中间：规则卡片 -->
+			<div class="align-top col-4 px-0 bd-highlight h-auto d-flex flex-column border-block p-3">
+				<h3 class="event-detail-card-title lang">Rules</h3>
+				<div class="flex-grow-1" id="event_buttons" style="height: 100px;">
+					<div class="text-left w-100 h-100 container" style="white-space: pre-wrap;">{{vueEventDetail.event.event_description}}</div>
+				</div>
+			</div>
+			
+			<!-- 右侧：获奖者卡片 -->
+			<div class="align-top col-4 px-0 h-auto d-flex flex-column event-detail-winners-card p-3">
+				<h3 class="event-detail-card-title lang">Winners</h3>
+				<div class="event-detail-winners-list d-flex flex-row justify-content-center align-items-center">
+					<!-- 第二名（银牌）- 左边 -->
+					<div v-if="vueEventDetail.members.length > 1" class="event-winner-item event-winner-silver d-flex flex-column justify-content-center align-items-center">
+						<div class="event-winner-medal d-flex align-items-center justify-content-center">
+							<img src="images/silver-medal.svg" alt="Silver Medal" class="medal-icon">
+						</div>
+						<div class="event-winner-info d-flex flex-column justify-content-center align-items-center">
+							<div class="event-winner-name">{{vueEventDetail.members[1]?.emember_member_account}}</div>
+							<div class="event-winner-bonus">{{vueEventDetail.event.event_bonus_currency}} {{vueEventDetail.members[1]?.emember_bonus || 0}}</div>
+						</div>
+					</div>
+					
+					<!-- 第一名（金牌）- 中间 -->
+					<div v-if="vueEventDetail.members.length > 0" class="event-winner-item event-winner-gold d-flex flex-column justify-content-center align-items-center">
+						<div class="event-winner-medal d-flex align-items-center justify-content-center">
+							<img src="images/gold-medal.svg" alt="Gold Medal" class="medal-icon">
+						</div>
+						<div class="event-winner-info d-flex flex-column justify-content-center align-items-center">
+							<div class="event-winner-name">{{vueEventDetail.members[0]?.emember_member_account}}</div>
+							<div class="event-winner-bonus">{{vueEventDetail.event.event_bonus_currency}} {{vueEventDetail.members[0]?.emember_bonus || 0}}</div>
+						</div>
+					</div>
+					
+					<!-- 第三名（铜牌）- 右边 -->
+					<div v-if="vueEventDetail.members.length > 2" class="event-winner-item event-winner-bronze d-flex flex-column justify-content-center align-items-center">
+						<div class="event-winner-medal d-flex align-items-center justify-content-center">
+							<img src="images/bronze-medal.svg" alt="Bronze Medal" class="medal-icon">
+						</div>
+						<div class="event-winner-info d-flex flex-column justify-content-center align-items-center">
+							<div class="event-winner-name">{{vueEventDetail.members[2]?.emember_member_account}}</div>
+							<div class="event-winner-bonus">{{vueEventDetail.event.event_bonus_currency}} {{vueEventDetail.members[2]?.emember_bonus || 0}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container p-3 flex-shrink-1 h-100 rounded-top">
+			<table class="table table-striped table-borderless text-center text-white " id="table-event-detail" style="table-layout: fixed;">
+				<thead>
+				<tr >
+					<th class="lang border-top-0"><label class="lang">Position</label> </th>
+					<th class="lang border-top-0"> <label class="lang">Player</label> </th>
+
+					<th v-if="vueEventDetail.event.event_is_global" class="lang border-top-0"> <label class="lang">CENTER NAME</label> </th>
+
+					<th class="lang border-top-0"> <label class="lang">Matches</label> </th>
+
+					<th v-if="['fortnite', 'pubg', 'lol', 'valorant', 'apex', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">WINS</label> </th>
+
+					<th v-if="['fortnite', 'pubg', 'lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">KILLS</label> </th>
+
+					<th v-if="['lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">ASSISTS</label> </th>
+
+					<th v-if="['lol', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">DEATHS</label> </th>
+
+					<th v-if="['dota2'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">LAST HITS</label> </th>
+
+					<th class="lang border-top-0"> <label class="lang">Point</label> </th>
+					<th class="lang border-top-0"> <label class="lang">Bonus</label> </th>
+					<th class="lang border-top-0"> <label class="lang">Bonus paid</label> </th>
+
+					<th v-if="vueEventDetail.event.event_is_global" class="lang border-top-0"> <label class="lang">STATUS</label> </th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr v-for="(member, index) in vueEventDetail.members" :key="member.emember_id" :class="{'event-leaderboard-first': index === 0, 'event-leaderboard-second': index === 1, 'event-leaderboard-third': index === 2}">
+						<td> 
+							<span v-if="index === 0" class="lang">1 Winner!</span>
+							<span v-else>{{member.emember_rank}}</span>
+						</td>
+						<td> <label>{{member?.emember_member_account}}</label> </td>
+
+						<td v-if="vueEventDetail.event.event_is_global"> 
+							<div :class="'fflag ff-xl fflag-'+(member.license_country||'').toUpperCase()" :title="member.license_country"></div>
+							<label>{{member.license_icafename}}</label>
+							</td>
+
+						<td> {{member.emember_point_matches}}/{{member.emember_matches}} </td>
+
+						<td v-if="['fortnite', 'pubg', 'lol', 'valorant', 'apex', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_wins}} </td>
+
+						<td v-if="['fortnite', 'pubg', 'lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_kills}} </td>
+
+						<td v-if="['lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_assists}} </td>
+
+						<td v-if="['lol', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_deaths}} </td>
+
+						<td v-if="['dota2'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_lasthits}} </td>
+
+						<td> {{member?.emember_point}} </td>
+						<td> {{ member?.emember_bonus > 0 ? member.emember_bonus : '' }} </td>
+						<td> {{ member?.emember_bonus_pay_status ? translate_string('Paid') : '-' }} </td>
+
+						<td v-if="vueEventDetail.event.event_is_global">
+							<span v-if="typeof(member?.emember_status) != 'undefined' && member?.emember_status == 1">{{translate_string('joined')}}</span>
+							<span v-else class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Not joined telegram group">{{translate_string('to be confirmed')}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column game-right-sidebar" style="width: 400px"></div>

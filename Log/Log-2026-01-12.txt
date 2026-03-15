@@ -1,0 +1,6 @@
+19:53:56 parent process explorer.exe 13408
+19:53:56 current process "C:\Users\link\Desktop\icafecloud-release\icafemenu\iCafeMenu.exe"  7240
+19:53:56 parent process iCafeMenu.exe 7240
+19:53:56 current process "C:\Users\link\Desktop\icafecloud-release\icafemenu\iCafeMenu.exe" -runasadmin 23456
+19:53:56 os ver 0602
+19:53:59 icafe.js not exists

@@ -1,0 +1,287 @@
+<style>
+	:root {
+		/*--electric-border-color: #dd8448;
+		--electric-light-color: oklch(from var(--electric-border-color) l c h);
+		--gradient-color: oklch(
+				from var(--electric-border-color) 0.3 calc(c / 2) h / 0.4
+		);
+		--color-neutral-900: oklch(0.185 0 0);*/
+		--electric-border-color: #dd8448;
+		--electric-light-color: rgba(255,150,80,0.9);
+		--gradient-color: rgba(230,150,90,0.35);
+		--color-neutral-900: #2e2e2e;
+	}
+	
+	#page_start_session .card-wh{
+		width: 220px;
+		height: 320px;
+	}
+	
+	#page_start_session .card-container {
+		padding: 2px;
+		border-radius: 24px;
+		position: relative;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(
+				-30deg,
+				var(--gradient-color),
+				transparent,
+				var(--gradient-color)
+		),
+		linear-gradient(
+				to bottom,
+				var(--color-neutral-900),
+				var(--color-neutral-900)
+		);
+	}
+	
+	#page_start_session .border-outer {
+		border: 2px solid rgba(221, 132, 72, 0.5);
+		border-radius: 24px;
+		padding-right: 4px;
+		padding-bottom: 4px;
+	}
+
+	#page_start_session .main-card {
+		border-radius: 24px;
+		border: 2px solid var(--electric-border-color);
+		margin-top: -4px;
+		margin-left: -4px;
+		filter: url(#turbulent-displace);
+	}
+	
+	#page_start_session .glow-layer-1 {
+		border: 2px solid rgba(221, 132, 72, 0.6);
+		border-radius: 24px;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		filter: blur(1px);
+	}
+
+	#page_start_session .glow-layer-2 {
+		border: 2px solid var(--electric-light-color);
+		border-radius: 24px;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		filter: blur(4px);
+	}
+	
+	#page_start_session .overlay-1 {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 24px;
+		opacity: 1;
+		mix-blend-mode: overlay;
+		transform: scale(1.1);
+		filter: blur(16px);
+		background: linear-gradient(
+				-30deg,
+				white,
+				transparent 30%,
+				transparent 70%,
+				white
+		);
+	}
+
+	#page_start_session .overlay-2 {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 24px;
+		opacity: 0.5;
+		mix-blend-mode: overlay;
+		transform: scale(1.1);
+		filter: blur(16px);
+		background: linear-gradient(
+				-30deg,
+				white,
+				transparent 30%,
+				transparent 70%,
+				white
+		);
+	}
+	
+	#page_start_session .background-glow {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: 24px;
+		filter: blur(32px);
+		transform: scale(1.1);
+		opacity: 0.3;
+		z-index: -1;
+		background: linear-gradient(
+				-30deg,
+				var(--electric-light-color),
+				transparent,
+				var(--electric-border-color)
+		);
+	}
+
+	.border-block {
+		background: linear-gradient(240deg,#20202020,#50505050);
+		box-shadow: 0 4px 4px rgb(0 0 0 / 50%);
+	}
+</style>
+<div id="page_start_session" class="container d-flex flex-column flex-grow-1 h-100 align-items-center justify-content-center" v-show="vueGlobal.currentView == 'start-session'">
+	<div class="position-absolute t-0 w-100 d-flex justify-content-end px-5" style="height: 60px">
+		<div class="mr-4 w-50 flex-grow-1 d-flex justify-content-end align-items-center">
+			<a class="lang mr-1" href="javascript:theShop.show_topup()" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Topup" v-if="theSettings.allow_topup_at_client == 1">
+				<i class="fal fa-qrcode fa-2x menu-icon text-success"></i>
+			</a>
+			<div>
+				<div class="col-md-12 text-right d-flex member_balance_realtime align-items-center justify-content-end">
+					<label>{{memberInfo.member_balance_realtime}}</label>
+					<i class="fal fa-fw fa-wallet ml-1 lang" data-toggle="tooltip" data-placement="bottom" title="Balance"></i>
+				</div>
+				<div class="col-md-12 text-right d-flex member_coin_balance align-items-center justify-content-end">
+					<label>
+						{{memberInfo.member_coin_balance}}
+					</label>
+					<i class="fal fa-fw fa-gamepad ml-1 lang" data-toggle="tooltip" data-placement="bottom" title="Coins"></i>
+				</div>
+			</div>
+		</div>
+		<div class="dropdown p-2" style="height: 100%; aspect-ratio: 1/1;" >
+			<span class="p-0" data-toggle="dropdown">
+				<img :src="vueMemberAvatar.getAvatarUrl(memberInfo.member_photo)" class="rounded-circle h-100 w-100 c-pointer" onerror="this.src='images/default-avatar.png';">
+			</span>
+			<div class="dropdown-menu mt-0 text-truncate" style="left: inherit !important;right: -5px;">
+				<a v-show="vueGlobal.menuButton.assist" class="lang dropdown-item text-truncate" href="javascript:send_assist()">Ask help</a>
+				<a v-show="vueGlobal.menuButton.feedback" class="lang dropdown-item text-truncate" href="javascript:customer_feedback()" >Feedback</a>
+				<a v-show="theSettings.join_us" class="lang dropdown-item text-truncate" href="javascript:open_url(theSettings.join_us)">Join us</a>
+				<a v-show="vueGlobal.menuButton.changepassword && memberInfo.canChangePassword" class="lang dropdown-item text-truncate" href="javascript:change_password_click()">Change password</a>
+				<a  class="lang dropdown-item text-truncate" href="javascript:logout()">Logout</a>
+			</div>
+		</div>
+	</div>
+	<div class="d-flex align-items-center justify-content-center">
+		<div  v-for="item in vueOffers.items.splice(0, theSettings.allow_topup_at_client == 1 ? 3 : 3)" :key="item.product_id" class="mr-4">
+			<svg width="0" height="0">
+				<defs>
+					<filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+						<feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+							<animate attributeName="dy" values="300; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+						</feOffset>
+						
+						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+						<feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+							<animate attributeName="dy" values="0; -300" dur="6s" repeatCount="indefinite" calcMode="linear" />
+						</feOffset>
+						
+						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
+						<feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+							<animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+						</feOffset>
+						
+						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+						<feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+							<animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+						</feOffset>
+						
+						<feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+						<feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+						<feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+						
+						<feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+					</filter>
+				</defs>
+			</svg>
+			
+			<div class="card-container card-wh">
+				<div class="position-relative">
+					<div class="border-outer">
+						<div class="main-card card-wh"></div>
+					</div>
+					<div class="glow-layer-1"></div>
+					<div class="glow-layer-2"></div>
+				</div>
+				
+				<div class="overlay-1"></div>
+				<div class="overlay-2"></div>
+				<div class="background-glow"></div>
+				
+				<div style="height: 325px"  class="position-absolute t-0 l-0 r-0 b-0 p-3 ml-1 d-flex flex-column justify-content-between align-items-center card-wh">
+					<img :src="item.image" onerror="this.src='images/default-offer2.png'" style="width: 138px;max-height:138px;" class="c-pointer rounded" :alt="item.product_name">
+					
+					<label class="text-white text-center mt-2" style="width: 80%">{{item.product_name}}</label>
+					
+					<div class="font-weight-bold mt-2 text-center">
+						<template v-if="theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).showBothPrices">
+							<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)">
+								{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)}}
+							</div>
+						</template>
+						<template v-else>
+							{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount))}}
+						</template>
+					</div>
+					
+					<div class="mt-2 w-100">
+						<button type="button" @click="delay_execute(function(){theStartSession.start_offer_session(item.product_id)})" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
+							<span class="lang text-white">Start</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="height: 325px"  class="card-wh bd-highlight rounded rounded-2  d-flex flex-column justify-content-between  align-items-center p-3 mr-4 mt-4 border-block position-relative" v-if="theSettings.allow_balance_for_pc_time == 1">
+			<img src="images/pc-time.png"  style="width: 138px;max-height:138px;" class="rounded">
+			<div  class="d-flex justify-content-between align-items-center mt-2 w-100">
+				<label class="lang text-white font-weight-bold">Balance</label>
+				<span class="lang font-weight-bold">{{memberInfo.member_balance_realtime}}</span>
+			</div>
+			<div v-if="vuePcTime?.price_dynamic_enable === 0" class="d-flex justify-content-between mt-2 w-100">
+				<label class="lang text-white font-weight-bold">Fixed</label>
+				<span>{{(theSettings.currency ?? '$')}} {{formatNumber(vuePcTime.fixed_price)}} / h</span>
+			</div>
+			
+			<div v-if="vuePcTime?.price_dynamic_enable == 1" class="w-100">
+				<div v-for="(dynamic, index) in vuePcTime.dynamic.splice(0, 1)" class="d-flex justify-content-between mt-2 w-100">
+					<label class="lang text-white font-weight-bold">Dynamic</label>
+					<span class="ml-1">{{(theSettings.currency ?? '$')}} {{formatNumber(dynamic.price)}} / h</span>
+				</div>
+			</div>
+			<div class="mt-2 w-100">
+				<button type="button" @click="delay_execute(theStartSession.start)" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
+					<span class="lang text-white">Start</span>
+				</button>
+			</div>
+		</div>
+		<div class="card-wh bd-highlight rounded rounded-2 d-flex flex-column align-items-center justify-content-between mr-4 mt-4 p-3 flex-shrink-1 border-block position-relative"
+			 v-if="theSettings.allow_topup_at_client == 1">
+			<img src="images/qr-topup.png" style="width: 138px;max-height:138px;" class="rounded">
+			<div class="mt-2">
+				<button @click="theShop.show_topup()" type="button" class="btn btn-block rounded-4 text-center client-btn-success lang" data-placement="bottom" data-toggle="tooltip" title="QR topup" onclick="javascript:theShop.cart_clear()">
+					<span class="lang text-white">QR topup</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

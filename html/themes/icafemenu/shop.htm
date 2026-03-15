@@ -1,0 +1,197 @@
+<style>
+	.shop-image { position: relative; }
+	.product-qty-badge {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		background: red;
+		width: 30px;
+		height: 30px;
+		color: white;
+		border-radius: 50%;
+		line-height: 30px;
+		text-align: center;
+		font-weight: bold;
+		z-index: 10;
+		pointer-events: none;
+	}
+</style>
+<div class="d-flex flex-column flex-shrink-0 border-block" style="width: 180px">
+	<span class="mr-4 pt-1 pb-1 dropdown c-pointer">
+		<template v-for="item in vueProductGroupList.tops" :key="item.product_group_id">
+			<a
+			class="lang dropdown-item text-truncate"
+			:class="[vueProductGroupList.current_group_id == item.product_group_id ? 'dropdown-item-active' : '']" 
+			href="javascript:;" 
+			@click.stop="theShop.change_group(item.product_group_id, '')"><label class="lang">{{ item.product_group_name }}</label>
+			</a>
+
+			<div v-show="item.children.length > 0" >
+				<a
+				v-for="child in item.children" :key="child.product_group_id"
+				class="lang dropdown-item text-truncate ml-2"
+				:class="[vueProductGroupList.current_group_id == child.product_group_id ? 'dropdown-item-active' : '']"
+				href="javascript:;"
+				@click.stop="theShop.change_group(child.product_group_id, '')"><label class="lang">{{ child.product_group_name }}</label>
+				</a>
+			</div>
+		</template>
+		<a 
+			class="lang dropdown-item text-truncate" 
+			:class="[vueProductGroupList.current_group_id == PRODUCT_GROUP_COINS ? 'dropdown-item-active' : '']" 
+			href="javascript:;" 
+			@click.stop="theShop.change_group(PRODUCT_GROUP_COINS, '')"><label class="lang">Coins</label>
+		</a>
+	</span>
+</div>
+
+<div class="container d-flex flex-column flex-grow-1">
+	<div
+		class="container d-flex flex-column flex-grow-1 shop-electric-shell"
+		:class="{'electric-border': isPromotedOfferInUsing(vueAvailableOffers.items)}"
+	>
+		<!-- Electric Border -->
+		<svg v-if="isPromotedOfferInUsing(vueAvailableOffers.items)" class="electro-filter-svg" aria-hidden="true" focusable="false">
+			<defs>
+				<filter id="electro-filter-shop-shell" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+					<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+					<feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+						<animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+					</feOffset>
+					<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+					<feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+						<animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
+					</feOffset>
+					<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
+					<feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+						<animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+					</feOffset>
+					<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+					<feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+						<animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+					</feOffset>
+					<feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+					<feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+					<feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+					<feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+				</filter>
+			</defs>
+		</svg>
+
+		<div v-if="isPromotedOfferInUsing(vueAvailableOffers.items)" class="electro-border-overlay" aria-hidden="true">
+			<div class="inner-container">
+				<div class="border-outer">
+					<div class="main-card"></div>
+				</div>
+				<div class="glow-layer-1"></div>
+				<div class="glow-layer-2"></div>
+			</div>
+			<div class="overlay-1"></div>
+			<div class="overlay-2"></div>
+			<div class="background-glow"></div>
+		</div>
+
+		<!-- st:shop area -->
+		<div class="d-flex d-inline-flex w-100 rounded align-items-center pl-4 pr-4 font-size-4">
+			<div class="col-3">
+				<form class="input-group border-0 bg-transparent" onsubmit="return false;">
+					<span class="position-absolute" style="line-height: 40px; padding: 0 8px;"><i class="fal fa-search"></i></span>
+					<input class="form-control lang" type="text" placeholder="Search shop" style="padding-left:30px; height: 40px;" id="search-product" v-model="vueShop.searchProduct" @input="theShop.onSearchInput">
+				</form>
+			</div>
+		</div>
+		<!-- st:shop images -->
+		<div class="d-flex text-left w-100 flex-wrap p-4 flex-grow-1 justify-content-start align-content-start" 
+			id="product-list" 
+			style="height: 100px; overflow-y: auto;">
+
+			<div class="p-4" v-for="item in vueProducts.items" :key="item.product_id">
+				<div class="shop-image ">
+					<img :src="item.image" :alt="item.product_name" @error="event.target.src = (item.product_id.indexOf('o-') === 0) ? 'images/default-offer.jpg' : 'images/default-product.jpg'">
+					<!-- Regular Cart Badge -->
+					<span class="product-qty-badge" v-if="!vueGlobal.isGiftCart && (vueOrderItems.product_qty_map && vueOrderItems.product_qty_map[item.product_id])">
+						{{ vueOrderItems.product_qty_map[item.product_id] }}
+					</span>
+					<!-- Gift Cart Badge -->
+					<span class="product-qty-badge" v-if="vueGlobal.isGiftCart && (vueGiftOrders.product_qty_map && vueGiftOrders.product_qty_map[item.product_id])">
+						{{ vueGiftOrders.product_qty_map[item.product_id] }}
+					</span>
+					<div class="overlay" style="background:rgba(17, 17, 17, 0.75);">
+						<div class="text-white btn-group d-flex w-100 h-100 p-3 text-center flex-column justify-content-around align-content-around">
+							<label class="font-size-4">{{item.product_name}}</label>
+							<label class="font-weight-bold" v-if="vueProductGroupList.current_group_id == -2">{{item.product_coin_price}} {{translate_string('coin')}}</label>
+							<div v-else class="font-weight-bold">
+								<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+									<!-- <div style="font-size: 0.9em;">Cash/Balance: {{(theSettings.currency ?? '$')}} {{toFixed2(theShop.getPriceDisplay(item.product_price).originalPrice)}}</div>
+									<div style="font-size: 0.9em;">Credit: {{(theSettings.currency ?? '$')}} {{toFixed2(theShop.getPriceDisplay(item.product_price).creditPrice)}}</div> -->
+									<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)">
+										{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}
+									</div>
+								</template>
+								<template v-else>
+									{{(theSettings.currency ?? '$')}} {{formatNumber(item.product_price)}}
+								</template>
+							</div>
+							<button v-if="vueProductGroupList.current_group_id == -2 && ((item.product_adult_only ?? 0) == 0 || getMemberInfo()?.member?.is_adult == true)" class="btn btn-lg lang" @click="theShop.gift_cart_change_qty(item.product_id, 1)">
+								<i class="fal fa-cart-plus fa-2x"></i>
+							</button>
+							<button v-else-if="(item.product_adult_only ?? 0) == 0 || getMemberInfo()?.member?.is_adult == true" class="btn py-0 mx-2" @click="theShop.cart_change_qty(item.product_id, 1)">
+								<i class="fal fa-cart-plus fa-2x"></i>
+							</button>
+						</div>
+					</div>
+					<i class="adult-only" v-if="(item.product_adult_only ?? 0) == 1"></i>
+				</div>
+				<label v-if="(theSettings.name_show_client ?? 0) == 1" class="text-white text-center mt-2" style="max-width: 138px;">{{item.product_name}}</label>
+			</div>
+		</div>
+		<!-- ed:shop images -->
+		
+		<!-- st:checkout bar -->
+		<div class="d-flex align-items-center justify-content-between py-3 flex-shrink-0 border-block" 
+			style="z-index: 100; border-top: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding-left: 1rem; padding-right: 1rem; width: 100%;">
+			
+			<!-- Regular Cart Display -->
+			<template v-if="!vueGlobal.isGiftCart">
+				<div class="d-flex align-items-center">
+					<span class="text-white font-weight-bold font-size-5 mr-2">{{theSettings.currency ?? '$'}}</span>
+					<span class="text-white font-weight-bold font-size-5">{{formatNumber(vueOrderItems.total_amount)}}</span>
+				</div>
+
+				<div class="d-flex">
+					<button class="btn client-btn-success text-white px-4 py-2 rounded shadow-sm d-flex align-items-center mr-3" @click="vueGlobal.modals.buy = true">
+						<i class="fal fa-shopping-cart mr-2"></i>
+						<span class="font-weight-bold">{{translate_string("Checkout")}}</span>
+						<span class="badge badge-light text-dark ml-2 font-weight-bold" style="background: rgba(255,255,255,0.9);">{{vueOrderItems.items.length}}</span>
+					</button>
+					<button class="btn client-btn-close text-white px-4 py-2 rounded shadow-sm d-flex align-items-center" @click="theShop.cart_clear()">
+						<i class="fal fa-trash-alt mr-2"></i>
+						<span class="font-weight-bold">{{translate_string("Reset")}}</span>
+					</button>
+				</div>
+			</template>
+
+			<!-- Gift Cart Display -->
+			<template v-else>
+				<div class="d-flex align-items-center">
+					<i class="fal fa-coins text-warning mr-2 font-size-5"></i>
+					<span class="text-white font-weight-bold font-size-5">{{formatNumber(vueGiftOrders.total_amount)}} {{translate_string('coins')}}</span>
+				</div>
+
+				<div class="d-flex">
+					<button class="btn client-btn-success text-white px-4 py-2 rounded shadow-sm d-flex align-items-center mr-3" @click="vueGlobal.modals.buy = true">
+						<i class="fal fa-shopping-cart mr-2"></i>
+						<span class="font-weight-bold">{{translate_string("Checkout")}}</span>
+						<span class="badge badge-light text-dark ml-2 font-weight-bold" style="background: rgba(255,255,255,0.9);">{{vueGiftOrders.items.length}}</span>
+					</button>
+					<button class="btn client-btn-close text-white px-4 py-2 rounded shadow-sm d-flex align-items-center" @click="theShop.gift_cart_clear()">
+						<i class="fal fa-trash-alt mr-2"></i>
+						<span class="font-weight-bold">{{translate_string("Reset")}}</span>
+					</button>
+				</div>
+			</template>
+		</div>
+		<!-- ed:checkout bar -->
+	</div>
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column" style="width: 400px"></div>

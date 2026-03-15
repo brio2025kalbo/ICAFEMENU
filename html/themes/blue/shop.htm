@@ -1,0 +1,188 @@
+<div class="d-flex flex-column flex-shrink-0 shop-category-menu" style="width: 252px">
+	<div class="menu-header d-flex align-items-center my-4 pl-3">
+		<img src="images/shop.svg" />
+		<span class="text-white font-weight-bold header-label lang">SHOP</span>
+	</div>
+	<span class="pt-1 pb-1 dropdown c-pointer">
+		<template v-for="item in vueProductGroupList.tops" :key="item.product_group_id">
+			<a
+			class="lang dropdown-item text-truncate"
+			:class="[vueProductGroupList.current_group_id == item.product_group_id ? 'dropdown-item-active' : '']" 
+			href="javascript:;" 
+			@click.stop="theShop.change_group(item.product_group_id, '')">{{ item.product_group_name }}
+			</a>
+
+			<div v-show="item.children.length > 0" class="pl-4">
+				<a
+				v-for="child in item.children"
+				class="lang dropdown-item text-truncate"
+				:class="[vueProductGroupList.current_group_id == child.product_group_id ? 'dropdown-item-active' : '']"
+				href="javascript:;"
+				@click.stop="theShop.change_group(child.product_group_id, '')">  {{ child.product_group_name }}
+				</a>
+			</div>
+		</template>
+		<a 
+			class="lang dropdown-item text-truncate" 
+			:class="[vueProductGroupList.current_group_id == PRODUCT_GROUP_COINS ? 'dropdown-item-active' : '']" 
+			href="javascript:;" 
+			@click.stop="theShop.change_group(PRODUCT_GROUP_COINS, '')">Coins
+		</a>
+	</span>
+</div>
+<div
+	class="align-top h-100 px-0 d-flex flex-column flex-grow-1 container shop-electric-shell"
+	:class="{'electric-border': isPromotedOfferInUsing(vueAvailableOffers.items)}"
+>
+	<!-- Electric Border -->
+	<svg v-if="isPromotedOfferInUsing(vueAvailableOffers.items)" class="electro-filter-svg" aria-hidden="true" focusable="false">
+		<defs>
+			<filter id="electro-filter-shop-shell" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+				<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+				<feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+					<animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+				</feOffset>
+				<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+				<feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+					<animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
+				</feOffset>
+				<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
+				<feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+					<animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+				</feOffset>
+				<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+				<feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+					<animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+				</feOffset>
+				<feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+				<feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+				<feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+				<feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+			</filter>
+		</defs>
+	</svg>
+
+	<div v-if="isPromotedOfferInUsing(vueAvailableOffers.items)" class="electro-border-overlay" aria-hidden="true">
+		<div class="inner-container">
+			<div class="border-outer">
+				<div class="main-card"></div>
+			</div>
+			<div class="glow-layer-1"></div>
+			<div class="glow-layer-2"></div>
+		</div>
+		<div class="overlay-1"></div>
+		<div class="overlay-2"></div>
+		<div class="background-glow"></div>
+	</div>
+
+	<!-- st:shop area -->
+
+			<!-- st:cart header bar -->
+			<div class="d-flex align-items-center justify-content-center py-3 flex-shrink-0" 
+				style="z-index: 100; width: 100%; gap: 16px;">
+
+				<!-- Regular Cart -->
+				<template v-if="!vueGlobal.isGiftCart">
+					<!-- Cart Info -->
+					<span class="text-white" style="font-size: 14px;">
+						<span class="font-weight-bold" style="font-family: system-ui;">{{vueOrderItems.items.length}}</span> <span class="lang">items</span> <span class="lang"> in cart</span>
+					</span>
+
+					<!-- Checkout Button -->
+					<button class="btn text-white px-4 py-2 rounded d-flex align-items-center lang" 
+						style="background: #28a745; font-weight: 600;"
+						@click="vueGlobal.modals.buy = true">
+						{{translate_string("Checkout")}}
+					</button>
+
+					<!-- Reset Button -->
+					<button class="btn text-white px-4 py-2 rounded d-flex align-items-center lang" 
+						style="background: #6c757d; font-weight: 600;"
+						@click="theShop.cart_clear()">
+						{{translate_string("Reset")}}
+					</button>
+				</template>
+
+				<!-- Gift Cart (Coins) -->
+				<template v-else>
+					<!-- Coin Total -->
+					<span class="text-white d-flex align-items-center" style="font-size: 14px;">
+						<i class="fal fa-coins text-warning mr-1"></i>
+						<span class="font-weight-bold">{{formatNumber(vueGiftOrders.total_amount)}} {{translate_string('coins')}}</span>
+						<span class="font-weight-bold ml-1">{{vueGiftOrders.items.length}}</span> items
+					</span>
+
+					<!-- Checkout Button -->
+					<button class="btn text-white px-4 py-2 rounded d-flex align-items-center" 
+						style="background: #28a745; font-weight: 600;"
+						@click="vueGlobal.modals.buy = true">
+						{{translate_string("Checkout")}}
+					</button>
+
+					<!-- Reset Button -->
+					<button class="btn text-white px-4 py-2 rounded d-flex align-items-center" 
+						style="background: #6c757d; font-weight: 600;"
+						@click="theShop.gift_cart_clear()">
+						{{translate_string("Reset")}}
+					</button>
+				</template>
+			</div>
+			<!-- ed:cart header bar -->
+
+			<!-- st:shop images -->
+			<div class="d-flex text-left w-100 flex-wrap p-4 flex-grow-1 justify-content-start align-content-start" id="product-list" style="height: 100px;">
+				<div class="p-3 shop-item-wrapper" v-for="item in vueProducts.items" :key="item.product_id">
+					<div class="shop-card d-flex flex-column h-100 position-relative">
+						<div class="shop-image position-relative overflow-hidden" :class="{'in-cart': vueGlobal.isGiftCart ? vueGiftOrders?.product_qty_map?.[item.product_id] : vueOrderItems?.product_qty_map?.[item.product_id]}">
+							<img :src="item.image" :alt="item.product_name" class="w-100 h-100" style="object-fit: cover;" @error="event.target.src = (item.product_id.indexOf('o-') === 0) ? 'images/default-offer.jpg' : 'images/default-product.jpg'">
+							<i class="adult-only" v-if="(item.product_adult_only ?? 0) == 1"></i>
+							
+							<!-- Hover Overlay (Add Button) - Show when qty is 0 -->
+							<div class="shop-overlay hover-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center" 
+								 v-if="vueGlobal.isGiftCart ? !vueGiftOrders?.product_qty_map?.[item.product_id] : !vueOrderItems?.product_qty_map?.[item.product_id]"
+								 @click.stop="vueGlobal.isGiftCart ? theShop.gift_cart_change_qty(item.product_id, 1) : theShop.cart_change_qty(item.product_id, 1)"
+								 style="backdrop-filter: blur(4px);">
+								<div class="btn rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 44px; height: 44px; padding: 0px!important; background: rgba(40, 167, 69, 0.25); border: 1px solid #28a745;">
+									<img src="images/cart.png" alt="cart">
+								</div>
+							</div>
+
+							<!-- Active Overlay (Qty Control) - Show when qty > 0 -->
+							<div class="shop-overlay active-overlay position-absolute w-100 h-100 d-flex align-items-end justify-content-center" 
+								 v-if="vueGlobal.isGiftCart ? vueGiftOrders?.product_qty_map?.[item.product_id] : vueOrderItems?.product_qty_map?.[item.product_id]">
+								<div class="active-overlay-bar w-100 d-flex align-items-center justify-content-between px-2">
+									<button class="btn btn-link text-white p-0" @click.stop="vueGlobal.isGiftCart ? theShop.gift_cart_change_qty(item.product_id, -1) : theShop.cart_change_qty(item.product_id, -1)">
+										<i class="fal fa-minus"></i>
+									</button>
+									<span class="text-white font-weight-bold">{{vueGlobal.isGiftCart ? vueGiftOrders?.product_qty_map?.[item.product_id] : vueOrderItems?.product_qty_map?.[item.product_id]}}</span>
+									<button class="btn btn-link text-white p-0" @click.stop="vueGlobal.isGiftCart ? theShop.gift_cart_change_qty(item.product_id, 1) : theShop.cart_change_qty(item.product_id, 1)">
+										<i class="fal fa-plus"></i>
+									</button>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Info Below Img -->
+						<div class="shop-info mt-2">
+							<label class="shop-name text-white font-weight-bold mb-1" style="font-size: 15px;">{{item.product_name}}</label>
+							<div class="shop-price text-success font-weight-bold" style="font-size: 15px;">
+								<label class="mb-0" v-if="vueProductGroupList.current_group_id == -2">{{item.product_coin_price}} {{translate_string('coin')}}</label>
+								<div v-else>
+									<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+										<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)">
+											{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}
+										</div>
+									</template>
+									<template v-else>
+										{{(theSettings.currency ?? '$')}} {{formatNumber(item.product_price)}}
+									</template>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	<!-- ed:shop images -->
+	<!-- ed:shop area -->
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column game-right-sidebar" style="width: 400px"></div>

@@ -1,0 +1,343 @@
+
+<!-- st:modal:order -->
+<div class="modal myModalBuy" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.buy}" :style="{display: vueGlobal.modals.buy ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang font-size-5">New Order</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.buy = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0 text-center">
+				<form v-if="!vueGlobal.isGiftCart" id="cart_form" onsubmit="return delay_execute(theShop.cart_done_promote);">
+					<table id="cart" class="table cart mb-0 w-100" style="table-layout: fixed;">
+						<tbody>
+							<tr v-for="item in vueOrderItems.items" :key="item.product_id" :data-productid="item.product_id">
+								<td class="feedback-icon col-2 align-middle">
+										<a @click="theShop.cart_change_qty(item.product_id, -999999)" class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Delete">
+											<i class="fal fa-trash-can fa-2x text-white"></i>
+										</a>
+									</td>
+								<td class="text-left col-4 align-middle">
+										<label class="text-white">{{item.product_name}}</label>
+										<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+											<div style="font-size: 0.85em;">
+												<div>Cash/Bal: {{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}}</div>
+												<div>Credit: {{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}</div>
+											</div>
+										</template>
+										<template v-else>
+											<label>{{(theSettings.currency ?? '$')}} {{formatNumber(item.product_price)}}</label>
+										</template>
+									</td>
+								<td class="col-2 align-middle">
+										<input type="number" class="px-0 form-control text-center new-order-item-qty bg-transparent" @input="theShop.update_item_qty" :data-productid="item.product_id" min="1" :value="item.order_item_qty">
+									</td>
+									<td class="text-right col-4 align-middle">
+										<label>{{theSettings.currency ?? '$'}} {{formatNumber(item.order_cost)}}</label>
+									</td>
+
+							</tr>
+							<tr v-if="vueOrderItems.items.length <= 0" >
+								<td colspan="4"></td>
+							</tr>
+						</tbody>
+						<tfoot class="text-white">
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Sub-total:")}}</label></td>
+								<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.total_cost)}}</label></td>
+							</tr>
+							<template v-if="theSettings.bonus_buy_offer === 1 
+								&& vueOrderItems.max_bonuses > 0 
+								&& vueOrderItems.product_count == 0
+								&& vueOrderItems.payment_method === PAY_METHOD_BALANCE 
+								&& theSettings.payment_method_balance == 1 
+								&& vueOrderItems.enable_balance">
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Maximum bonuses:")}}</label></td>
+									<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.max_bonuses)}}</label></td>
+								</tr>
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Your bonuses:")}}</label></td>
+									<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(memberInfo.member_balance_bonus)}}</label></td>
+								</tr>
+								<tr>
+									<td class="text-left" colspan="3"><label>{{translate_string("Balance to be paid:")}}</label></td>
+									<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.payable_balance)}}</label></td>
+								</tr>
+							</template>
+							<tr v-if="vueOrderItems.total_discount > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Discount")}}:</label></td>
+								<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.total_discount)}}</label></td>
+							</tr>
+							<tr v-if="vueOrderItems.total_tax > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Tax:")}}</label></td>
+								<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.total_tax)}}</label></td>
+							</tr>
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Total amount:")}}</label></td>
+								<td class="text-right"><label>{{theSettings.currency ?? '$'}} {{formatNumber(vueOrderItems.total_amount)}}</label></td>
+							</tr>
+						</tfoot>
+					</table>
+					<div id="payment-table" class="row cart mb-5">
+						<div class="col-12 d-flex justify-content-around">
+							<div v-if="(typeof(theSettings.payment_method_cash_in_client) == 'undefined' || theSettings.payment_method_cash_in_client == 1) && vueOrderItems.enable_cash" class="custom-control custom-radio mr-0">
+								<input type="radio" id="payment_method_cash" name="payment_method" :value="PAY_METHOD_CASH" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="payment_method_cash" data-toggle="tooltip" data-placement="bottom" title="Cash"><i class="fal fa-money-bill-wave fa-3x"></i></label>
+							</div>
+							<div v-if="(typeof(theSettings.payment_method_credit_card) == 'undefined' || theSettings.payment_method_credit_card == 1) && vueOrderItems.enable_credit_card" class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="payment_method_card" name="payment_method" :value="PAY_METHOD_CARD" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="payment_method_card" data-toggle="tooltip" data-placement="bottom" title="Credit card"><i class="fa fa-brands fa-cc-visa fa-3x"></i></label>
+							</div>
+							<div v-if="(typeof(theSettings.payment_method_qr) == 'undefined' || theSettings.payment_method_qr == 1) && vueOrderItems.enable_qr" class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="payment_method_qr" name="payment_method" :value="PAY_METHOD_QR" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="payment_method_qr" data-toggle="tooltip" data-placement="bottom" title="QR payment"><i class="fa fa-qrcode fa-3x"></i></label>
+							</div>
+							<div v-if="(typeof(theSettings.payment_method_balance) == 'undefined' || theSettings.payment_method_balance == 1) && vueOrderItems.enable_balance" class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="payment_method_balance" name="payment_method" :value="PAY_METHOD_BALANCE" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+								<label v-if="vueOrderItems.member_group_id == MEMBER_GROUP_POSTPAID" class="custom-control-label lang" for="payment_method_balance" data-toggle="tooltip" data-placement="bottom" title="Pay later"><i class="fal fa-clock fa-3x"></i></label>
+								<label v-else class="custom-control-label lang" for="payment_method_balance" data-toggle="tooltip" data-placement="bottom" title="Balance"><i class="fal fa-wallet fa-3x"></i></label>
+							</div>
+							<div v-if="vueOrderItems.enable_pay_later" class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="payment_method_pay_later" name="payment_method" :value="PAY_METHOD_PAY_LATER" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="payment_method_pay_later" data-toggle="tooltip" data-placement="bottom" title="Pay later"><i class="fa  fa-clock fa-3x"></i></label>
+							</div>
+						</div>
+					</div>
+					
+					<div class="btn-group w-100">
+						<button type="submit" class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Done" id="new-order-done" :disabled="vueOrderItems.items.length == 0"><i class="fal fa-check fa-2x text-white"></i></button>		
+					</div>
+				</form>
+				
+				<!-- Gift Cart -->
+				<form v-else id="gift_cart_form" onsubmit="return delay_execute(theShop.gift_cart_done);">
+					<table id="gift_cart" class="table cart mb-0 w-100" style="table-layout: fixed;">
+						<tbody>
+							<tr v-for="item in vueGiftOrders.items" :key="item.product_id" :data-productid="item.product_id">
+								<td class="feedback-icon col-2 align-middle">
+									<a @click="theShop.gift_cart_change_qty(item.product_id, -999999)" class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Delete">
+										<i class="fal fa-trash-can fa-2x text-white"></i>
+									</a>
+								</td>
+								<td class="text-left col-4 align-middle">
+									<label class="text-white">{{item.product_name}}</label>
+									<div>
+										<label>{{item.product_coin_price}} {{translate_string('coin')}}</label>
+									</div>
+								</td>
+								<td class="col-2 align-middle">
+									<input type="number" class="px-0 form-control text-center new-order-item-qty bg-transparent" @input="theShop.update_gift_item_qty" :data-productid="item.product_id" min="1" :value="item.order_item_qty">
+								</td>
+								<td class="text-right col-4 align-middle">
+									<label>{{formatNumber(item.order_cost)}} {{translate_string('coins')}}</label>
+								</td>
+							</tr>
+							<tr v-if="vueGiftOrders.items.length <= 0">
+								<td colspan="4"></td>
+							</tr>
+						</tbody>
+						<tfoot class="text-white">
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Total Coins:")}}</label></td>
+								<td class="text-right"><label>{{formatNumber(vueGiftOrders.total_amount)}}</label></td>
+							</tr>
+						</tfoot>
+					</table>
+					
+					<div class="row cart mb-5">
+						<!-- Spacer to match layout height -->
+						<div class="col-12" style="height: 50px;"></div>
+					</div>
+
+					<div class="btn-group w-100">
+						<button type="submit" class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Done" id="gift-order-done" :disabled="vueGiftOrders.items.length == 0"><i class="fal fa-check fa-2x text-white"></i></button>		
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:order -->
+
+<!-- st:modal:print -->
+<div class="modal myModalPrint" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered " role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang font-size-5">Print</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0 text-center">
+				<form id="cart_form" onsubmit="return delay_execute(theShopPrint.cart_done);">
+					<table id="cart" class="table cart mb-0 w-100" style="table-layout: fixed;">
+						<tbody>
+							<tr>
+								<td class="text-left col-9" colspan="3">
+									<label class="text-white">Pages</label>
+								</td>
+								<td class="text-right col-3">
+									<label>{{vuePrint.page_count}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-left col-9" colspan="1">
+									<label class="text-white">Print</label>
+								</td>
+								<td class="text-right col-3" colspan="3">
+									<div class="d-flex justify-content-around">
+										<div class="custom-control custom-radio mr-0" v-if="vuePrint.blackwhite != null">
+											<input type="radio" id="printer_black_white" name="product_id" :value="vuePrint.blackwhite.product_id"
+												v-model="vuePrint.product_id" @change="theShopPrint.cart_refresh()" class="custom-control-input">
+											<label class="custom-control-label lang" for="printer_black_white" data-toggle="tooltip" data-placement="bottom"
+												title="Black & white"><i class="fal fa-print fa-3x"></i></label>
+											<label class="lang">{{vuePrint.blackwhite.product_name}}</label>
+											<label class="lang">{{theSettings.currency ?? '$'}} {{toFixed2(vuePrint.blackwhite.product_price)}}</label>
+										</div>
+										<div class="custom-control custom-radio ml-5 mr-0" v-if="vuePrint.color != null">
+											<input type="radio" id="printer_color" name="product_id" :value="vuePrint.color.product_id"
+												v-model="vuePrint.product_id" @change="theShopPrint.cart_refresh()" class="custom-control-input">
+											<label class="custom-control-label lang" for="printer_color" data-toggle="tooltip" data-placement="bottom"
+												title="Color"><i class="fa fa-print fa-3x"></i></label>
+											<label class="lang">{{vuePrint.color.product_name}}</label>
+											<label class="lang">{{theSettings.currency ?? '$'}} {{toFixed2(vuePrint.color.product_price)}}</label>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot class="text-white">
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Sub-total:")}}</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_cost)}}</label></td>
+							</tr>
+							<tr v-if="vuePrint.total_discount > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Discount")}}:</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_discount)}}</label></td>
+							</tr>
+							<tr v-if="vuePrint.total_tax > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Tax:")}}</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_tax)}}</label></td>
+							</tr>
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Total amount:")}}</label>
+								</td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_amount)}}</label></td>
+							</tr>
+						</tfoot>
+					</table>
+					<div id="payment-table" class="row cart mb-5">
+						<div class="col-12 d-flex justify-content-around">
+							<div v-if="(typeof(theSettings.payment_method_cash_in_client) == 'undefined' || theSettings.payment_method_cash_in_client == 1) && theShopPrint.enable_cash"
+								class="custom-control custom-radio mr-0">
+								<input type="radio" id="print_payment_method_cash" name="payment_method"
+									:value="PAY_METHOD_CASH" v-model="vuePrint.payment_method"
+									@change="theShopPrint.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="print_payment_method_cash" data-toggle="tooltip"
+									data-placement="bottom" title="Cash"><i
+										class="fal fa-money-bill-wave fa-3x"></i></label>
+							</div>
+							<div v-if="(typeof(theSettings.payment_method_credit_card) == 'undefined' || theSettings.payment_method_credit_card == 1) && theShopPrint.enable_credit_card"
+								class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="print_payment_method_card" name="payment_method"
+									:value="PAY_METHOD_CARD" v-model="vuePrint.payment_method"
+									@change="theShopPrint.cart_refresh()" class="custom-control-input">
+								<label class="custom-control-label lang" for="print_payment_method_card" data-toggle="tooltip"
+									data-placement="bottom" title="Credit card"><i
+										class="fa fa-brands fa-cc-visa fa-3x"></i></label>
+							</div>
+							<div v-if="(typeof(theSettings.payment_method_balance) == 'undefined' || theSettings.payment_method_balance == 1) && theShopPrint.enable_balance"
+								class="custom-control custom-radio ml-5 mr-0">
+								<input type="radio" id="print_payment_method_balance" name="payment_method"
+									:value="PAY_METHOD_BALANCE" v-model="vuePrint.payment_method"
+									@change="theShopPrint.cart_refresh()" class="custom-control-input">
+								<label v-if="vuePrint.member_group_id == MEMBER_GROUP_POSTPAID"
+									class="custom-control-label lang" for="print_payment_method_balance" data-toggle="tooltip"
+									data-placement="bottom" title="Pay later"><i class="fal fa-clock fa-3x"></i></label>
+								<label v-else class="custom-control-label lang" for="print_payment_method_balance"
+									data-toggle="tooltip" data-placement="bottom" title="Balance"><i
+										class="fal fa-wallet fa-3x"></i></label>
+							</div>
+						</div>
+					</div>
+
+					<div class="btn-group w-100">
+						<button type="submit"
+							class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success"
+							data-placement="bottom" data-toggle="tooltip" title="Done" id="print-new-order-done"><i
+								class="fal fa-check fa-2x text-white"></i></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- st:modal: member-topup -->
+<div class="modal myModalTopup" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.topup}" :style="{display: vueGlobal.modals.topup ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Topup</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.topup = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-topup" class="form-horizontal" @submit.prevent="theShop.topup()">
+				<div class="modal-body" style="padding: 20px 70px;">
+
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Member</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="member_account" name="member_account" required :value="memberInfo.member_name" v-model="vueTopup.member_account">
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Amount</label>
+								<input type="number" step="0.01" :placeholder="translate_string('Please input mini amount') + ' ' + theSettings.mini_qr_payment" @keyup="theTopupLogin.topupAmountCalculate()" class="form-control modal-input bg-transparent" id="topup_amount" name="topup_amount" required v-model="vueTopup.topup_amount">
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Minutes</label>
+								<input type="number" @keyup="theTopupLogin.topupTimeCalculate()" class="form-control modal-input bg-transparent" id="topup_time" name="topup_time" required v-model="vueTopup.topup_time"> 
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Promo code</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_promo_code" name="promo_code" v-model="vueTopup.promo_code">
+							</div>
+						</div>
+						<div v-if="vueTopup.payment_qr" id="payment_qr"  class="col-12 d-flex justify-content-center" data-clipboard-target="#payment_qr" @click="copyToClipboard('#payment_qr');">
+						</div>
+						<div id="payment_type" class="col-12 d-flex justify-content-center " >
+							<img src="images/kaspi_qr.jpg" style="width: 266px;" class="d-none" v-show="vueTopup.payment_type_img">
+						</div>
+						<div id="payment_url" class="col-12 d-flex justify-content-center " >
+							<div class="razorpay-qr-img" v-show="vueTopup.payment_url_div" v-html="vueTopup.payment_html"></div>
+							<div v-html="vueTopup.manual_payment_html"></div>
+							<div v-html="vueTopup.paymongo_html"></div>
+							<div v-html="vueTopup.midtrans_html"></div>
+							<div v-html="vueTopup.finik_html"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer" v-show="vueTopup.btn_group">
+					<div class="btn-group" id="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.topup = false" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal: member-topup -->

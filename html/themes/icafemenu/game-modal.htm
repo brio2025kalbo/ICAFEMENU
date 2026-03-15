@@ -1,0 +1,23 @@
+<!-- st:modal:rungame -->
+<div class="modal myModalRunGame" tabindex="-1" role="dialog" aria-hidden="true"  :style="{display: vueGlobal.modals.runGame ? 'block' : 'none'}">
+	<div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">{{ vueRunGame.title }}</h5>
+				<button type="button" class="close " @click="vueGlobal.modals.runGame = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+<!-- ... content ... -->
+			<!-- No footer button here, but close button in header -->
+			<div class="modal-body pb-3 pt-0 text-center">
+				<!-- hidden input removed -->
+				<div class="btn-group feedback-icon">
+					<a href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="Switch to" onclick="javascript:rungame_switch_to()" class="mr-5 lang "><i class="fal fa-arrow-right-arrow-left fa-4x " style="line-height: 1.25;"></i></a>
+					<a href="javascript:void(0)" data-toggle="tooltip" data-placement="bottom" title="Terminate" onclick="javascript:rungame_terminate()" class="lang "><i class="fa fa-circle-xmark fa-4x " style="line-height: 1.25;"></i></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:rungame -->

@@ -1,0 +1,110 @@
+<!-- st:modal:audio -->
+<div class="modal myModalAudio" tabindex="-1" role="dialog" aria-hidden="true" :class="{show: vueGlobal.modals.audio}" :style="{display: vueGlobal.modals.audio ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Audio settings</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.audio = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-4 text-center">
+				<div class="d-flex align-items-center justify-content-center">
+					<button type="button" class="btn btn-outline-secondary rounded-0 border-0 mb-3" id="volumeToggleBtn" @click="theAudioSettings.toggleMute()">
+						<i :class="vueSystemSettings.isMuted ? 'fas fa-volume-xmark' : 'fas fa-volume-up'" 
+						   :style="{color: vueSystemSettings.isMuted ? '#dc3545' : '', fontSize: '30px'}" class="fa-fw fa-2x" id="volumeIcon"></i>
+					</button>
+					
+					<div class="volume-slider-container mt-3 flex-grow-1">
+						<div class="volume-slider-track" style="height: 4px; background: #ddd; border-radius: 2px; position: relative;" @click="theAudioSettings.handleTrackClick($event)">
+							<div class="volume-slider-progress" :style="{height: '100%', background: '#007bff', borderRadius: '2px', width: vueSystemSettings.volume + '%'}"></div>
+							<div class="volume-slider-handle" :style="{width: '16px', height: '16px', background: '#007bff', borderRadius: '50%', position: 'absolute', top: '50%', left: vueSystemSettings.volume + '%', transform: 'translate(-50%, -50%)', cursor: 'pointer'}" @mousedown="theAudioSettings.handleMouseDown($event)"></div>
+						</div>
+						<div class="volume-value mt-2">
+							<span class="current-volume">{{vueSystemSettings.volume}}</span>%
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group">
+					<button type="button" class="btn btn-lg client-btn-success lang py-0" @click="vueGlobal.modals.audio = false"
+						data-placement="bottom" data-toggle="tooltip" title="Leave"><i
+							class="fal fa-check fa-2x text-white"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:audio -->
+
+
+<!-- st:modal:mouse -->
+<div class="modal myModalMouse" tabindex="-1" role="dialog" aria-hidden="true" :class="{show: vueGlobal.modals.mouse}" :style="{display: vueGlobal.modals.mouse ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Mouse settings</h5>
+				<button type="button" class="close " @click="vueGlobal.modals.mouse = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-3 text-center">
+				<!-- mouse move speed control -->
+				<div class="mb-4">
+					<h6 class="lang mb-3">Mouse move speed</h6>
+					<div class="mouse-move-slider-container" style="width: 80%; margin: 0 auto; position: relative;">
+						<div class="mouse-move-slider-track"
+							style="height: 4px; background: #ddd; border-radius: 2px; position: relative;" @click="theMouseSettings.handleMoveSpeedTrackClick($event)">
+							<div class="mouse-move-slider-progress"
+								:style="{height: '100%', background: '#007bff', borderRadius: '2px', width: (vueSystemSettings.moveSpeed * 10) + '%'}"></div>
+							<div class="mouse-move-slider-handle"
+								:style="{width: '16px', height: '16px', background: '#007bff', borderRadius: '50%', position: 'absolute', top: '50%', left: (vueSystemSettings.moveSpeed * 10) + '%', transform: 'translate(-50%, -50%)', cursor: 'pointer'}" @mousedown="theMouseSettings.handleMoveSpeedMouseDown($event)">
+							</div>
+						</div>
+						<div class="mouse-move-value mt-2">
+							<span class="mouse-move-current-speed">{{vueSystemSettings.moveSpeed}}</span>/10
+						</div>
+					</div>
+				</div>
+
+				<!-- Double-click speed control -->
+				<div class="mb-4">
+					<h6 class="lang mb-3">Double-click speed</h6>
+					<div class="double-click-slider-container" style="width: 80%; margin: 0 auto; position: relative;">
+						<div class="double-click-slider-track"
+							style="height: 4px; background: #ddd; border-radius: 2px; position: relative;" @click="theMouseSettings.handleDoubleClickTrackClick($event)">
+							<div class="double-click-slider-progress"
+								:style="{height: '100%', background: '#007bff', borderRadius: '2px', width: (vueSystemSettings.doubleClickSpeed * 10) + '%'}"></div>
+							<div class="double-click-slider-handle"
+								:style="{width: '16px', height: '16px', background: '#007bff', borderRadius: '50%', position: 'absolute', top: '50%', left: (vueSystemSettings.doubleClickSpeed * 10) + '%', transform: 'translate(-50%, -50%)', cursor: 'pointer'}" @mousedown="theMouseSettings.handleDoubleClickMouseDown($event)">
+							</div>
+						</div>
+						<div class="double-click-value mt-2">
+							<span class="double-click-current-speed">{{vueSystemSettings.doubleClickSpeed}}</span>/10
+						</div>
+					</div>
+				</div>
+
+				<!-- Mouse smoothness control -->
+				<div class="mouse-smoothness-control">
+					<div class="form-check form-check-inline" style="margin-top: 10px; margin-left: 50px; text-align:left; cursor: pointer;">
+						<label for="mouseSmoothnessSwitch" class="form-check-label" >
+							<input type="checkbox" class="form-check-input lang" name="mouseSmoothnessSwitch" id="mouseSmoothnessSwitch"
+								   v-model="vueSystemSettings.mouseSmoothness" @change="theMouseSettings.handleMouseSmoothnessChange(vueSystemSettings.mouseSmoothness)">
+							<label class="input-helper" for="mouseSmoothnessSwitch" :class="{active: vueSystemSettings.mouseSmoothness}"><span class="lang">Mouse smoothness</span></label>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="btn-group">
+					<button type="button" class="btn btn-lg client-btn-success lang py-0" @click="vueGlobal.modals.mouse = false"
+						data-placement="bottom" data-toggle="tooltip" title="Leave"><i
+							class="fal fa-check fa-2x text-white"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:mouse -->

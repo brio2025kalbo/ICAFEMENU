@@ -1,0 +1,6 @@
+call "%~dp0cmd\allow.bat"
+call "%~dp0control_panel\allow.bat"
+call "%~dp0power_button\allow.bat"
+call "%~dp0task_manager\allow.bat"
+call "%~dp0usb\allow.bat"
+call "%~dp0download_file\allow.bat"

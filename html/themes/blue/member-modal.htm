@@ -1,0 +1,77 @@
+<!-- st:modal:member-avatar -->
+<div class="modal myModalMemberAvatar" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" :class="{show: vueGlobal.modals.avatar}" :style="{display: vueGlobal.modals.avatar ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Change Avatar</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.avatar = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body p-0">
+				<div class="d-flex flex-column align-items-center pt-4 pb-3">
+					<div class="current-avatar-container mb-3 position-relative">
+						<img :src="uploadPreview || getAvatarUrl(vueMemberAvatar.selectedAvatar || memberInfo.member_photo)" class="rounded-circle border border-success" style="width: 120px; height: 120px; object-fit: cover; border-width: 2px !important;" onerror="this.src='images/default-avatar.png'">
+						<div class="current-label badge badge-success position-absolute" style="bottom: 0; left: 50%; transform: translateX(-50%);">Current</div>
+					</div>
+				</div>
+
+				<ul class="nav nav-tabs justify-content-center border-bottom-0 mb-3" id="avatarTabs" role="tablist">
+					<li class="nav-item">
+						<a class="nav-link" :class="{ active: activeTab === 'gallery' }" href="#" @click.prevent="switchTab('gallery')">
+							<i class="fal fa-images mr-2"></i><span class="lang">Gallery</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" :class="{ active: activeTab === 'upload' }" href="#" @click.prevent="switchTab('upload')">
+							<i class="fal fa-upload mr-2"></i><span class="lang">Upload</span>
+						</a>
+					</li>
+				</ul>
+
+				<div class="tab-content px-4 pb-4" id="avatarTabContent">
+					<!-- Gallery Tab -->
+					<div class="tab-pane" :class="{ 'show active': activeTab === 'gallery' }" id="member-gallery" role="tabpanel">
+						<div class="avatar-grid d-flex flex-wrap justify-content-start" style="width: 400px; margin: 0 auto;">
+							<!-- Avatars will be populated by JS or Vue -->
+							<div v-for="n in 12" :key="n" class="avatar-option m-2" style="width: 60px;" @click="selectAvatar('#' + n + '.png')">
+								<img :src="ICAFEMENU_CORE.core_path('faces/' + n + '.png')" class="rounded-circle c-pointer" style="width: 60px; height: 60px; object-fit: cover; border-width: 2px !important;" :class="{'border border-success': vueMemberAvatar.selectedAvatar === '#' + n + '.png'}">
+							</div>
+						</div>
+					</div>
+
+					<!-- Upload Tab -->
+					<div class="tab-pane" :class="{ 'show active': activeTab === 'upload' }" id="member-upload" role="tabpanel">
+						<div class="upload-area border rounded p-4 text-center d-flex flex-column align-items-center justify-content-center" style="border-style: dashed !important; border-color: #666 !important; height: 304px;">
+							<div v-if="!uploadPreview">
+								<i class="fal fa-cloud-upload fa-3x mb-3 text-muted"></i>
+								<p class="text-muted mb-3 lang">Click to upload or drag and drop</p>
+								<input type="file" id="avatarUploadInput" accept="image/*" class="d-none" @change="handleAvatarUpload">
+								<button class="btn btn-outline-secondary lang" onclick="document.getElementById('avatarUploadInput').click()">Choose File</button>
+								<p class="small text-muted mt-2 lang">Max size: 2MB. Formats: JPG, PNG, GIF</p>
+							</div>
+							<div v-else class="preview-container position-relative">
+								<img :src="uploadPreview" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border-width: 2px !important;">
+								<button class="btn btn-sm btn-danger position-absolute" style="top: 0; right: -10px;" @click="clearUpload">
+									<i class="fal fa-times"></i>
+								</button>
+								<p class="text-success mt-2 lang">Ready to upload</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-center border-top-0 pb-4">
+				<div class="btn-group">
+					<button type="button" class="btn btn-lg client-btn-success lang mr-3 py-0" @click="saveAvatar" data-placement="bottom" data-toggle="tooltip" title="Save">
+						Save
+					</button>
+					<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.avatar = false" data-placement="bottom" data-toggle="tooltip" title="Cancel">
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:member-avatar -->

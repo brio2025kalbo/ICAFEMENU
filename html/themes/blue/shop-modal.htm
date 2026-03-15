@@ -1,0 +1,512 @@
+
+
+<!-- st:modal:order -->
+<div class="modal myModalBuy" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.buy}" :style="{display: vueGlobal.modals.buy ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang font-size-5">Checkout</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.buy = false" aria-label="Close">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 6L6 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M6 6L18 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0">
+				<!-- Regular Cart -->
+				<form v-if="!vueGlobal.isGiftCart" id="cart_form" onsubmit="return delay_execute(theShop.cart_done_promote);">
+					
+					<!-- Items count + Clear all -->
+					<div class="d-flex justify-content-between align-items-center mb-3 px-1">
+						<span class="checkout-items-count">{{vueOrderItems.items.length}} {{translate_string("items")}}</span>
+						<a href="javascript:;" class="checkout-clear-all" @click.stop="theShop.cart_clear()">{{translate_string("Clear all")}}</a>
+					</div>
+
+					<!-- Product Cards -->
+					<div class="checkout-product-list">
+						<div class="checkout-product-card" v-for="item in vueOrderItems.items" :key="item.product_id">
+							<div class="checkout-product-img">
+								<img :src="item.image" :alt="item.product_name" @error="event.target.src = 'images/default-product.jpg'">
+							</div>
+							<div class="checkout-product-info">
+								<div class="checkout-product-name">{{item.product_name}}</div>
+								<template v-if="theShop.getPriceDisplay(item.product_price).showBothPrices">
+									<div class="checkout-product-price" style="font-size: 0.85em;">
+										<div>Cash/Bal: {{theSettings.currency ?? '$'}}{{formatNumber(theShop.getPriceDisplay(item.product_price).originalPrice)}}</div>
+										<div>Credit: {{theSettings.currency ?? '$'}}{{formatNumber(theShop.getPriceDisplay(item.product_price).creditPrice)}}</div>
+									</div>
+								</template>
+								<template v-else>
+									<div class="checkout-product-price">{{theSettings.currency ?? '$'}}{{formatNumber(item.order_cost)}}</div>
+								</template>
+							</div>
+							<div class="checkout-product-qty">
+								<button type="button" class="checkout-qty-btn" @click.stop="theShop.cart_change_qty(item.product_id, -1)">
+									<i class="fal fa-minus"></i>
+								</button>
+								<span class="checkout-qty-value">{{vueOrderItems?.product_qty_map?.[item.product_id] ?? 1}}</span>
+								<button type="button" class="checkout-qty-btn" @click.stop="theShop.cart_change_qty(item.product_id, 1)">
+									<i class="fal fa-plus"></i>
+								</button>
+							</div>
+						</div>
+						<div v-if="vueOrderItems.items.length <= 0" class="text-center py-4" style="color: #576081;">
+							{{translate_string("No items in cart")}}
+						</div>
+					</div>
+
+					<!-- Summary -->
+					<div class="checkout-summary">
+						<div class="checkout-summary-row">
+							<span>{{translate_string("Subtotal")}}</span>
+							<span>{{theSettings.currency ?? '$'}}{{formatNumber(vueOrderItems.total_cost)}}</span>
+						</div>
+						<div class="checkout-summary-row" v-if="vueOrderItems.total_discount > 0">
+							<span>{{translate_string("Discount")}}</span>
+							<span>{{theSettings.currency ?? '$'}}{{formatNumber(vueOrderItems.total_discount)}}</span>
+						</div>
+						<div class="checkout-summary-row">
+							<span>{{translate_string("Taxes")}}</span>
+							<span>{{theSettings.currency ?? '$'}}{{formatNumber(vueOrderItems.total_tax)}}</span>
+						</div>
+						<div class="checkout-summary-row checkout-summary-total">
+							<span>{{translate_string("Total")}}</span>
+							<span>{{theSettings.currency ?? '$'}}{{formatNumber(vueOrderItems.total_amount)}}</span>
+						</div>
+					</div>
+					<!-- Payment Methods -->
+					<div id="payment-table" class="shop-payment-methods mb-5 justify-content-around">
+						<!-- Cash -->
+						<div class="shop-payment-method payment-green" :class="{ 'active': vueOrderItems.payment_method === PAY_METHOD_CASH }" @click="vueOrderItems.payment_method = PAY_METHOD_CASH; theShop.cart_refresh()" v-if="(typeof(theSettings.payment_method_cash_in_client) == 'undefined' || theSettings.payment_method_cash_in_client == 1) && vueOrderItems.enable_cash">
+							<input type="radio" id="payment_method_cash" name="payment_method" :value="PAY_METHOD_CASH" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" style="display: none;">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M2.49951 12.0004L2.5001 7.63662C2.5001 6.48846 3.20941 5.46569 4.28795 5.06046L12.0029 2.16593C13.2078 1.71245 14.5001 2.60014 14.5001 3.88338V7.54976" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<foreignObject x="-22.2998" y="-17.0498" width="68.5996" height="63.5996"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(12px);clip-path:url(#bgblur_0_4011_3088_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="24" d="M18.04 13.4482C17.62 13.851 17.38 14.4307 17.44 15.0496C17.53 16.1107 18.52 16.8868 19.6 16.8868H21.5V18.056C21.5 20.0896 19.81 21.75 17.74 21.75H6.26C4.19 21.75 2.5 20.0896 2.5 18.056V11.444C2.5 9.41036 4.19 7.75 6.26 7.75H17.74C19.81 7.75 21.5 9.41036 21.5 11.444V12.8588H19.48C18.92 12.8588 18.41 13.0749 18.04 13.4482Z" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M22.4297 13.9463V15.9561C22.4297 16.4927 22.0008 16.9317 21.4549 16.9512H19.5442C18.4914 16.9512 17.5263 16.1804 17.4386 15.1268C17.3801 14.5121 17.6141 13.9365 18.0235 13.5365C18.3842 13.1658 18.8813 12.9512 19.4272 12.9512H21.4549C22.0008 12.9707 22.4297 13.4097 22.4297 13.9463Z" stroke="#1D9F57" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M7 12H14" stroke="#1D9F57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+								<defs>
+								<clipPath id="bgblur_0_4011_3088_clip_path" transform="translate(22.2998 17.0498)"><path d="M18.04 13.4482C17.62 13.851 17.38 14.4307 17.44 15.0496C17.53 16.1107 18.52 16.8868 19.6 16.8868H21.5V18.056C21.5 20.0896 19.81 21.75 17.74 21.75H6.26C4.19 21.75 2.5 20.0896 2.5 18.056V11.444C2.5 9.41036 4.19 7.75 6.26 7.75H17.74C19.81 7.75 21.5 9.41036 21.5 11.444V12.8588H19.48C18.92 12.8588 18.41 13.0749 18.04 13.4482Z"/>
+								</clipPath></defs>
+							</svg>
+							<label class="shop-payment-label lang" title="Cash">Cash</label>
+						</div>
+
+						<!-- Credit Card -->
+						<div class="shop-payment-method payment-green" :class="{ 'active': vueOrderItems.payment_method === PAY_METHOD_CARD }" @click="vueOrderItems.payment_method = PAY_METHOD_CARD; theShop.cart_refresh()" v-if="(typeof(theSettings.payment_method_credit_card) == 'undefined' || theSettings.payment_method_credit_card == 1) && vueOrderItems.enable_credit_card">
+							<input type="radio" id="payment_method_card" name="payment_method" :value="PAY_METHOD_CARD" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" style="display: none;">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M20 5H4C2.89543 5 2 5.89543 2 7V17C2 18.1046 2.89543 19 4 19H20C21.1046 19 22 18.1046 22 17V7C22 5.89543 21.1046 5 20 5Z" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M2 10H22" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+							<label class="shop-payment-label lang" title="Credit card">Credit card</label>
+						</div>
+						
+						<!-- QR -->
+						<div class="shop-payment-method payment-green" :class="{ 'active': vueOrderItems.payment_method === PAY_METHOD_QR }" @click="vueOrderItems.payment_method = PAY_METHOD_QR; theShop.cart_refresh()" v-if="(typeof(theSettings.payment_method_qr) == 'undefined' || theSettings.payment_method_qr == 1) && vueOrderItems.enable_qr">
+							<input type="radio" id="payment_method_qr" name="payment_method" :value="PAY_METHOD_QR" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" style="display: none;">
+							<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon">
+								<rect x="1.5" y="1.5" width="6" height="6" rx="1" stroke="#1D9F57" stroke-width="1.5"/>
+								<rect x="3.5" y="3.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="12.5" y="1.5" width="6" height="6" rx="1" stroke="#1D9F57" stroke-width="1.5"/>
+								<rect x="14.5" y="3.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="1.5" y="12.5" width="6" height="6" rx="1" stroke="#1D9F57" stroke-width="1.5"/>
+								<rect x="3.5" y="14.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="12.5" y="12.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="16.5" y="12.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="14.5" y="14.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="12.5" y="16.5" width="2" height="2" fill="#1D9F57"/>
+								<rect x="16.5" y="16.5" width="2" height="2" fill="#1D9F57"/>
+							</svg>
+							<label class="shop-payment-label lang" title="QR Payment">QR</label>
+						</div>
+
+						<!-- Account Balance -->
+						<div class="shop-payment-method payment-blue" :class="{ 'active': vueOrderItems.payment_method === PAY_METHOD_BALANCE }" @click="vueOrderItems.payment_method = PAY_METHOD_BALANCE; theShop.cart_refresh()" v-if="(typeof(theSettings.payment_method_balance) == 'undefined' || theSettings.payment_method_balance == 1) && vueOrderItems.enable_balance">
+							<input type="radio" id="payment_method_balance" name="payment_method" :value="PAY_METHOD_BALANCE" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" style="display: none;">
+							<template v-if="vueOrderItems.member_group_id == MEMBER_GROUP_POSTPAID">
+								<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon">
+									<g clip-path="url(#clip0_2001_163)">
+									<path d="M9 4.5V9H6" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.5 4.85786 13.1421 1.5 9 1.5C4.85786 1.5 1.5 4.85786 1.5 9C1.5 13.1421 4.85786 16.5 9 16.5Z" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+									</g>
+									<defs>
+									<clipPath id="clip0_2001_163">
+									<rect fill="white"/>
+									</clipPath>
+									</defs>
+								</svg>
+								<label class="shop-payment-label lang" title="Pay later" style="margin-top: 4px;">Pay later</label>
+							</template>
+							<template v-else>
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M10 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M11.1201 2.19809C11.3945 2.0648 11.6957 1.99604 12.0008 1.99708C12.3059 1.99812 12.6066 2.06893 12.8801 2.20409L20.7461 6.05109C21.2221 6.28409 21.0561 7.00009 20.5261 7.00009H3.4741C2.9441 7.00009 2.7791 6.28409 3.2541 6.05109L11.1201 2.19809Z" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M14 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M18 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M3 22H21" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M6 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<label class="shop-payment-label lang" title="Balance">Balance</label>
+							</template>
+						</div>
+						
+						<!--Pay later-->
+						<div class="shop-payment-method payment-green d-flex flex-column align-items-center" :class="{ 'active': vueOrderItems.payment_method === PAY_METHOD_PAY_LATER }" @click="vueOrderItems.payment_method = PAY_METHOD_PAY_LATER; theShop.cart_refresh()" v-if="vueOrderItems.enable_pay_later">
+							<input type="radio" id="payment_method_pay_later" name="payment_method" :value="PAY_METHOD_PAY_LATER" v-model="vueOrderItems.payment_method" @change="theShop.cart_refresh()" style="display: none;">
+							<svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon">
+								<g clip-path="url(#clip0_2001_163)">
+									<path d="M9 4.5V9H6" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.5 4.85786 13.1421 1.5 9 1.5C4.85786 1.5 1.5 4.85786 1.5 9C1.5 13.1421 4.85786 16.5 9 16.5Z" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+								</g>
+								<defs>
+									<clipPath id="clip0_2001_163">
+										<rect width="24" height="24" fill="white"/>
+									</clipPath>
+								</defs>
+							</svg>
+							<label class="shop-payment-label lang" title="Pay later">Pay later</label>
+						</div>
+					</div>
+					
+					<div class="btn-group w-100">
+						<button type="submit" class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Done" id="new-order-done" :disabled="vueOrderItems.items.length == 0">Done</button>		
+					</div>
+				</form>
+
+				<!-- Gift Cart (Coins) -->
+				<form v-else id="gift_cart_form" onsubmit="return delay_execute(theShop.gift_cart_done);">
+					
+					<!-- Items count + Clear all -->
+					<div class="d-flex justify-content-between align-items-center mb-3 px-1">
+						<span class="checkout-items-count">{{vueGiftOrders.items.length}} {{translate_string("items")}}</span>
+						<a href="javascript:;" class="checkout-clear-all" @click.stop="theShop.gift_cart_clear()">{{translate_string("Clear all")}}</a>
+					</div>
+
+					<!-- Product Cards -->
+					<div class="checkout-product-list">
+						<div class="checkout-product-card" v-for="item in vueGiftOrders.items" :key="item.product_id">
+							<div class="checkout-product-img">
+								<img :src="item.image" :alt="item.product_name" @error="event.target.src = 'images/default-product.jpg'">
+							</div>
+							<div class="checkout-product-info">
+								<div class="checkout-product-name">{{item.product_name}}</div>
+								<div class="checkout-product-price"><i class="fal fa-coins text-warning mr-1"></i>{{formatNumber(item.order_cost)}} {{translate_string('coins')}}</div>
+							</div>
+							<div class="checkout-product-qty">
+								<button type="button" class="checkout-qty-btn" @click.stop="theShop.gift_cart_change_qty(item.product_id, -1)">
+									<i class="fal fa-minus"></i>
+								</button>
+								<span class="checkout-qty-value">{{vueGiftOrders?.product_qty_map?.[item.product_id] ?? 1}}</span>
+								<button type="button" class="checkout-qty-btn" @click.stop="theShop.gift_cart_change_qty(item.product_id, 1)">
+									<i class="fal fa-plus"></i>
+								</button>
+							</div>
+						</div>
+						<div v-if="vueGiftOrders.items.length <= 0" class="text-center py-4" style="color: #576081;">
+							{{translate_string("No items in cart")}}
+						</div>
+					</div>
+
+					<!-- Summary -->
+					<div class="checkout-summary">
+						<div class="checkout-summary-row checkout-summary-total">
+							<span>{{translate_string("Total Coins")}}</span>
+							<span><i class="fal fa-coins text-warning mr-1"></i>{{formatNumber(vueGiftOrders.total_amount)}}</span>
+						</div>
+					</div>
+
+					<div class="btn-group w-100">
+						<button type="submit" class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Done" id="gift-order-done" :disabled="vueGiftOrders.items.length == 0">Done</button>		
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:order -->
+
+
+<!-- st:modal:print -->
+<div class="modal myModalPrint" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.print}" :style="{display: vueGlobal.modals.print ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang font-size-5">Print</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.print = false" aria-label="Close">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 6L6 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M6 6L18 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0 text-center">
+				<form id="cart_form" onsubmit="return delay_execute(theShopPrint.cart_done);">
+					<table id="cart" class="table cart mb-0 w-100" style="table-layout: fixed;">
+						<tbody>
+							<tr>
+								<td class="text-left col-9" colspan="3">
+									<label class="text-white lang">Pages</label>
+								</td>
+								<td class="text-right col-3">
+									<label>{{vuePrint.page_count}}</label>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-left col-9" colspan="1">
+									<label class="text-white lang">Print</label>
+								</td>
+								<td class="text-right col-3" colspan="3">
+									<div class="d-flex justify-content-around">
+										<div class="custom-control custom-radio mr-0" v-if="vuePrint.blackwhite != null">
+											<input type="radio" id="printer_black_white" name="product_id" :value="vuePrint.blackwhite.product_id"
+												v-model="vuePrint.product_id" @change="theShopPrint.cart_refresh()" class="custom-control-input">
+											<label class="custom-control-label lang" for="printer_black_white" data-toggle="tooltip" data-placement="bottom"
+												title="Black & white"><i class="fal fa-print fa-3x"></i></label>
+											<label class="lang">{{vuePrint.blackwhite.product_name}}</label>
+											<label class="lang">{{theSettings.currency ?? '$'}} {{toFixed2(vuePrint.blackwhite.product_price)}}</label>
+										</div>
+										<div class="custom-control custom-radio ml-5 mr-0" v-if="vuePrint.color != null">
+											<input type="radio" id="printer_color" name="product_id" :value="vuePrint.color.product_id"
+												v-model="vuePrint.product_id" @change="theShopPrint.cart_refresh()" class="custom-control-input">
+											<label class="custom-control-label lang" for="printer_color" data-toggle="tooltip" data-placement="bottom"
+												title="Color"><i class="fa fa-print fa-3x"></i></label>
+											<label class="lang">{{vuePrint.color.product_name}}</label>
+											<label class="lang">{{theSettings.currency ?? '$'}} {{toFixed2(vuePrint.color.product_price)}}</label>
+										</div>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+						<tfoot class="text-white">
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Sub-total:")}}</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_cost)}}</label></td>
+							</tr>
+							<tr v-if="vuePrint.total_discount > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Discount")}}:</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_discount)}}</label></td>
+							</tr>
+							<tr v-if="vuePrint.total_tax > 0">
+								<td class="text-left" colspan="3"><label>{{translate_string("Tax:")}}</label></td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_tax)}}</label></td>
+							</tr>
+							<tr>
+								<td class="text-left" colspan="3"><label>{{translate_string("Total amount:")}}</label>
+								</td>
+								<td class="text-right"><label>{{toFixed2(vuePrint.total_amount)}}</label></td>
+							</tr>
+						</tfoot>
+					</table>
+					<!-- Payment Methods -->
+					<div id="payment-table" class="shop-payment-methods mb-5">
+						<!-- Cash -->
+						<div class="shop-payment-method payment-green" :class="{ 'active': vuePrint.payment_method === PAY_METHOD_CASH }" @click="vuePrint.payment_method = PAY_METHOD_CASH; theShopPrint.cart_refresh()" v-if="(typeof(theSettings.payment_method_cash_in_client) == 'undefined' || theSettings.payment_method_cash_in_client == 1) && theShopPrint.enable_cash">
+							<input type="radio" id="print_payment_method_cash" name="payment_method" :value="PAY_METHOD_CASH" v-model="vuePrint.payment_method" @change="theShopPrint.cart_refresh()" style="display: none;">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M2.49951 12.0004L2.5001 7.63662C2.5001 6.48846 3.20941 5.46569 4.28795 5.06046L12.0029 2.16593C13.2078 1.71245 14.5001 2.60014 14.5001 3.88338V7.54976" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<foreignObject x="-22.2998" y="-17.0498" width="68.5996" height="63.5996"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(12px);clip-path:url(#bgblur_0_4011_3088_clip_path);height:100%;width:100%"></div></foreignObject><path data-figma-bg-blur-radius="24" d="M18.04 13.4482C17.62 13.851 17.38 14.4307 17.44 15.0496C17.53 16.1107 18.52 16.8868 19.6 16.8868H21.5V18.056C21.5 20.0896 19.81 21.75 17.74 21.75H6.26C4.19 21.75 2.5 20.0896 2.5 18.056V11.444C2.5 9.41036 4.19 7.75 6.26 7.75H17.74C19.81 7.75 21.5 9.41036 21.5 11.444V12.8588H19.48C18.92 12.8588 18.41 13.0749 18.04 13.4482Z" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M22.4297 13.9463V15.9561C22.4297 16.4927 22.0008 16.9317 21.4549 16.9512H19.5442C18.4914 16.9512 17.5263 16.1804 17.4386 15.1268C17.3801 14.5121 17.6141 13.9365 18.0235 13.5365C18.3842 13.1658 18.8813 12.9512 19.4272 12.9512H21.4549C22.0008 12.9707 22.4297 13.4097 22.4297 13.9463Z" stroke="#1D9F57" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M7 12H14" stroke="#1D9F57" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+								<defs>
+								<clipPath id="bgblur_0_4011_3088_clip_path" transform="translate(22.2998 17.0498)"><path d="M18.04 13.4482C17.62 13.851 17.38 14.4307 17.44 15.0496C17.53 16.1107 18.52 16.8868 19.6 16.8868H21.5V18.056C21.5 20.0896 19.81 21.75 17.74 21.75H6.26C4.19 21.75 2.5 20.0896 2.5 18.056V11.444C2.5 9.41036 4.19 7.75 6.26 7.75H17.74C19.81 7.75 21.5 9.41036 21.5 11.444V12.8588H19.48C18.92 12.8588 18.41 13.0749 18.04 13.4482Z"/>
+								</clipPath></defs>
+							</svg>
+							<p class="shop-payment-label lang">Cash<br/></p>
+						</div>
+
+						<!-- Credit Card -->
+						<div class="shop-payment-method payment-green" :class="{ 'active': vuePrint.payment_method === PAY_METHOD_CARD }" @click="vuePrint.payment_method = PAY_METHOD_CARD; theShopPrint.cart_refresh()" v-if="(typeof(theSettings.payment_method_credit_card) == 'undefined' || theSettings.payment_method_credit_card == 1) && theShopPrint.enable_credit_card">
+							<input type="radio" id="print_payment_method_card" name="payment_method" :value="PAY_METHOD_CARD" v-model="vuePrint.payment_method" @change="theShopPrint.cart_refresh()" style="display: none;">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M20 5H4C2.89543 5 2 5.89543 2 7V17C2 18.1046 2.89543 19 4 19H20C21.1046 19 22 18.1046 22 17V7C22 5.89543 21.1046 5 20 5Z" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								<path d="M2 10H22" stroke="#1D9F57" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+							<p class="shop-payment-label lang">Credit<br>card</p>
+						</div>
+
+						<!-- Account Balance -->
+						<div class="shop-payment-method payment-blue" :class="{ 'active': vuePrint.payment_method === PAY_METHOD_BALANCE }" @click="vuePrint.payment_method = PAY_METHOD_BALANCE; theShopPrint.cart_refresh()" v-if="(typeof(theSettings.payment_method_balance) == 'undefined' || theSettings.payment_method_balance == 1) && theShopPrint.enable_balance">
+							<input type="radio" id="print_payment_method_balance" name="payment_method" :value="PAY_METHOD_BALANCE" v-model="vuePrint.payment_method" @change="theShopPrint.cart_refresh()" style="display: none;">
+							<template v-if="vuePrint.member_group_id == MEMBER_GROUP_POSTPAID">
+								<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon">
+									<g clip-path="url(#clip0_2001_163)">
+									<path d="M9 4.5V9H6" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.5 4.85786 13.1421 1.5 9 1.5C4.85786 1.5 1.5 4.85786 1.5 9C1.5 13.1421 4.85786 16.5 9 16.5Z" stroke="#1D9F57" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+									</g>
+									<defs>
+									<clipPath id="clip0_2001_163">
+									<rect width="24" height="24" fill="white"/>
+									</clipPath>
+									</defs>
+								</svg>
+								<p class="shop-payment-label lang" style="margin-top: 4px;">Pay<br>later</p>
+							</template>
+							<template v-else>
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M10 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M11.1201 2.19809C11.3945 2.0648 11.6957 1.99604 12.0008 1.99708C12.3059 1.99812 12.6066 2.06893 12.8801 2.20409L20.7461 6.05109C21.2221 6.28409 21.0561 7.00009 20.5261 7.00009H3.4741C2.9441 7.00009 2.7791 6.28409 3.2541 6.05109L11.1201 2.19809Z" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M14 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M18 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M3 22H21" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M6 18V11" stroke="#2E7EC1" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p class="shop-payment-label lang">Account<br>balance</p>
+							</template>
+						</div>
+					</div>
+
+					<div class="btn-group w-100">
+						<button type="submit"
+							class="btn btn-lg f-right lang w-100 px-9 text-center ml-1 client-btn-success"
+							data-placement="bottom" data-toggle="tooltip" title="Done" id="print-new-order-done"><i
+								class="fal fa-check fa-2x text-white"></i></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:print -->
+
+<!-- st:modal: member-topup -->
+<div class="modal myModalTopup" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.topup}" :style="{display: vueGlobal.modals.topup ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Topup</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.topup = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-topup" class="form-horizontal" onsubmit="event.preventDefault(); return delay_execute(theShop.topup);" novalidate>
+				<div class="modal-body" style="padding: 20px 70px;">
+
+					<div class="row">
+						<div class="col-12 member-topup-form-row" v-if="vueTopup.showFormRows">
+							<div class="form-group">
+								<label class="control-label lang">Member</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="member_account" name="member_account" placeholder="" v-model="vueTopup.member_account" :class="{'is-invalid error': vueTopup.errors.member_account}">
+								<div id="member-error-topup" class="error-message" :class="{'d-none': !vueTopup.errors.member_account, 'show': vueTopup.errors.member_account}">{{ vueTopup.errors.member_account }}</div>
+							</div>
+						</div>
+						<div class="col-12 member-topup-form-row" v-if="vueTopup.showFormRows">
+							<div class="form-group">
+								<label class="control-label lang">Amount</label>
+								<input type="number" step="0.01" placeholder="" onkeyup="theTopupLogin.topupAmountCalculate()" class="form-control modal-input bg-transparent" id="topup_amount" name="topup_amount" v-model="vueTopup.topup_amount" :class="{'is-invalid error': vueTopup.errors.topup_amount}">
+								<div id="amount-error-topup" class="error-message" :class="{'d-none': !vueTopup.errors.topup_amount, 'show': vueTopup.errors.topup_amount}">{{ vueTopup.errors.topup_amount }}</div>
+							</div>
+						</div>
+						<div class="col-12 member-topup-form-row" v-if="vueTopup.showFormRows">
+							<div class="form-group">
+								<label class="control-label lang">Minutes</label>
+								<input type="number" onkeyup="theTopupLogin.topupTimeCalculate()" class="form-control modal-input bg-transparent" id="topup_time" name="topup_time" placeholder="" v-model="vueTopup.topup_time" :class="{'is-invalid error': vueTopup.errors.topup_time}">
+								<div id="minutes-error-topup" class="error-message" :class="{'d-none': !vueTopup.errors.topup_time, 'show': vueTopup.errors.topup_time}">{{ vueTopup.errors.topup_time }}</div>
+							</div>
+						</div>
+						<div class="col-12 member-topup-form-row" v-if="vueTopup.showFormRows">
+							<div class="form-group">
+								<label class="control-label lang">Promo code</label>
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_promo_code" name="promo_code" v-model="vueTopup.promo_code" :class="{'is-invalid error': vueTopup.errors.promo_code}">
+								<div id="promo-error-topup" class="error-message" :class="{'d-none': !vueTopup.errors.promo_code, 'show': vueTopup.errors.promo_code}">{{ vueTopup.errors.promo_code }}</div>
+							</div>
+						</div>
+						<div class="col-12">
+							<div id="topup-summary" :class="{'d-none': !vueTopup.showSummary}">
+								<div class="form-group">
+									<label class="control-label lang">Member</label>
+									<div id="summary-member" class="topup-summary-value">{{ vueTopup.summaryMember }}</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label lang">Amount</label>
+									<div id="summary-amount" class="topup-summary-value">{{ vueTopup.summaryAmount }}</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label lang">Minutes</label>
+									<div id="summary-minutes" class="topup-summary-value">{{ vueTopup.summaryMinutes }}</div>
+								</div>
+							</div>
+						</div>
+						<div v-if="vueTopup.payment_qr" id="payment_qr" class="col-12 justify-content-center" data-clipboard-target="#payment_qr" @click="copyToClipboard('#payment_qr');">
+						</div>
+						<div id="payment_type" class="col-12 d-flex justify-content-center">
+							<img src="images/kaspi_qr.jpg" style="width: 266px;" v-show="vueTopup.payment_type_img">
+						</div>
+						<div id="payment_url" class="col-12 d-flex justify-content-center " >
+							<div class="razorpay-qr-img" v-show="vueTopup.payment_url_div" v-html="vueTopup.payment_html"></div>
+							<div v-html="vueTopup.manual_payment_html"></div>
+							<div v-html="vueTopup.paymongo_html"></div>
+							<div v-html="vueTopup.midtrans_html"></div>
+							<div v-html="vueTopup.finik_html"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer" v-show="vueTopup.btn_group">
+					<div class="btn-group" id="btn-group-topup" v-if="vueTopup.btn_group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" :disabled="vueGlobal.isLoading" data-placement="bottom" data-toggle="tooltip" title="Submit">Submit</button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.topup = false" data-placement="bottom" data-toggle="tooltip" title="Cancel">Cancel</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal: member-topup -->
+
+<!-- st:modal:copygamelicense -->
+<div class="modal myModalCopyGameLicense" tabindex="-1" role="dialog" aria-hidden="true" :class="{show: vueGlobal.modals.gameLicense}" :style="{display: vueGlobal.modals.gameLicense ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Game license</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.gameLicense = false" aria-label="Close">
+					<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M18 6L6 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M6 6L18 18" stroke="#576081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0 mt-3" style="padding: 20px 40px;">
+				<div class="license-item d-flex justify-content-between align-items-center mb-3 p-3" style="background: rgba(255,255,255,0.05); border-radius: 8px;">
+					<label class="mb-0 lang text-white">License</label>
+					<div class="d-flex align-items-center">
+						<span id="license-account" class="mr-3 text-white font-weight-bold">{{ vueGameLicense.account }}</span>
+						<a href="javascript:void(0)"
+							data-toggle="tooltip"
+							data-placement="left"
+							title="Copy"
+							id="license-account-btn"
+							data-clipboard-target="#license-account"
+							@click="copyToClipboard('#license-account-btn')"
+							class="text-muted lang">
+							<i class="fal fa-copy fa-lg text-white"></i>
+						</a>
+					</div>
+				</div>
+				
+				<div class="license-item d-flex justify-content-between align-items-center mb-3 p-3" style="background: rgba(255,255,255,0.05); border-radius: 8px;">
+					<label class="mb-0 lang text-white">Password</label>
+					<div class="d-flex align-items-center">
+						<input id="license-password" :value="vueGameLicense.password" style="position:absolute; left:-9999px;" />
+						<span class="mr-3 text-white font-weight-bold">*********</span>
+						<a href="javascript:void(0)"
+							data-toggle="tooltip"
+							data-placement="left"
+							title="Copy"
+							id="license-password-btn"
+							data-clipboard-target="#license-password"
+							@click="copyToClipboard('#license-password-btn')"
+							class="text-muted lang">
+							<i class="fal fa-copy fa-lg text-white"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-lg client-btn-success lang w-100" @click="vueGlobal.modals.gameLicense = false">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:copygamelicense -->

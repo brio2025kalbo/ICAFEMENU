@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<title class="lang">iCafeMenu</title>
+	<script src='js/icafe.js'></script>
+	<script src="core/lib/jquery.js"></script>
+	<script src="core/core.js"></script>
+	<script src="core/apiclient.js"></script>
+	
+	<script>
+	// 放在所有其他脚本之前，捕捉js报错时的堆栈
+	(function() {
+		// 保存原始的 console.error
+		var originalConsoleError = console.error;
+
+		// 重写 console.error
+		console.error = function() {
+			var args = Array.prototype.slice.call(arguments);
+			
+			// 如果有Error对象，获取堆栈
+			for (var i = 0; i < args.length; i++) {
+				if (args[i] instanceof Error && args[i].stack) {
+					// 将堆栈信息也包含在输出中
+					args.push('\nStack Trace:');
+					args.push(args[i].stack);
+					break;
+				}
+			}
+			
+			// 调用原始函数
+			originalConsoleError.apply(console, args);
+		};
+
+		// 全局错误处理
+		window.addEventListener('error', function(event) {
+			var msg = event.message || 'Unknown error';
+			var stack = event.error ? event.error.stack : 'No stack trace';
+			console.error('Uncaught Error:', msg, '\nStack:', stack);
+		});
+
+		// Promise错误处理
+		window.addEventListener('unhandledrejection', function(event) {
+			var reason = event.reason;
+			var stack = reason && reason.stack ? reason.stack : 'No stack trace';
+			console.error('Unhandled Promise Rejection:', reason, '\nStack:', stack);
+		});
+	})();
+
+	async function loadTheme() {
+		const theme = theSettings.client_theme || 'icafemenu';
+		const theme_url = `themes/${theme}/main.htm`;
+		var ret = null;
+		try {
+			ret = await fetch(theme_url, {cache: 'no-cache'});
+		} catch(e){
+			console.log(`Failed to load ${theme}, falling back to the icafemenu theme.`)
+			ret = await fetch('themes/icafemenu/main.htm', {cache: 'no-cache'})
+			const text = await ret.text();
+			$('#main_body').html(text);
+			return;
+		}
+		const text = await ret.text();
+   		 $('#main_body').html(text);
+    
+			// --- ADD THIS FOR TESTING ---
+			//setTimeout(() => {
+			//	console.log("Forcing GUI to Logged-In state...");
+			//	if (typeof vueGlobal !== 'undefined') {
+			//		vueGlobal.currentView = 'home'; // Or whatever the main view name is
+					// You might also need to set a fake user
+			//		thePCStatus.member_account = "G-75";
+			//	}
+			//}, 1000);
+		
+	};
+	loadTheme();
+
+	</script>
+</head>
+
+<body style="background-color: black" id="main_body" ondragstart="return false" onselectstart = "return false" class="bs-c bp-c br-n ba-f text-gray">
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!-- st:modal:copygamelicense -->
+<div class="modal myModalCopyGameLicense" tabindex="-1" role="dialog" aria-hidden="true" :class="{show: vueGlobal.modals.gameLicense}" :style="{display: vueGlobal.modals.gameLicense ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Game license</h5>
+				<button type="button" class="close " @click="vueGlobal.modals.gameLicense = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body pb-3 pt-0 mt-3">
+				<div class="license-item d-flex justify-content-between align-items-center mb-3">
+					<label class="mb-0 lang">License</label>
+					<div class="d-flex align-items-center">
+						<span id="license-account" class="mr-2">{{ vueGameLicense.account }}</span>
+						<a href="javascript:void(0)"
+							data-toggle="tooltip"
+							data-placement="left"
+							title="Copy"
+							id="license-account-btn"
+							data-clipboard-target="#license-account"
+							onclick="copyToClipboard('#license-account-btn')"
+							class="text-muted lang">
+							<i class="fal fa-copy"></i>
+						</a>
+					</div>
+				</div>
+				
+				<div class="license-item d-flex justify-content-between align-items-center mb-3">
+					<label class="mb-0 lang">Password</label>
+					<div class="d-flex align-items-center">
+						<input id="license-password" :value="vueGameLicense.password" style="position:absolute; left:-9999px;" />
+						<span class="mr-2">*********</span>
+						<a href="javascript:void(0)"
+							data-toggle="tooltip"
+							data-placement="left"
+							title="Copy"
+							id="license-password-btn"
+							data-clipboard-target="#license-password"
+							onclick="copyToClipboard('#license-password-btn')"
+							class="text-muted lang">
+							<i class="fal fa-copy"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:copygamelicense -->

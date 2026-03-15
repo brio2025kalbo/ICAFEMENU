@@ -1,0 +1,514 @@
+<style>
+#page_login .login-form-div .password-toggle:hover {
+  opacity: 0.7 !important;
+}
+
+/* 登录页预定提示条样式（从 inline style 抽离） */
+#page_login .login-booking-alert {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+}
+
+#page_login .login-booking-alert-title {
+  font-size: 20px;
+}
+
+#page_login .login-booking-alert-text {
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+/* 预定提示里的旗子图标颜色 */
+#page_login .login-booking-alert .fa-flag {
+  color: #ffc107;
+  font-size: 20px;
+  margin-right: 20px;
+}
+</style>
+<div id="page_login" :class="{'w-50': vueGlobal.isDualMonitor, 'h-50': vueGlobal.isDualMonitorHeight}">
+	<div class="feedback-icon">
+		<a href="javascript:void(0)" class="power-button pt-3 lang" data-toggle="tooltip" title="Shutdown" onclick="javascript:shutdown_click()">
+			<i class="fal fa-power-off fa-2x text-white"></i> 
+		</a>
+		<a href="javascript:void(0)" class="reboot-button pt-3 lang" data-toggle="tooltip" title="Reboot" onclick="javascript:reboot_click()">
+			<i class="fal fa-rotate-right fa-2x text-white"></i> 
+		</a>
+	</div>
+	<span id="version_date" class=" align-moddle ml-2 text-white">{{ vueGlobal.versionDate }}</span>
+	<!-- st:login div -->
+	<div class="pc_name normal-only" v-show="!vueGlobal.isHomeVersion" :style="{ fontSize: vueGlobal.pcNameFontSize }">{{ vueGlobal.pcName }}</div>
+	<div class="loginDiv h-100 formDiv" v-show="vueGlobal.loginSubView === 'login' && !vueGlobal.isHomeCafeId">
+		<section class="h-100 d-flex align-items-center justify-content-center">
+			<div class="text-center login-form-div d-flex h-100 align-items-center" id="login-form-container">
+				<form method="post" id="loginForm" role="form" class="form-horizontal" @submit.prevent="multi_mode_login()">
+				<!-- 今日预定提示（在输入框上方） -->
+				<div v-if="vueLogin.recentBookingAt" class="alert alert-warning py-2 px-3 mb-3 login-booking-alert" role="alert">
+					<div class="d-flex align-items-center">
+						<span class="mr-2"><i class="fal fa-flag"></i></span>
+						<div class="text-left">
+							<div class="font-weight-bold login-booking-alert-title">
+								<span class="lang">PC will be busy at</span>
+								<span v-if="vueLogin.recentBookingAt">&nbsp;{{ vueLogin.recentBookingAt }}</span>
+							</div>
+							<div class="login-booking-alert-text" v-if="vueLogin.recentBookingLeft">
+								<span class="lang">in</span>
+								&nbsp;{{ vueLogin.recentBookingLeft }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex align-items-center justify-content-between" v-if="vueLoginMode.mode === 'tabs'">
+					<div class="c-pointer py-3" :class="{'nav-active': vueLoginMode.active_tab === 'account'}" @click="login_switch_tab('account')">
+						<label class="lang text-uppercase">Account</label>
+					</div>
+					<div class="c-pointer py-3" :class="{'nav-active': vueLoginMode.active_tab === 'access_code'}" @click="login_switch_tab('access_code')" v-show="vueLoginMode.mode === 'tabs'">
+						<label class="lang text-uppercase">Access code</label>
+					</div>
+				</div>
+				<div v-show="vueLoginMode.active_tab === 'access_code'" style="min-height:150px" class="align-items-center">
+					<div class="form-group client-form-row justify-content-center" >
+						<div class="col-auto">
+							<input type="text" id="access_code" name="access_code" class="form-control lang bg-transparent" placeholder="Access code" v-model="vueLogin.access_code">
+						</div>
+					</div>
+				</div>
+				<div v-show="vueLoginMode.active_tab === 'account'" style="min-height:150px" class="align-items-center">
+					<div class="form-group client-form-row justify-content-center">
+						<div class="col-auto">
+							<input type="text" id="username" name="username" class="form-control lang bg-transparent" placeholder="Username" v-model="vueLogin.username">
+						</div>
+					</div>
+
+					<div class="form-group client-form-row justify-content-center" >
+						<div class="col-auto">
+						<input :type="vueLogin.showPassword ? 'text' : 'password'" id="password" name="password" class="form-control lang bg-transparent" :class="{'is-invalid': vueLogin.isKeyboardError}" placeholder="Password" v-model="vueLogin.password" @keydown="vueLogin.isKeyboardError = !isEnglishKeyboardInput($event)">
+						<i class="password-toggle fa fa-fw fa-regular" :class="vueLogin.showPassword ? 'fa-eye-slash' : 'fa-eye'" style="opacity: 0.4;position: absolute !important;right: 26px !important;top: 13px !important;cursor: pointer !important;z-index: 10 !important;font-size: 20px !important;" @click="vueLogin.showPassword = !vueLogin.showPassword"></i>
+					</div>
+					</div>
+				</div>
+
+					<div class="form-group text-center justify-content-center d-flex">
+						<button type="submit" class="btn btn-lg mx-3 memberlogin lang py-0 client-btn-success col-12" data-placement="bottom" data-toggle="tooltip" title="Login" :disabled="vueGlobal.isLoading"><i class="fal fa-check fa-2x text-white" ></i></button>
+					</div>
+					<div class="form-group row client-form-row d-flex justify-content-around" >
+						<a href="javascript:void(0)" v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1) && ((theSettings.client_register_member_way ?? 0) == 1)" class="text-gray text-underline mx-3 lang py-0" id="register-button" onclick="theMemberRegister.show_dialog()" data-placement="bottom" data-toggle="tooltip" title="Register">Register</a>
+						<a href="javascript:void(0)" v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1) && ((theSettings.client_register_member_way ?? 0) != 1)" class="text-gray text-underline mx-3 lang py-0" id="register-button" onclick="theMemberRegister.show_client_register()" data-placement="bottom" data-toggle="tooltip" title="Register">Register</a>
+						<a href="javascript:void(0)" v-if="[RESET_PASSWORD_SMS, RESET_PASSWORD_EMAIL].includes(theSettings?.client_reset_password_way ?? 0)" class="text-gray text-underline mx-3 lang py-0" id="forgot-password-button" onclick="theForgotPassword.show_dialog()" data-placement="bottom" data-toggle="tooltip" title="Forgot password">Forgot password</a>
+					</div>
+					<div class="btn-group text-center d-flex justify-content-center">
+						<button type="button" v-if="theSettings.social_login == 1" class="btn btn-lg mx-3 lang py-0 " data-placement="bottom" data-toggle="tooltip" title="Social login" onclick="theMemberLogin.show_dialog()" ><i class="fa fa-share-alt fa-2x text-white" ></i></button>
+						<button type="button" v-if="theSettings.topup_login_at_client == 1" class="btn btn-lg mx-3 lang py-0" data-placement="bottom" data-toggle="tooltip" title="Guest topup login" onclick="theTopupLogin.show_topup_login()" ><i class="fa fa-vcard fa-2x text-white" ></i></button>
+						<button type="button" v-if="theSettings.allow_topup_at_client == 1" class="btn btn-lg mx-3 lang py-0" data-placement="bottom" data-toggle="tooltip" title="Topup" onclick="javascript:theShop.show_topup()" ><i class="fal fa-qrcode fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg mx-3 home-only lang py-0 client-btn-close" id="close-button" @click="close_click()" data-placement="bottom" data-toggle="tooltip" title="Close" v-show="vueGlobal.isHomeVersion"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- dd:login div -->
+
+	<!-- st:admin exit div -->
+	<div class="adminexitDiv h-100 formDiv" v-show="vueGlobal.loginSubView === 'admin_exit'">
+		<section class="h-100 d-flex align-items-center justify-content-center">
+			<div class="admin-exit-form-div" >
+				<form method="post" id="adminexitForm" role="form" class="form-horizontal text-center" @submit.prevent="admin_exit_form_submit()">
+					<div class="form-group row client-form-row">
+						<input type="password" class="lang form-control bg-transparent" :class="{'border-warning': vueAdminExit.hasError}" name="password" placeholder="Admin password" v-model="vueAdminExit.password">
+					</div>
+
+					<div class="d-flex justify-content-center">
+						<button type="submit" class="lang btn btn-lg mr-3 py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Quit"><i class="fal fa-check fa-2x text-white" aria-hidden="true"></i></button>
+						<button type="button" onclick="javascript:show_login_page('login')" class="lang btn btn-lg py-0 client-btn-close" data-placement="bottom" data-toggle="tooltip" title="Cancel"><i class="fal fa-xmark fa-2x text-white"></i></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- ed:admin exit div -->
+
+	<!-- st:home-version-enter-cafe-id div -->
+	<div class="homecafeidDiv h-100" v-show="vueGlobal.loginSubView === 'homecafeid' || vueGlobal.isHomeCafeId">
+		<section class="h-100 d-flex align-items-center justify-content-center">
+			<div class="text-center col-3 home-cafeid-form-div" >
+				<form method="post" id="homecafeidForm" role="form" class="form-horizontal text-center" onsubmit="return delay_execute(homecafeid_form_submit);">
+					<div class="form-group row client-form-row">
+						<input type="number" class="lang form-control bg-transparent" name="icafe_id" placeholder="Cafe ID" value="">
+					</div>
+
+					<div class="btn-group text-center">
+						<button type="submit" class="lang btn btn-lg mr-3 py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Continue" :disabled="vueGlobal.isLoading"><i class="fal fa-check fa-2x text-white"></i></button>
+						<button type="button" onclick="javascript:close_click()" class="lang btn btn-lg py-0 client-btn-close" data-placement="bottom" data-toggle="tooltip" title="Close"><i class="fal fa-xmark fa-2x text-white"></i></i></button>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<!-- ed:home-version-enter-cafe-id div -->
+</div>
+
+<!-- st:modal:register-member -->
+<div class="modal myModalRegisterMember" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{'w-50': vueGlobal.isDualMonitor, 'h-50': vueGlobal.isDualMonitorHeight, show: vueGlobal.modals.register}" :style="{display: vueGlobal.modals.register ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:700px; max-width:700px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Member</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.register = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-register-member" class="form-horizontal" onsubmit="event.preventDefault(); return delay_execute(member_register);">
+				<div class="modal-body modal-body-scrollable" style="padding: 20px 70px;">
+
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang required">Account</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="account" v-model="vueRegister.account" required>
+							</div>
+						</div>
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_birthday == 1">
+							<div class="form-group">
+								<label class="control-label lang required">Birthday</label>
+								<input type="date" class="form-control modal-input bg-transparent" name="birthday" v-model="vueRegister.birthday" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang required">New password</label>
+								<input type="password" class="form-control bg-transparent" name="password" v-model="vueRegister.password" required>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang required">Confirm password</label>
+								<input type="password" class="form-control bg-transparent" name="confirm_password" v-model="vueRegister.confirm_password" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_first_name == 1">
+							<div class="form-group">
+								<label class="control-label lang required">First name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="first_name" v-model="vueRegister.first_name" required>
+							</div>
+						</div>
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_last_name == 1">
+							<div class="form-group">
+								<label class="control-label lang required">Last name</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="last_name" v-model="vueRegister.last_name" required>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_phone == 1">
+							<div class="form-group">
+								<label class="control-label lang required">Phone</label>
+								<input type="tel" class="form-control modal-input bg-transparent" name="phone" v-model="vueRegister.phone" required>
+							</div>
+						</div>
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_email == 1">
+							<div class="form-group">
+								<label class="control-label lang required">Email</label>
+								<input type="email" class="form-control modal-input bg-transparent" name="email" v-model="vueRegister.email" required>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-6" v-if="vueGlobal.memberSettings.member_id_card == 1">
+							<div class="form-group">
+								<label class="control-label lang required">ID number</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="id_card" v-model="vueRegister.id_card" required>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-group">
+								<label class="control-label lang">Promo/Referral code</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="promo_code" v-model="vueRegister.promo_code">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6" v-if="theSettings.sms_enable == 1 && vueGlobal.memberSettings.member_phone == 1">
+							<div class="form-group">
+								<label class="control-label lang required">SMS code</label>
+								<div class="row">
+									<div class="col-7">
+										<input type="text" class="form-control modal-input bg-transparent" name="member_sms_code" v-model="vueRegister.member_sms_code">
+									</div>
+									<div class="col-5">
+										<button type="button" style="width:90px; padding-left: 0px; padding-right: 0;text-align:center;" class="btn btn-primary lang" onclick="javascript:SmsClassFun.sendCode('register')" id="sms_timer_code" title="Get verification code" :disabled="vueGlobal.sms.disabled">{{ vueGlobal.sms.text }}</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="club-rule-agreement-row" v-if="(theSettings.register_agreement_enable ?? 0) == 1">
+						<div class="col-12">
+							<div class="form-check form-check-inline" style="display: inline-block !important;">
+								<label for="club-rule-agreement" class="form-check-label">
+									<input type="checkbox" class="form-check-input lang" id="club-rule-agreement" v-model="vueRegister.agree_club_rules"/>
+									<label class="input-helper" for="club-rule-agreement">
+										<span class="lang">I have read and agree to the </span>
+										<a class="lang" href="javascript:;" onclick="theMemberRegister.show_club_rules()" style="text-decoration: none;">club rules</a>
+									</label>
+								</label>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="personal-data-agreement-row" v-if="(theSettings.register_agreement_enable ?? 0) == 1">
+						<div class="col-12">
+							<div class="form-check form-check-inline" style="display: inline-block !important;">
+								<label for="personal-data-agreement" class="form-check-label">
+									<input type="checkbox" class="form-check-input lang" id="personal-data-agreement" v-model="vueRegister.agree_personal_data"/>
+									<label class="input-helper" for="personal-data-agreement">
+										<span class="lang">I agree to the </span>
+										<a class="lang" href="javascript:;" onclick="theMemberRegister.show_personal_data()" style="text-decoration: none;">privacy policy</a>
+									</label>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Register" :disabled="((theSettings.register_agreement_enable ?? 0) == 1 && (!vueRegister.agree_club_rules || !vueRegister.agree_personal_data)) || vueGlobal.isLoading"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.register = false" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:register-member -->
+
+<!-- modal:topup-login -->
+<div class="modal myModalTopupLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.topupLogin}" :style="{display: vueGlobal.modals.topupLogin ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Guest topup login</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.topupLogin = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form class="form-horizontal" @submit.prevent="theTopupLogin.create_topup_qrcode()">
+				<div class="modal-body" style="padding: 20px 70px;">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Email</label> 
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_memeber_email" name="topup_memeber_email" v-model="vueTopupLogin.member_email" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Amount</label>
+								<input type="number" step="0.01" @keyup="theTopupLogin.topupLoginAmountCalculate()" :placeholder="translate_string('Please input mini amount') + ' ' + theSettings.mini_qr_payment" class="form-control modal-input bg-transparent" id="topup_login_amount" name="topup_login_amount" v-model="vueTopupLogin.topup_amount" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Minutes</label>
+								<input type="number" @keyup="theTopupLogin.topupLoginTimeCalculate()" class="form-control modal-input bg-transparent" id="topup_login_time" name="topup_login_time" v-model="vueTopupLogin.topup_time" required>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Promo code</label> 
+								<input type="text" class="form-control modal-input bg-transparent" id="topup_login_promo_code" name="promo_code" v-model="vueTopupLogin.promo_code">
+							</div>
+						</div>
+						<div v-if="vueTopupLogin.payment_qr" id="login_payment_qr" class="col-12 d-flex justify-content-center" data-clipboard-target="#login_payment_qr" @click="copyToClipboard('#login_payment_qr');">
+						</div>
+						<div id="login_payment_type" class="col-12 d-flex justify-content-center"  >
+							<img src="images/kaspi_qr.jpg" style="width: 266px;" class="d-none" v-show="vueTopupLogin.payment_type_img">
+						</div>
+							<div class="razorpay-qr-img" v-show="vueTopupLogin.payment_url_div">
+								<img src="" alt="razorpay payment qr code"/>
+							</div>
+							<div id="login_payment_url" class="col-12 d-flex justify-content-center " >
+							<div class="razorpay-qr-img" v-show="vueTopupLogin.payment_url_div" v-html="vueTopupLogin.payment_html"></div>
+							<div v-html="vueTopupLogin.manual_payment_html"></div>
+							<div v-html="vueTopupLogin.paymongo_html"></div>
+							<div v-html="vueTopupLogin.midtrans_html"></div>
+							<div v-html="vueTopupLogin.finik_html"></div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" v-show="vueTopupLogin.btn_group">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.topupLogin = false" data-placement="bottom" data-toggle="tooltip" title="No"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- modal:topup-login -->
+
+<!-- modal:member-login  -->
+<div class="modal myModalMemberLogin" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.login}" :style="{display: vueGlobal.modals.login ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Social login</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.login = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="member_login" class="col-12 d-flex justify-content-center" data-clipboard-target="#member_login" @click="copyToClipboard('#member_login');"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- modal:member-login  -->
+
+<!-- modal:member-register  -->
+<div class="modal myModalQRMemberRegister" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.scanRegister}" :style="{display: vueGlobal.modals.scanRegister ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Register</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.scanRegister = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="member_register" class="col-12 d-flex justify-content-center" data-clipboard-target='#member_register' @click="copyToClipboard('#member_register')"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- st:modal:club rules agreement- -->
+<div class="modal clubRulesModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.clubRules}" :style="{display: vueGlobal.modals.clubRules ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Club Rules</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.clubRules = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="club_rules_content" style="white-space: pre-wrap;" v-html="theSettings.club_rules"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:club rules agreement- -->
+<!-- st:modal:personal data agreement- -->
+<div class="modal personalDataModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.personalData}" :style="{display: vueGlobal.modals.personalData ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Privacy Policy</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.personalData = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="personal_data_content" style="white-space: pre-wrap;" v-html="theSettings.privacy_policy"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:personal data agreement- -->
+
+<!-- st:modal:forgot-password -->
+<div class="modal myModalForgotPassword" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.forgotPassword}" :style="{display: vueGlobal.modals.forgotPassword ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Forgot password</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.forgotPassword = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-forgot-password" class="form-horizontal" @submit.prevent="theForgotPassword.submit_form()">
+				<div class="modal-body" style="padding: 20px 70px;">
+					<div class="row" v-if="((theSettings.client_reset_password_way ?? 0) == RESET_PASSWORD_SMS)">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Phone number</label>
+								<input type="tel" class="form-control modal-input bg-transparent" name="phone_number" v-model="vueForgotPassword.phone_number" required>
+							</div>
+						</div>
+					</div>
+					<div class="row" v-if="((theSettings.client_reset_password_way ?? 0) == RESET_PASSWORD_EMAIL)">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">Email</label>
+								<input type="text" class="form-control modal-input bg-transparent" name="email" v-model="vueForgotPassword.email" required>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.forgotPassword = false" data-placement="bottom" data-toggle="tooltip" title="Cancel"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:forgot-password -->
+
+<!-- st:modal:booking-password -->
+<div class="modal" id="booking-password-modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" :class="{show: vueGlobal.modals.bookingPassword}" :style="{display: vueGlobal.modals.bookingPassword ? 'block' : 'none'}">
+	<div class="modal-dialog modal-dialog-centered" role="document" style="width:500px; max-width:500px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title lang">Booking password</h5>
+				<button type="button" class="close" @click="vueGlobal.modals.bookingPassword = false" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<form id="form-booking-password" class="form-horizontal" @submit.prevent="login_form_submit()">
+				<div class="modal-body" style="padding: 20px 70px;">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-group">
+								<label class="control-label lang">PC name</label>
+								<div class="booking-pc-name" style="font-weight: bold; color: #007bff;">{{vueLogin.bookingPCName}}</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Booking time</label>
+								<div class="booking-time-range" style="font-weight: bold; color: #28a745;">{{vueLogin.bookingTimeRange}}</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label lang">Booking password</label>
+								<input type="password" class="form-control modal-input bg-transparent" name="booking_password" v-model="vueLogin.booking_password" required>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<div class="btn-group">
+						<button type="submit" class="btn btn-lg client-btn-success lang mr-3 py-0" data-placement="bottom" data-toggle="tooltip" title="Submit"><i class="fal fa-check fa-2x text-white" ></i></button>
+						<button type="button" class="btn btn-lg client-btn-close lang py-0" @click="vueGlobal.modals.bookingPassword = false" data-dismiss="modal" data-placement="bottom" data-toggle="tooltip" title="Cancel"><i class="fal fa-times fa-2x text-white" ></i></button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- ed:modal:booking-password -->
+
+<!-- spinner for login page -->
+<div id="login-spinner" class="cover" v-show="vueGlobal.isLoading" :style="{display: vueGlobal.isLoading ? 'block' : 'none'}">
+	<div class="text-center cover-font">
+		<div class="spinner-border" style="width: 6rem;height: 6rem;" role="status">
+			<i class="fal fa-spinner fa-spin fa-5x"></i>
+		</div>
+	</div>
+</div>
+
+
+<!-- 密码切换和键盘检测逻辑已迁移到 Vue 绑定 -->

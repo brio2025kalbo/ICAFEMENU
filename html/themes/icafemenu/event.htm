@@ -1,0 +1,248 @@
+<div class="events-container flex-grow-1 flex-column" :class="[vueGlobal.pageType != 'Event' ? 'd-none' : 'd-flex']">
+	<div class="cover"></div>
+	<div class="h-100 p-4 d-flex flex-column container flex-shrink-1">
+		<h2 v-if="vueEventsMy.events.length > 0" class="text-white name pb-4 font-size-5 font-weight-bold lang" id="my-events-title">My events</h2>
+		<div class="d-flex flex-wrap events" id="my-events">
+			<div v-for="event in vueEventsMy.events" :key="event.event_id" :class="'col-4 mb-5 event event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+				<div class="d-flex m-2 p-4 h-100 border-block">
+					<div class="icon col-4"></div>
+					<div class="info col-8 d-flex flex-column">
+						<label class="name  text-truncate">{{event.event_name}}</label>
+						<label>
+						<i class="fal fa-fw mr-1 fa-gamepad-modern lang" data-toggle="tooltip" data-placement="bottom" title="Games"></i> {{event.game_name}}
+						{{ event.event_game_mode.length > 0 ? '/ ' + event.event_game_mode : ''}}
+						</label>
+
+						<label>
+						<i class="fal fa-fw mr-1 fa-clock lang" data-toggle="tooltip" data-placement="bottom" title="Event time"></i> {{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+						</label>
+
+						<label >
+							<i class="fal fa-fw mr-1 fa-circle-info lang" data-toggle="tooltip" data-placement="bottom" title="Score count way"></i>
+							<span>
+								{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+
+								{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+
+								{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+							</span>
+						</label>
+
+						<label>
+							<i class="fal fa-fw mr-1 fa-cubes lang" data-toggle="tooltip" data-placement="bottom" title="Best players"></i> {{translate_string('Best {0} players').replace('{0}', event.event_top_winners)}}
+						</label>
+
+						<label v-if="event.event_status == 'end' && event.event_bonus_amount > 0">
+						<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Event bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+						</label>
+
+						<label v-if="event.event_status != 'end' && event.event_bonus_amount > 0">
+							<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Won bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+							{{ event.emember_bonus ? '(won ' + event.emember_bonus + ')': ''}}
+						</label>
+
+						<label v-if="event.emember_id">
+							<i class="fal fa-fw mr-1 fa-trophy"  data-toggle="tooltip" data-placement="bottom" :title="'Your rank is #' + event.emember_rank + ', total ' + event.emember_count + ' players'"></i> {{event.emember_rank}} / {{event.emember_count}}
+							<i class="fal fa-fw mr-1 fa-chart-line ml-5"  data-toggle="tooltip" data-placement="bottom" :title="'Your point is ' + event.emember_point"></i> {{event.emember_point}}
+						</label>
+
+						<button type="submit" class="w-50 mx-auto mt-auto btn btn-block btn-lg mr-3 memberlogin lang py-0 client-btn-success" data-placement="bottom" data-toggle="tooltip" title="Detail" @click="theEvents.open(event.event_id)"><i class="text-white">...</i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<h2 v-if="vueEventsActive.events.length > 0" class="text-white pb-4 font-size-5 font-weight-bold lang" id="active-events-title">Active events</h2>
+		<div class="d-flex flex-wrap events" id="active-events" v-if="vueEventsActive.events.length > 0">
+			<div v-for="event in vueEventsActive.events" :key="event.event_id" :class="'col-4 mb-5 event event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+				<div class="d-flex m-2 p-4 h-100 border-block">
+					<div class="icon col-4"></div>
+					<div class="info col-8 d-flex flex-column">
+						<div class="name  text-truncate">{{event.event_name}}</div>
+
+						<label>
+							<i class="fal fa-fw mr-1 fa-gamepad-modern lang" data-toggle="tooltip" data-placement="bottom" title="Games"></i> {{event.game_name}}
+							{{ event.event_game_mode.length > 0 ? '/ ' + event.event_game_mode : ''}}
+						</label>
+
+						<label>
+							<i class="fal fa-fw mr-1 fa-clock lang" data-toggle="tooltip" data-placement="bottom" title="Event time"></i> {{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+						</label>
+
+						<label>
+							<i class="fal fa-fw mr-1 fa-circle-info lang" data-toggle="tooltip" data-placement="bottom" title="Score count way"></i>
+							<span>
+							{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+
+							{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+
+							{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+							</span>
+						</label>
+
+						<label>
+							<i class="fal fa-fw mr-1 fa-cubes lang" data-toggle="tooltip" data-placement="bottom" title="Best players"></i> {{translate_string('Best {0} players').replace('{0}', event.event_top_winners)}}
+						</label>
+
+						<label v-if="event.event_status == 'end' && event.event_bonus_amount > 0">
+							<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Event bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+						</label>
+
+						<label v-if="event.event_status != 'end' && event.event_bonus_amount > 0">
+							<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Won bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+							{{ event.emember_bonus ? '(won ' + event.emember_bonus + ')': ''}}
+						</label>
+
+						<label v-if="event.emember_id">
+							<i class="fal fa-fw mr-1 fa-trophy"  data-toggle="tooltip" data-placement="bottom" :title="'Your rank is #' + event.emember_rank + ', total ' + event.emember_count + ' players'"></i> {{event.emember_rank}} / {{event.emember_count}}
+							<i class="fal fa-fw mr-1 fa-chart-line ml-5"  data-toggle="tooltip" data-placement="bottom" :title="'Your point is ' + event.emember_point"></i> {{event.emember_point}}
+						</label>
+						<button type="submit" class="w-50 mx-auto mt-auto btn btn-block btn-lg mr-3 memberlogin lang py-0 client-btn-success" @click="theEvents.play(event.event_id);theEvents.open(event.event_id)" data-placement="bottom" data-toggle="tooltip" title="Join game"><i class="fal fa-plus text-white"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="event-detail-container event-detail flex-grow-1 flex-column" :class="[vueGlobal.pageType != 'EventDetail' ? 'd-none' : 'd-flex']">
+	<div class="rounded-top d-flex flex-column p-4 w-100">
+		<div class="d-flex">
+			<div class="info align-top col-4">
+				<div class="events event-detail-main" id='detail-events'>
+					<div v-for="event in vueEventsDetail.events" :key="event.event_id" :class="'border-block border-0 event event-' + event.event_game_code + ' event-' + event.event_status" :data-id="event.event_id">
+						<div class="d-flex p-4">
+							<div class="icon col-4"></div>
+							<div class="info col-8">
+								<div class="p-2">
+									<label class="name">{{event.event_name}}</label>
+
+									<label>
+										<i class="fal fa-fw mr-1 fa-gamepad-modern lang" data-toggle="tooltip" data-placement="bottom" title="Games"></i> {{event.game_name}}
+										{{ event.event_game_mode.length > 0 ? '/ ' + event.event_game_mode : ''}}
+									</label>
+
+									<label>
+										<i class="fal fa-fw mr-1 fa-clock lang" data-toggle="tooltip" data-placement="bottom" title="Event time"></i> {{moment(event.event_start_time_local).format('MM/DD HH:mm')}} - {{moment(event.event_end_time_local).format('MM/DD HH:mm')}}
+									</label>
+
+									<label>
+										<i class="fal fa-fw mr-1 fa-circle-info lang" data-toggle="tooltip" data-placement="bottom" title="Score count way"></i>
+										<span>
+											{{ event.event_score_type == 'all' ? translate_string('Total score') : ''}}
+
+											{{ event.event_score_type == 'best' ? translate_string('Take best') : ''}}
+
+											{{ event.event_score_type == 'compound' ? translate_string('Best {0} matches').replace('{0}', event.event_top_matches) : ''}}
+										</span>
+									</label>
+
+									<label>
+										<i class="fal fa-fw mr-1 fa-cubes lang" data-toggle="tooltip" data-placement="bottom" title="Best players"></i> {{translate_string('Best {0} players').replace('{0}', event.event_top_winners)}}
+									</label>
+
+									<label v-if="event.event_status == 'end' && event.event_bonus_amount > 0">
+										<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Event bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+									</label>
+
+									<label v-if="event.event_status != 'end' && event.event_bonus_amount > 0">
+										<i class="fal fa-fw mr-1 fa-gem lang" data-toggle="tooltip" data-placement="bottom" title="Won bonus"></i> {{event.event_bonus_currency}} {{toFixed2(parseFloat(event.event_bonus_amount)).replace('.00', '')}}
+										{{ event.emember_bonus ? '(won ' + event.emember_bonus + ')': ''}}
+									</label>
+
+									<label v-if="event.emember_id">
+										<i class="fal fa-fw mr-1 fa-trophy"  data-toggle="tooltip" data-placement="bottom" :title="'Your rank is #' + event.emember_rank + ', total ' + event.emember_count + ' players'"></i> {{event.emember_rank}} / {{event.emember_count}}
+										<i class="fal fa-fw mr-1 fa-chart-line ml-5"  data-toggle="tooltip" data-placement="bottom" :title="'Your point is ' + event.emember_point"></i> {{event.emember_point}}
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="align-top col-4 bd-highlight h-auto d-flex flex-column border-block">
+				<div class="p-2 flex-grow-1" id="event_buttons" style="height: 100px;">
+					<div class="text-left w-100 h-100 container" style="white-space: pre-wrap;">{{vueEventDetail.event.event_description}}</div>
+				</div>
+			</div>
+			<div class="align-top col-4 h-auto d-flex justify-content-around flex-column mb-3">
+				<div class="p-2 w-100 d-flex justify-content-around">
+					<a v-if="vueEventButtons.event.event_status == 'past'" href="javascript:;">
+						<i class="fal fa-trophy-star fa-3x lang text-danger" data-toggle="tooltip" data-placement="bottom" title="Event is end"></i>
+					</a>
+					<a v-else-if="vueEventButtons.event.event_game_code != 'all' || typeof(vueEventButtons.event.emember_member_account) != 'undefined'" class="c-pointer" @click="theEvents.play(vueEventButtons.event.event_id)" id="btn-event-play">
+						<i class="fal fa-circle-play fa-3x lang text-success"  data-toggle="tooltip" data-placement="bottom" title="Play game"></i>
+					</a>
+				</div>
+				
+				<div v-if="vueEventButtons.event.event_status != 'past' && vueEventButtons.event.event_game_code == 'all' && typeof(vueEventButtons.event.emember_member_account) == 'undefined'" class="mt-auto p-2" style="width:35%">
+					<button type="submit" class="btn btn-block btn-lg ml-3 lang py-0 client-btn-success" @click="theEvents.play(vueEventButtons.event.event_id)" data-placement="bottom" data-toggle="tooltip" title="Join game"  ><i class="fal fa-plus text-white fa-2x" ></i></button>
+				</div>
+			</div>
+		</div>
+		<hr size="20" class="border-white" style="width:88%; margin: 1.5% 6%" >
+		<div class="container p-0 flex-shrink-1 h-100" style="background-color: rgba(48, 48, 48, 0.57);border: 1px solid #666; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
+			<table class="table table-striped table-borderless text-center text-white " id="table-event-detail" style="table-layout: fixed;">
+				<thead>
+				<tr >
+					<th class="lang border-top-0" style="border-right: 1px solid #666"><label class="lang">POS</label> </th>
+					<th class="lang border-top-0"> <label class="lang">PLAYER</label> </th>
+
+					<th v-if="vueEventDetail.event.event_is_global" class="lang border-top-0"> <label class="lang">CENTER NAME</label> </th>
+
+					<th class="lang border-top-0"> <label class="lang">MATCHES</label> </th>
+
+					<th v-if="['fortnite', 'pubg', 'lol', 'valorant', 'apex', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">WINS</label> </th>
+
+					<th v-if="['fortnite', 'pubg', 'lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">KILLS</label> </th>
+
+					<th v-if="['lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">ASSISTS</label> </th>
+
+					<th v-if="['lol', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">DEATHS</label> </th>
+
+					<th v-if="['dota2'].indexOf(vueEventDetail.event.event_game_code) >= 0" class="lang border-top-0"> <label class="lang">LAST HITS</label> </th>
+
+					<th class="lang border-top-0"> <label class="lang">POINT</label> </th>
+					<th class="lang border-top-0"> <label class="lang">BONUS</label> </th>
+					<th class="lang border-top-0"> <label class="lang">BONUS PAID</label> </th>
+
+					<th v-if="vueEventDetail.event.event_is_global" class="lang border-top-0"> <label class="lang">STATUS</label> </th>
+				</tr>
+				</thead>
+				<tbody>
+					<tr v-for="member in vueEventDetail.members" :key="member.emember_id">
+						<td style="border-right: 1px solid #666"> {{member.emember_rank}} </td>
+						<td> <label>{{member.emember_member_account}}</label> </td>
+
+						<td v-if="vueEventDetail.event.event_is_global"> 
+							<div :class="'fflag ff-xl fflag-'+(member.license_country||'').toUpperCase()" :title="member.license_country"></div>
+							<label>{{member.license_icafename}}</label>
+							</td>
+
+						<td> {{member.emember_point_matches}}/{{member.emember_matches}} </td>
+
+						<td v-if="['fortnite', 'pubg', 'lol', 'valorant', 'apex', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_wins}} </td>
+
+						<td v-if="['fortnite', 'pubg', 'lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_kills}} </td>
+
+						<td v-if="['lol', 'valorant', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_assists}} </td>
+
+						<td v-if="['lol', 'dota2', 'csgo', 'all'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_deaths}} </td>
+
+						<td v-if="['dota2'].indexOf(vueEventDetail.event.event_game_code) >= 0"> {{member.emember_lasthits}} </td>
+
+						<td> {{member.emember_point}} </td>
+						<td> {{ member.emember_bonus > 0 ? member.emember_bonus : '' }} </td>
+						<td> {{ member.emember_bonus_pay_status ? translate_string('Paid') : '-' }} </td>
+
+						<td v-if="vueEventDetail.event.event_is_global">
+							<span v-if="typeof(member.emember_status) != 'undefined' && member.emember_status == 1">{{translate_string('joined')}}</span>
+							<span v-else class="lang c-pointer" data-toggle="tooltip" data-placement="bottom" title="Not joined telegram group">{{translate_string('to be confirmed')}}</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+	</div>
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column" style="width: 400px"></div>

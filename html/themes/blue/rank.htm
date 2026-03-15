@@ -1,0 +1,102 @@
+<div class="rank-page-container d-flex flex-column align-items-stretch w-100">
+	<!-- Game Icons Header -->
+	<div v-if="Object.keys(vueRank.items).length > 0" class="rank-game-icons d-flex flex-row align-items-center justify-content-center">
+		<div v-for="(items, gameCode) in vueRank.items" :key="gameCode" class="game-icon d-flex align-items-center justify-content-center" :class="[vueRank.active_game == gameCode ? 'active' : '']" @click="vueRank.active_game = gameCode; vueRank.currentPage = 1">
+			<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
+		</div>
+	</div>
+
+	<!-- Winners Section -->
+	<div v-if="vueGlobal.pageType == 'Rank' && vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > 0" class="rank-winners d-flex flex-row justify-content-center align-items-center position-relative">
+		<h2 class="winners-title lang">Winners</h2>
+		<!-- 1st Place -->
+		<div v-if="vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game][0]" class="winner-item first-place d-flex flex-row align-items-center">
+			<div class="winner-medal d-flex align-items-center justify-content-center position-relative">
+				<img src="./images/gold-medal.svg" alt="Gold Medal" class="medal-icon">
+				<img :src="vueRank.items[vueRank.active_game]?.[0]?.avatar_url || './images/default-avatar.png'" alt="Winner" class="medal-avatar">
+			</div>
+			<div class="winner-details d-flex flex-column">
+				<div class="winner-info d-flex flex-row align-items-center">
+					<span class="winner-rank lang">1st</span>
+					<span class="winner-separator">–</span>
+					<span class="winner-name">{{ vueRank.items[vueRank.active_game]?.[0]?.player_name || '' }}</span>
+				</div>
+				<div class="winner-points">{{ vueRank.items[vueRank.active_game]?.[0]?.points || '0' }} PTS</div>
+			</div>
+		</div>
+		<!-- 2nd Place -->
+		<div v-if="vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game][1]" class="winner-item second-place d-flex flex-row align-items-center">
+			<div class="winner-medal d-flex align-items-center justify-content-center position-relative">
+				<img src="./images/silver-medal.svg" alt="Silver Medal" class="medal-icon">
+				<img :src="vueRank.items[vueRank.active_game]?.[1]?.avatar_url || './images/default-avatar.png'" alt="Winner" class="medal-avatar">
+			</div>
+			<div class="winner-details d-flex flex-column">
+				<div class="winner-info d-flex flex-row align-items-center">
+					<span class="winner-rank lang">2nd</span>
+					<span class="winner-separator">–</span>
+					<span class="winner-name">{{ vueRank.items[vueRank.active_game]?.[1]?.player_name || '' }}</span>
+				</div>
+				<div class="winner-points">{{ vueRank.items[vueRank.active_game]?.[1]?.points || '0' }} PTS</div>
+			</div>
+		</div>
+		<!-- 3rd Place -->
+		<div v-if="vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game][2]" class="winner-item third-place d-flex flex-row align-items-center">
+			<div class="winner-medal d-flex align-items-center justify-content-center position-relative">
+				<img src="./images/bronze-medal.svg" alt="Bronze Medal" class="medal-icon">
+				<img :src="vueRank.items[vueRank.active_game]?.[2]?.avatar_url || './images/default-avatar.png'" alt="Winner" class="medal-avatar">
+			</div>
+			<div class="winner-details d-flex flex-column">
+				<div class="winner-info d-flex flex-row align-items-center">
+					<span class="winner-rank lang">3rd</span>
+					<span class="winner-separator">–</span>
+					<span class="winner-name">{{ vueRank.items[vueRank.active_game]?.[2]?.player_name || '' }}</span>
+				</div>
+				<div class="winner-points">{{ vueRank.items[vueRank.active_game]?.[2]?.points || '0' }} PTS</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Rank Table -->
+	<div v-if="vueGlobal.pageType == 'Rank' && vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > 0" class="rank-table-container d-flex flex-column">
+		<table class="rank-table">
+			<thead>
+				<tr>
+					<th class="lang">Position</th>
+					<th class="lang">Player</th>
+					<th class="lang" v-if="['fortnite', 'pubg', 'lol', 'dota2', 'valorant', 'apex'].indexOf(vueRank.active_game) >= 0">Wins</th>
+					<th class="lang" v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">Losses</th>
+					<th class="lang" v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">KDR</th>
+					<th class="lang">Kills</th>
+					<th class="lang" v-if="['lol', 'dota2', 'valorant', 'csgo'].indexOf(vueRank.active_game) >= 0">Deaths</th>
+					<th class="lang" v-if="['lol', 'dota2', 'valorant', 'csgo', 'apex'].indexOf(vueRank.active_game) >= 0">Assist</th>
+					<th class="lang" v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">Win Ratio</th>
+					<th class="lang" v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">Top 5</th>
+					<th class="lang" v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">Top 10</th>
+					<th class="lang" v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">Top 25</th>
+					<th><i class="fal fa-coins"></i></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-for="n in 10" :key="n" :class="[n <= 3 ? 'top-' + n : '']">
+					<td class="position">{{ n }}</td>
+					<td class="player">
+						<img :src="(vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].avatar_url) ? vueRank.items[vueRank.active_game][n-1].avatar_url : './images/default-avatar.png'" alt="Avatar" class="player-avatar">
+						<span>{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].player_name ? vueRank.items[vueRank.active_game][n-1].player_name : '' }}</span>
+					</td>
+					<td v-if="['fortnite', 'pubg', 'lol', 'dota2', 'valorant', 'apex'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].wins != undefined ? vueRank.items[vueRank.active_game][n-1].wins : '-' }}</td>
+					<td v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].losses != undefined ? vueRank.items[vueRank.active_game][n-1].losses : '-' }}</td>
+					<td v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].kdr != undefined ? vueRank.items[vueRank.active_game][n-1].kdr : '-' }}</td>
+					<td>{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].kills != undefined ? vueRank.items[vueRank.active_game][n-1].kills : '-' }}</td>
+					<td v-if="['lol', 'dota2', 'valorant', 'csgo'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].deaths != undefined ? vueRank.items[vueRank.active_game][n-1].deaths : '-' }}</td>
+					<td v-if="['lol', 'dota2', 'valorant', 'csgo', 'apex'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].assist != undefined ? vueRank.items[vueRank.active_game][n-1].assist : '-' }}</td>
+					<td v-if="['lol', 'dota2', 'valorant'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].win_ratio != undefined ? toFixed2(vueRank.items[vueRank.active_game][n-1].win_ratio) : '-' }}</td>
+					<td v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].top5s != undefined ? vueRank.items[vueRank.active_game][n-1].top5s : '-' }}</td>
+					<td v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].top10s != undefined ? vueRank.items[vueRank.active_game][n-1].top10s : '-' }}</td>
+					<td v-if="['fortnite'].indexOf(vueRank.active_game) >= 0">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].top25s != undefined ? vueRank.items[vueRank.active_game][n-1].top25s : '-' }}</td>
+					<td class="prize">{{ vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].prize ? vueRank.items[vueRank.active_game][n-1].prize : '$' + (vueRank.items[vueRank.active_game] && vueRank.items[vueRank.active_game].length > n-1 && vueRank.items[vueRank.active_game][n-1].points ? vueRank.items[vueRank.active_game][n-1].points : '0') }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column game-right-sidebar" style="width: 400px"></div>

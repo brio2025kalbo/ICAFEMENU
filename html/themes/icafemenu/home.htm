@@ -1,0 +1,251 @@
+<div class="home-container mb-5 d-flex  flex-grow-1 h-50">
+	<div v-if="!vueGameInfo.show" class="d-flex col-9 flex-column home-up-column mr-3 flex-shrink-1">
+		<div class="bd-highlight rounded home-top5-games h-50 d-flex align-items-center justify-content-around flex-shrink-1 container border-block">
+			<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id">
+				<div class="game-image w-100">
+					<span class="text-white game-heat"><i class="fal fa-star mr-1"></i>Top {{index + 1}}</span>
+					<template v-if="theSettings?.game_detail_view_launch == 1">
+						<img class="c-pointer rounded" @click="theGameList.open_detail(game, 'home')" :src="ICAFEMENU_CORE.posters_path(game.pkg_id + '.jpg')" onerror="this.src='images/default-poster.png';">
+					</template>
+					<template v-else>
+						<img class="rounded" :src="ICAFEMENU_CORE.posters_path(game.pkg_id + '.jpg')" onerror="this.src='images/default-poster.png';" >
+						<div class="overlay" style="background:rgba(17, 17, 17, 0.75);">
+							<label class="text-center">{{game.pkg_name}}</label>
+							<div class="btn-group d-flex justify-content-center align-items-center h-75 w-100">
+								<button v-if="vueGames.type != 'license'" class="btn lang" @click="theGameList.play_game(game.pkg_id, thePCStatus.status_pc_token, 0, '', 0, 0)" data-toggle="tooltip" data-placement="bottom" title="Play">
+									<i class="fal fa-play fa2x"></i>
+								</button>
+								<button v-if="(game.pkg_game_type >= 1 && game.pkg_has_license > 0) || theGameList.deliver_password_for_games.includes(game.pkg_game_type?.toString())" class="btn ml-2 lang" @click="theGameList.request_game_licenses(game.pkg_id, 'btn-home-play-with-license-' + game.pkg_id)" data-toggle="tooltip" data-placement="bottom" :id="'btn-home-play-with-license-' + game.pkg_id" title="Free to play">
+									<i class="fal fa-paper-plane fa2x"></i>
+								</button>
+							</div>
+						</div>
+					</template>
+				</div>
+				<label v-if="(theSettings.name_show_client ?? 0) == 1" class="text-white text-center mt-2" style="max-width: 168px;">{{game.pkg_name}}</label>
+			</div>
+		</div>
+		<div class="d-flex flex-row h-50 mt-5  px-0 flex-shrink-1">
+			<div  class="bd-highlight rounded text-white home-news col-12 mr-5 py-4  flex-shrink-1 border-block">
+				<div v-if="vueCafeNews.items.length > 0" id="home_carousel_news" class="carousel carousel-spotlight slide carousel-fade fl-scn mb-0" data-ride="carousel">
+					<ol v-if="vueCafeNews.items.length > 1" class="carousel-indicators">
+						<li v-for="(item, index) in vueCafeNews.items" data-target="#home_carousel_news" :data-slide-to="index" :class="item.active"></li>
+					</ol>
+					<div class="carousel-inner h-100">
+						<div v-for="item in vueCafeNews.items" :key="item.news_id" class="carousel-item item" :class="item.active" :data-bs-interval="item.news_duration">
+							<img v-if="!item.news_video" class="h-100 c-pointer m-auto" :src="ICAFEMENU_CORE.posters_path('ns-'+item.news_id + '.jpg')" onerror="this.src='images/default-news.jpg'" :alt="item.news_name" @click="open_news(item.news_id)" />
+							
+							<div v-else class="h-100 m-auto">
+								<div v-if="item.isYoutube" class="h-100 video-box align-middle embed-responsive">
+									<iframe :src="item.news_video" id="newsYoutubeVideo" class="embed-responsive-item" allow="autoplay" @click="open_news(item.news_id)" allowfullscreen></iframe>
+								</div>
+								<div v-else class="h-100 m-auto">
+									<video class="video-box h-100 c-pointer" autoplay muted loop  @click="open_news(item.news_id)">
+										<source :src="item.news_video" type="video/webm" id="newsUrlVideo">
+									</video>
+								</div>
+							</div>
+							<div v-show="item.news_show_qr" @click="handleQRClick(item.news_id)" style="cursor: pointer;"
+								 v-effect="new QRCode(document.querySelector('.news-qr-box-'+ item.news_id), item.news_url);"
+								 :class="'news-qr news-qr-box-' + item.news_id">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="bd-highlight rounded p-4 text-white home-leaderboard col-4 mr-0 container border-block" v-if="theSettings.license_start_game_tracker ?? 0">
+				<div class="px-8 h-100 ranking-div d-flex flex-column" v-if="vueHome.leaderboardItems">
+					<h4 class="text-center text-uppercase font-size-5 pb-3 lang" id="current-month-name">Last 30 days</h4>
+					<div class="d-flex flex-column justify-content-between h-100 flex-shrink-1" id="home_rank">
+						<div class="d-flex">
+							<div class="col-4 text-center"><label class="lang text-light font-weight-bold">RANK</label></div>
+							<div class="col-4 text-center"><label class="lang text-light font-weight-bold">PLAYER</label></div>
+							<div class="col-4 text-right"><label class="lang text-light font-weight-bold">SCORE</label></div>
+						</div>
+						<div class="d-flex" v-for="n in vueHome.leaderboardItems.current_month.length">
+							<div class="col-4 text-center"><label :class="[vueHome.leaderboardItems.current_month[n-1].track_member_account == 'ME' ? 'text-warning' : 'text-light']">
+								{{vueHome.leaderboardItems.current_month[n-1].rank}}</label></div>
+							<div class="col-4 text-center"><label class="text-light">{{vueHome.leaderboardItems.current_month[n-1].track_member_account}}</label></div>
+							<div class="col-4 text-right"><label class="text-light">{{parseInt(vueHome.leaderboardItems.current_month[n-1].track_game_coins) || 0}}</label></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div v-if="vueGameInfo.show && vueGameInfo.source == 'home'" class="d-flex col-9 flex-column  mr-3 flex-shrink-1">
+		<div class="d-flex align-items-center">
+			<button class="btn btn-sm" @click="theGameList.back_to_list()">
+				<i class="fas fa-arrow-left"></i>
+			</button>
+			<h2 class="mx-2">{{ vueGameInfo.game?.pkg_name }}</h2>
+		</div>
+		<div class="d-flex mt-4">
+			<div class="position-relative">
+				<div class="position-absolute d-flex w-100 justify-content-end">
+					<span v-if="(vueGameInfo.game?.pkg_game_type >= 1 && vueGameInfo.game?.pkg_has_license > 0)" class="badge badge-license" :class="{'badge-shifted': vueGameInfo.game?.member_favorite}"><i class="fa fa-solid fa-bookmark fa-2x text-success"></i></span>
+					
+					<span class="badge badge-favorite c-pointer" :class="{'badge-with-license': (vueGameInfo.game?.pkg_game_type >= 1 && vueGameInfo.game?.pkg_has_license > 0)}" @click.stop="theGameList.toggle_favorite(vueGameInfo.game?.pkg_id)">
+					<i v-if="vueGameInfo.game?.member_favorite" class="fa fa-solid fa-heart fa-2x text-danger"></i>
+					<i v-else class="fa fa-regular fa-heart fa-2x text-white favorite-icon"></i>
+				</span>
+				</div>
+				
+				<img class="rounded-2" v-if="vueGameInfo.game?.pkg_id" :src="vueGameInfo.game?.pkg_id ? ICAFEMENU_CORE.posters_path(vueGameInfo.game?.pkg_id + '.jpg') : 'images/default-poster.png'" onerror="this.src='images/default-poster.png';">
+			</div>
+			<div class="d-flex flex-column pl-2">
+				<div class="btn-group d-flex justify-content-center align-items-center w-100">
+					<button v-if="!theGameList.is_running_pkg(vueGameInfo.game?.pkg_id) && vueGames.type != 'license'" class="btn mx-1 lang"
+							@click="theGameList.play_game(vueGameInfo.game?.pkg_id, thePCStatus.status_pc_token, 0, '', 0, 0)"
+							data-toggle="tooltip"
+							data-placement="bottom"
+							title="Play">
+						<i class="fal fa-play fa2x"></i>
+					</button>
+					<button v-if="!theGameList.is_running_pkg(vueGameInfo.game?.pkg_id) && ((vueGameInfo.game?.pkg_game_type >= 1 && vueGameInfo.game?.pkg_has_license > 0) || theGameList.deliver_password_for_games.includes(vueGameInfo.game?.pkg_game_type?.toString()))"
+							class="btn mx-1 lang"
+							@click="theGameList.request_game_licenses(vueGameInfo.game?.pkg_id, 'btn-play-with-license-' + vueGameInfo.game?.pkg_id)"
+							data-toggle="tooltip" data-placement="bottom"
+							:id="'btn-play-with-license-' + vueGameInfo.game?.pkg_id" title="Free to play">
+						<i class="fal fa-paper-plane fa2x"></i>
+					</button>
+					<button v-if="theGameList.is_running_pkg(vueGameInfo.game?.pkg_id)"
+							class="btn mx-1 lang"
+							@click="theGameList.close(vueGameInfo.game?.pkg_id)"
+							data-toggle="tooltip"
+							data-placement="bottom"
+							title="Close">
+						<i class="fal text-danger fa-close fa2x"></i>
+					</button>
+				</div>
+				<div class="d-flex flex-column">
+				
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex col-3 flex-column home-down-column  border-1">
+		<div class="bd-highlight rounded h-50 p-4  border-block">
+			<div class="container d-flex flex-column h-100" id="home_member_info">
+				<div class="row text-white">
+					<div class="col-md-3 p-2">
+						<img :src="vueMemberAvatar.getAvatarUrl(memberInfo.member_photo)" class="cafe_info_member_logo p-0 border-0 rounded-circle c-pointer" style="aspect-ratio: 1/1;" onerror="this.src='images/default-avatar.png';" onclick="javascript:vueMemberAvatar.show_member_avatar_modal()">
+					</div>
+					<div class="col-md-9 p-2 normal-only ">
+						<div class="text-truncate font-size-5 d-flex justify-content-between">
+							<label class="name text-uppercase font-size-5" id="member_info_name">{{memberInfo.member_info_name}}</label>
+							<a class="lang pr-2" v-if="theSettings?.client_checklist_enable == 1" href="javascript:checklist()" data-toggle="tooltip" data-placement="left" title="Checklist" data-original-title="checklist">
+								<i class="fa fa-receipt"></i>
+							</a>
+						</div>
+						<div class="member_balance_realtime normal-only font-size-4 pt-2 d-flex align-items-center">
+							<i class="fal fa-wallet fa-fw mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Balance"></i>
+							<label class="value mw-100">
+								{{memberInfo.member_balance_realtime}}
+							</label>
+							
+							<div style="margin-left: 40px;"><i class="fa-solid fa-rotate lang" data-toggle="tooltip" data-placement="bottom" title="Refresh" onclick="javascript:refreshBalanceInfo()" style="cursor: pointer;"></i></div>
+						</div>
+						<div class="member_loan normal-only font-size-4 pt-2 d-flex align-items-center" v-if="memberInfo.member_loan > 0">
+							<i class="fal fa-exclamation-triangle fa-fw text-danger mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Loan"></i>
+							<label class="value mw-100 text-danger">
+								{{memberInfo.member_loan}}
+							</label>
+						</div>
+						<div class="member_balance_bonus_realtime normal-only font-size-4 pt-2 d-flex align-items-center">
+							<i class="fal fa-fw fa-award fa-fw mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Bonus"></i>
+							<label class="value mw-100">
+								{{memberInfo.member_balance_bonus_realtime}}
+							</label>
+						</div>
+						<div class="member_coin_balance normal-only font-size-4 pt-2 d-flex align-items-center">
+							<i class="fal fa-gamepad fa-fw mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Coins"></i>
+							<label class="value mw-100">
+								{{memberInfo.member_coin_balance}}
+							</label>
+						</div>
+						<div v-if="memberInfo.price_per_hour && theSettings?.show_client_hourly_rate == 1" class="normal-only font-size-4 pt-2 d-flex align-items-center">
+							<i class="fal fa-barcode fa-fw mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Price"></i>
+							<span class="currency">{{theSettings.currency ?? '$'}}</span> <label class="font-size-4">{{memberInfo.price_per_hour}}</label><span>/H</span>
+						</div>
+						<div v-if="memberInfo.pc_cost > 0 && thePCStatus.member_group_id == MEMBER_GROUP_POSTPAID" class="normal-only font-size-4 pt-2 d-flex align-items-center">
+							<i class="fal fa-money-bill-wave fa-fw mr-1 lang" data-toggle="tooltip" data-placement="bottom" title="Total spend"></i>
+							<span class="currency">{{theSettings.currency ?? '$'}}</span> <label class="font-size-4">{{memberInfo.pc_cost}}</label></span>
+						</div>
+					</div>
+				</div>
+
+				<div id="offers_div" class="row text-white text-center justify-content-md-center " style="margin-top:auto;">
+
+					<div v-for="(item, index) in vueHome.memberGroup" 
+						v-show="!theSettings || theSettings.show_member_points != 0"
+						:class="['member-group', item.mebmer_group_index == vueHome.memberCurrentGroup ? 'col-md-2 member-current-group' : 'col-md-3', vueHome.memberGroup.length == 1 ? 'group-left group-right' : (index == 0 ? 'group-left' : (index == vueHome.memberGroup.length - 1 ? 'group-right' : ''))]"
+						class="pl-0 pr-0">
+						{{item.mebmer_group_index}}
+					</div>
+					<div v-if="vueHome.memberGroup.length > 0" v-show="!theSettings || theSettings.show_member_points != 0" class="col-md-12 pl-0 pr-0 mt-2 mb-2" >
+						{{vueHome.memberPointValue}}
+					</div>
+
+					<div v-if="vueAvailableOffers.items.length > 0" id="carousel_main" class="carousel slide row normal-only w-100 h-100" data-interval="false" >
+						<div  class="carousel-inner h-100">
+							<div v-for="(item, index) in vueAvailableOffers.items" :key="item.id" :class="['carousel-item', 'item', { 'active': index === vueAvailableOffers.currentIndex }]" :id="'available-' + item.id">
+								<div class="col-md-8 pl-0 pr-0 progress" style="position:relative; margin: 0 auto;padding-top:1px;height: 1.7rem; background-color: #395A2A;border:1px solid #ffffff;border-radius: 5px;" >
+									<div class="progress-bar progress-bar-animated" role="progressbar" style="width:0%; background-color:#43AE1D;" :style="{width:item.percent+'%'}"  aria-valuemin="0" aria-valuemax="100" ></div>
+									<span class="remaining" style="position:absolute; left:37%;height: 1.6rem;line-height: 1.6rem;">{{item.remaining}}</span>
+								</div>
+								<div class="col-md-12 pl-0 pr-0 mt-2 mb-2" >
+									{{item.name}}
+								</div>
+							</div>
+						</div>
+
+						<div v-if="vueAvailableOffers.items.length > 1">
+							<button class="carousel-control-prev c-pointer border-0" type="button" @click="prevOffer()" style="top:4%; bottom:auto;background: none;">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+							</button>
+							<button class="carousel-control-next c-pointer border-0" type="button" @click="nextOffer()" style="top:4%; bottom:auto;background: none;">
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="bd-highlight rounded h-50 mt-5 position-relative p-4 text-white home-promoted  d-flex flex-column border-block">
+			<div class="text-center font-size-5 lang" >PROMOTIONS</div>
+			<hr class="mt-0 mb-3 bg-white w-50">
+			<div v-if="vueHome.promotedItems.length > 0" id="home_carousel_promoted" class="carousel carousel-spotlight slide h-100 flex-shrink-1 mb-0" data-ride="carousel" data-interval="false">
+				<ol v-if="vueHome.promotedItems.length > 1" class="carousel-indicators">
+					<li v-for="(item, outIndex) in vueHome.promotedItems" data-target="#home_carousel_promoted" :data-slide-to="outIndex" :class="[outIndex == vueHome.promotedActive ? 'active' : '']"></li>
+				</ol>
+				<div  class="carousel-inner h-100 p-0">
+					<div v-for="(items, outIndex) in vueHome.promotedItems" class="carousel-item item flex-wrap justify-content-around align-content-around" :class="[outIndex == vueHome.promotedActive ? 'active' : '']" >
+						<div v-for="(goods, inIndex) in items" class="h-50 w-50 p-3">
+							<div class="position-relative promoted-product c-pointer w-100 h-100" :style="{'background-image': 'url(' + goods.image + ')'}" 
+							style="background-repeat: no-repeat; background-position: center; background-size: cover;">
+								<div class="overlay" style="background:rgba(17, 17, 17, 0.75);">
+									<div class="btn-group d-flex flex-column justify-content-center w-100 h-100 text-center">
+										<div class="w-100">
+											<p class="text-white">
+												<label class="">{{goods.product_name}}</label>
+												<label class="font-weight-bold w-100 d-inline-block" v-if="vueProductGroupList.current_group_id == -2" >{{formatNumber(goods.product_coin_price)}} {{translate_string('coin')}}</label>
+												<label class="font-weight-bold w-100 d-inline-block" v-else>{{theSettings.currency ?? '$'}} {{formatNumber(goods.product_price)}}</label>
+											</p>
+										</div>
+										<button class="py-0 mx-3 btn btn-sm lang" @click="theShop.buy(goods.product_id, 1)">
+											<i class="fal fa-cart-plus fa-2x"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

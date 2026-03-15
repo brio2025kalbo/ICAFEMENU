@@ -1,0 +1,49 @@
+<div class="rank-container text-center d-flex flex-column flex-grow-1 h-100 p-4">
+
+	<div v-if="Object.keys(vueRank.items).length > 0" class="rank-game-icons d-flex flex-row align-items-center justify-content-center mb-4">
+		<div v-for="(items, gameCode) in vueRank.items" :key="gameCode" class="game-icon d-flex align-items-center justify-content-center" :class="[vueRank.active_game == gameCode ? 'active' : '']" @click="vueRank.active_game = gameCode">
+			<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
+		</div>
+	</div>
+	<div v-if="vueGlobal.pageType == 'Rank' && Object.keys(vueRank.items).length > 0" class="rank-table-container flex-grow-1">
+		<div v-for="(items, gameCode) in vueRank.items" v-show="gameCode == vueRank.active_game" :key="gameCode">
+				<table class="table table-bordered table-hover  table-rounded h-100" style="background-color: rgba(48, 48, 48, 0.5);">
+					<thead>
+						<tr class="text-white font-size-8">
+							<th class="p-1 lang" scope="col" width="4%"><i class="fal fa-chart-line " ></i></th>
+							<th class="p-1" scope="col" width="15%">PLAYER</th>
+							<th v-if="['fortnite', 'pubg', 'lol', 'dota2', 'valorant', 'apex'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">WINS</th>
+							<th v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">LOSSES</th>
+							<th v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">KDR</th>
+							<th class="p-1 lang" scope="col" width="8%">KILLS</th>
+							<th v-if="['lol', 'dota2', 'valorant', 'csgo'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">DEATHS</th>
+							<th v-if="['lol', 'dota2', 'valorant', 'csgo', 'apex'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">ASSIST</th>
+							<th v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="15%">WIN RATIO</th>
+							<th v-if="['fortnite'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">TOP 5</th>
+							<th v-if="['fortnite'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">TOP 10</th>
+							<th v-if="['fortnite'].indexOf(gameCode) >= 0" class="p-1 lang" scope="col" width="8%">TOP 25</th>
+							<th class="p-1" scope="col" width="10%"><i class="fal fa-coins "></i></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="n in 10" class="text-white">
+							<td scope="row">{{ n }}</td>
+							<td>{{ items.length > n-1 && items[n-1].player_name != undefined ? items[n-1].player_name.toUpperCase() : '' }}</td>
+							<td v-if="['fortnite', 'pubg', 'lol', 'dota2', 'valorant', 'apex'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].wins != undefined ? items[n-1].wins : '' }}</td>
+							<td v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].losses ? items[n-1].losses : '' }}</td>
+							<td v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].kdr ? items[n-1].kdr : '' }}</td>
+							<td>{{ items.length > n-1 && items[n-1].kills != undefined ? items[n-1].kills : '' }}</td>
+							<td v-if="['lol', 'dota2', 'valorant', 'csgo'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].deaths ? items[n-1].deaths : '' }}</td>
+							<td v-if="['lol', 'dota2', 'valorant', 'csgo', 'apex'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].assist ? items[n-1].assist : '' }}</td>
+							<td v-if="['lol', 'dota2', 'valorant'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].win_ratio ? toFixed2(items[n-1].win_ratio) : '' }}</td>
+							<td v-if="['fortnite'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].top5s != undefined ? items[n-1].top5s : '' }}</td>
+							<td v-if="['fortnite'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].top10s != undefined ? items[n-1].top10s : '' }}</td>
+							<td v-if="['fortnite'].indexOf(gameCode) >= 0">{{ items.length > n-1 && items[n-1].top25s != undefined ? items[n-1].top25s : '' }}</td>
+							<td>{{ items.length > n-1 && items[n-1].points ? items[n-1].points : '' }}</td>
+						</tr>
+					</tbody>
+				</table>
+		</div>
+	</div>
+</div>
+<div class="member-sidebar bd-highlight rounded p-4 border-block flex-shrink-0 d-flex flex-column" style="width: 400px"></div>

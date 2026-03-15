@@ -1,0 +1,99 @@
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<base href="themes/icafemenu/"> <!-- 关键修改 -->
+	<title>iCafeCloud Client</title>
+	<link rel="stylesheet" type="text/css" href="../../core/lib/toastr/toastr.css">
+	<link rel="stylesheet" type="text/css" href="../../core/lib/sweetalert/sweetalert.css">
+	<link rel="stylesheet" type="text/css" href="../../core/lib/contextmenu/jquery.contextMenu.css">
+	<link rel="stylesheet" type="text/css" href="../../core/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="../../core/css/responsive.css">
+	<link rel="stylesheet" type="text/css" href="../../core/css/dark.css">
+	<link rel="stylesheet" type="text/css" href="../../core/css/font-awesome.css">
+	<link rel="stylesheet" type="text/css" href="../../core/css/freakflags/freakflags.css">
+
+	<link rel="stylesheet" type="text/css" href="css/style.css?v=20260108">
+	
+<div ondragstart="return false" onselectstart = "return false" class="theme-body bs-c bp-c br-n ba-f text-gray" :class="vueGlobal.bodyClass" :style="vueGlobal.bodyStyle" @vue:mounted="mounted()" v-cloak>
+
+<div id="page-layout"></div>
+<div id="page-login" v-show="vueGlobal.currentView === 'login'"></div>
+<div id="page-start-session" class="h-100vh" v-show="vueGlobal.currentView === 'start-session'"></div>
+
+<div id="page-shop-modal"></div>
+<div id="page-game-modal"></div>
+
+<div id="page-event-modal"></div>
+<div id="page-system-settings-modal"></div>
+<div id="page-game-license-modal"></div>
+<div id="page-member-modal" v-pre></div>
+
+<script src="../../core/lib/jquery.js"></script>
+<script src="../../core/lib/petite-vue.iife.js"></script>
+<script src="../../core/lib/accounting.js"></script>
+<script src="../../core/lib/md5.js"></script>
+<script src="../../core/lib/moment.js"></script>
+<script src="../../core/lib/qrcode.js"></script>
+<script src="../../core/lib/bootstrap.js"></script>
+<script src="../../core/lib/toastr/toastr.js"></script>
+<script src="../../core/lib/sweetalert/sweetalert.js"></script>
+<script src="../../core/lib/templates/tmpl.js"></script>
+<script src="../../core/lib/contextmenu/jquery.contextMenu.js"></script>
+<script src="../../core/lib/clipboard/clipboard.js"></script>
+
+<script src="../../core/js/helper.js?v=20251231"></script>
+<script src="../../core/js/login.js?v=20251231"></script>
+<script src="../../core/js/layout.js?v=20251231"></script>
+<script src="../../core/js/home.js?v=20251231"></script>
+<script src="../../core/js/game.js?v=20251231"></script>
+<script src="../../core/js/shop.js?v=20251231"></script>
+<script src="../../core/js/event.js?v=20251231"></script>
+<script src="../../core/js/rank.js?v=20251231"></script>
+<script src="../../core/js/system.js?v=20251231"></script>
+<script src="../../core/js/listen.js?v=20251231"></script>
+<script src="../../core/js/main.js?v=20260113"></script>
+<script>
+
+const pages = [
+					{ url: 'login.htm', id: 'page-login' },
+					{ url: 'layout.htm', id: 'page-layout' },
+					{ url: 'home.htm', id: 'page-home' },
+					{ url: 'game.htm', id: 'page-game' },
+					{ url: 'shop.htm', id: 'page-shop' },
+					{ url: 'event.htm', id: 'page-event' },
+					{ url: 'rank.htm', id: 'page-rank' },
+					{ url: 'game-modal.htm', id: 'page-game-modal' },
+					{ url: 'shop-modal.htm', id: 'page-shop-modal' },
+					{ url: 'event-modal.htm', id: 'page-event-modal' },
+					{ url: 'system-settings-modal.htm', id: 'page-system-settings-modal' },
+					{ url: 'game-license-modal.htm', id: 'page-game-license-modal' },
+					{ url: 'start-session.htm', id: 'page-start-session' },
+					{ url: 'member-modal.htm', id: 'page-member-modal' },
+				];
+async function loadPages()
+{
+	$('#main_body').hide();
+	for(i = 0; i < pages.length; i ++)
+	{
+		const page = pages[i];
+		const ret = await fetch(page.url, {cache: 'no-cache'});
+		const text = await ret.text();
+		await $('#'+page.id).html(text);
+	};
+	
+	// Load member sidebar into class .member-sidebar
+	const ret = await fetch('member-sidebar.htm', {cache: 'no-cache'});
+	const text = await ret.text();
+	$('.member-sidebar').html(text);
+}
+
+loadPages().then(() => main()).then(() => {
+	$('#main_body').show();
+	ICAFEMENU_CORE.translate_obj(document.body);
+});
+</script>
+
+<script src="js/app.js"></script>
+</div>
