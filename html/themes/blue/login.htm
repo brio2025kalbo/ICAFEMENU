@@ -44,14 +44,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    width: 384px;
+    max-width: 95vw;
 }
 
 /* ── The dark panel card ──────────────────────────────── */
 .circuit-panel {
-    width: 384px;
-    max-width: 95vw;
+    width: 100%;
+    flex: 1;
     background: rgba(20, 25, 38, 0.97);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     padding: 36px 28px 20px;
@@ -217,7 +221,9 @@
 .circuit-pc-name-wrap {
     text-align: center; padding: 14px 0 8px;
     background: rgba(0,0,0,0.45);
-    width: 384px; max-width: 95vw; box-sizing: border-box;
+    width: 100%; box-sizing: border-box;
+    flex-shrink: 0;
+    margin-top: auto;
 }
 .circuit-pc-name-text {
     font-weight: 700; color: #ffffff;
@@ -357,7 +363,7 @@
 <!-- ed:login footer info -->
 <!-- st:login div -->
 <div class="loginDiv h-100 formDiv" v-show="vueGlobal.loginSubView == 'login'">
-<section class="h-100 d-flex align-items-center justify-content-center">
+<section class="h-100 d-flex align-items-stretch justify-content-center">
 <div class="circuit-wrapper">
 
 <!-- ══ MAIN PANEL ═══════════════════════════════════ -->
@@ -735,13 +741,13 @@ v-show="vueLoginMode.active_tab !== 'admin'"
 </span>
 </div>
 
-</div><!-- /circuit-panel -->
-
-<!-- PC name + version below the panel -->
+<!-- PC name + version at the bottom of the panel -->
 <div class="circuit-pc-name-wrap normal-only" v-show="!vueGlobal.isHomeVersion">
 <div class="circuit-pc-name-text" :style="{ fontSize: vueGlobal.pcNameFontSize }">{{ vueGlobal.pcName }}</div>
 <div class="circuit-version-text">{{ vueGlobal.versionDate }}</div>
 </div>
+
+</div><!-- /circuit-panel -->
 
 </div><!-- /circuit-wrapper -->
 </section>
