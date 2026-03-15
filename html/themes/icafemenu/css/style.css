@@ -50,9 +50,9 @@ html, body {
 
 #games .home-container .home-up-column .home-top5-games .game-heat {
 	right:15px;
-	background-color:#9B69E8;
+	background-color: var(--theme-badge-heat-bg, var(--theme-accent, #9B69E8));
 	padding:1px 10px;
-	border-radius: 20px; 
+	border-radius: var(--theme-badge-heat-radius, 20px);
 	margin:5px 1px 0 0;
 	cursor: pointer;
 	position: absolute;
@@ -143,9 +143,9 @@ html, body {
 }
 
 #games .rank-container .rank-game-logo {
-	width: 200px;
-	background-color: #303030;
-	border-radius: 5px;
+	width: var(--theme-rank-logo-width, 200px);
+	background-color: var(--theme-rank-logo-bg, #303030);
+	border-radius: var(--theme-radius-sm, 5px);
 }
 
 #games .games-container::-webkit-scrollbar, #game_items::-webkit-scrollbar, #product-list::-webkit-scrollbar, #games .shop-container::-webkit-scrollbar, #games #product_groups::-webkit-scrollbar { display: none; }
@@ -176,22 +176,22 @@ html, body {
 
 /* 游戏详情页操作按钮 */
 .game-detail-btn-groups .btn {
-	background: rgba(255, 255, 255, 0.1);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: var(--theme-btn-secondary-bg, rgba(255, 255, 255, 0.1));
+	border: var(--theme-border-width, 1px) solid var(--theme-btn-border, rgba(255, 255, 255, 0.2));
 	width: 48px;
 	height: 48px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: all 0.2s ease;
+	transition: background var(--theme-transition-fast, 0.2s ease), border-color var(--theme-transition-fast, 0.2s ease);
 }
 .game-detail-btn-groups .btn:hover {
-	background: rgba(255, 255, 255, 0.2);
-	border-color: rgba(255, 255, 255, 0.4);
+	background: var(--theme-btn-secondary-hover, rgba(255, 255, 255, 0.2));
+	border-color: var(--theme-border-color-focus, rgba(255, 255, 255, 0.4));
 }
 .game-detail-btn-groups .btn i {
-	color: #fff;
-	font-size: 20px;
+	color: var(--theme-btn-icon-color, #fff);
+	font-size: var(--theme-btn-icon-size, 20px);
 }
 
 /* extra */

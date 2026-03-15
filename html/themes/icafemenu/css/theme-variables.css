@@ -1,0 +1,148 @@
+/*
+ * iCafeMenu – Theme Design Tokens
+ * ================================
+ * This file defines all CSS custom properties (variables) used by the
+ * icafemenu theme.  Edit the values here to rebrand or redesign the
+ * entire theme from a single location.
+ *
+ * Reload the page (or press F5 in Chrome DevTools) to see changes.
+ *
+ * HOW IT WORKS
+ * ------------
+ * Two additional variables are injected at runtime by main.js from the
+ * iCafeMenu server settings and should NOT be redefined here:
+ *   --client_themes_front_color        (admin-configured accent color)
+ *   --client_themes_back_color         (admin-configured card/bg color)
+ *
+ * The variables below give you fine-grained control over every other
+ * visual aspect of the theme.
+ */
+
+:root {
+
+  /* ============================================================
+   * ACCENT / BRAND COLORS
+   * ============================================================
+   * --theme-accent      : primary highlight used on badges, hover states
+   * --theme-accent-hover: darker shade used on hover / pressed states
+   * ============================================================ */
+  --theme-accent:              #9B69E8;
+  --theme-accent-hover:        #7b4ec8;
+  --theme-accent-rgb:          155, 105, 232; /* used for rgba() shadows */
+
+  /* ============================================================
+   * BACKGROUND COLORS
+   * ============================================================ */
+  --theme-bg-body:             #000000;   /* outermost page background    */
+  --theme-bg-primary:          #111111;   /* main content area            */
+  --theme-bg-card:             #1a1a1a;   /* cards, panels, modals        */
+  --theme-bg-header:           #0d0d0d;   /* top navigation bar           */
+  --theme-bg-overlay:          rgba(0, 0, 0, 0.65); /* image hover overlay */
+
+  /* ============================================================
+   * TEXT COLORS
+   * ============================================================ */
+  --theme-text-primary:        #ffffff;   /* headings, labels             */
+  --theme-text-secondary:      #cccccc;   /* body text                    */
+  --theme-text-muted:          #888888;   /* placeholder, disabled text   */
+  --theme-text-link:           #9B69E8;   /* hyperlinks                   */
+
+  /* ============================================================
+   * BORDER & DIVIDER
+   * ============================================================ */
+  --theme-border-color:        rgba(255, 255, 255, 0.10);
+  --theme-border-color-focus:  rgba(255, 255, 255, 0.35);
+  --theme-border-width:        1px;
+
+  /* ============================================================
+   * RADIUS
+   * ============================================================ */
+  --theme-radius-sm:           4px;
+  --theme-radius-md:           8px;
+  --theme-radius-lg:           12px;
+  --theme-radius-pill:         20px;
+  --theme-radius-circle:       50%;
+
+  /* ============================================================
+   * SPACING (used in custom components, not Bootstrap grid)
+   * ============================================================ */
+  --theme-space-xs:            4px;
+  --theme-space-sm:            8px;
+  --theme-space-md:            16px;
+  --theme-space-lg:            24px;
+  --theme-space-xl:            40px;
+
+  /* ============================================================
+   * SHADOWS
+   * ============================================================ */
+  --theme-shadow-card:         0 4px 16px rgba(0, 0, 0, 0.40);
+  --theme-shadow-overlay:      0 0 5px 2px rgba(0, 0, 0, 0.40);
+  --theme-shadow-accent:       0 0 12px rgba(var(--theme-accent-rgb), 0.45);
+
+  /* ============================================================
+   * TRANSITIONS
+   * ============================================================ */
+  --theme-transition-fast:     0.15s ease;
+  --theme-transition-normal:   0.30s ease;
+  --theme-transition-slow:     0.50s ease;
+
+  /* ============================================================
+   * TYPOGRAPHY
+   * ============================================================ */
+  --theme-font-family:         'Open Sans', 'Segoe UI', Roboto, sans-serif;
+  --theme-font-size-base:      14px;
+  --theme-font-size-sm:        12px;
+  --theme-font-size-lg:        18px;
+  --theme-font-size-h1:        40px;   /* PC name on login screen        */
+
+  /* ============================================================
+   * HEADER / NAVIGATION
+   * ============================================================ */
+  --theme-header-height:       60px;
+  --theme-logo-size:           96px;
+  --theme-menu-icon-padding:   0 20px;
+
+  /* ============================================================
+   * GAME / SHOP CARDS
+   * ============================================================ */
+  --theme-game-img-width:      136px;
+  --theme-shop-img-size:       138px;
+  --theme-card-radius:         var(--theme-radius-md);
+
+  /* ============================================================
+   * BADGE – "HEAT" / HOT INDICATOR
+   * ============================================================ */
+  --theme-badge-heat-bg:       var(--theme-accent);  /* defaults to accent color */
+  --theme-badge-heat-radius:   var(--theme-radius-pill);
+
+  /* ============================================================
+   * BUTTONS
+   * ============================================================ */
+  --theme-btn-primary-bg:      var(--theme-accent);
+  --theme-btn-primary-hover:   var(--theme-accent-hover);
+  --theme-btn-secondary-bg:    rgba(255, 255, 255, 0.10);
+  --theme-btn-secondary-hover: rgba(255, 255, 255, 0.20);
+  --theme-btn-border:          rgba(255, 255, 255, 0.20);
+  --theme-btn-icon-size:       20px;
+  --theme-btn-icon-color:      #ffffff;
+
+  /* ============================================================
+   * STATUS COLORS (keep consistent with Bootstrap utilities)
+   * ============================================================ */
+  --theme-color-success:       #28a745;
+  --theme-color-warning:       #ffc107;
+  --theme-color-danger:        #dc3545;
+  --theme-color-info:          #17a2b8;
+
+  /* ============================================================
+   * RANK TABLE
+   * ============================================================ */
+  --theme-rank-logo-bg:        #303030;
+  --theme-rank-logo-width:     200px;
+  --theme-rank-font-size:      16px;
+
+  /* ============================================================
+   * SCROLLBAR (hidden by default; change display to "auto" to show)
+   * ============================================================ */
+  --theme-scrollbar-display:   none;
+}
