@@ -39,7 +39,7 @@
 	<!-- st:login div -->
 	<div class="pc_name normal-only" v-show="!vueGlobal.isHomeVersion" :style="{ fontSize: vueGlobal.pcNameFontSize }">{{ vueGlobal.pcName }}</div>
 	<div class="loginDiv h-100 formDiv" v-show="vueGlobal.loginSubView === 'login' && !vueGlobal.isHomeCafeId">
-		<section class="h-100 d-flex align-items-center justify-content-center">
+		<section class="h-100 d-flex align-items-stretch justify-content-center">
 			<div class="text-center login-form-div d-flex h-100 align-items-center" id="login-form-container">
 				<form method="post" id="loginForm" role="form" class="form-horizontal" @submit.prevent="multi_mode_login()">
 				<!-- 今日预定提示（在输入框上方） -->

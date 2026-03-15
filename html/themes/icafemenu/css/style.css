@@ -961,6 +961,12 @@ a.reboot-button {
 	border-radius: 0.3125rem;
 }
 
+#page_login .loginDiv .login-form-div {
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
 .bg-90 {
 	background-color: var(--client_themes_back_color_90);
 }
