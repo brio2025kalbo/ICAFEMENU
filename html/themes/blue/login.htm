@@ -51,8 +51,10 @@
 /* ── The dark panel card ──────────────────────────────── */
 .circuit-panel {
     width: 100%;
+    flex: 1;
     background: rgba(20, 25, 38, 0.97);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     padding: 36px 28px 20px;
@@ -219,6 +221,8 @@
     text-align: center; padding: 14px 0 8px;
     background: rgba(0,0,0,0.45);
     width: 100%; box-sizing: border-box;
+    flex-shrink: 0;
+    margin-top: auto;
 }
 .circuit-pc-name-text {
     font-weight: 700; color: #ffffff;
@@ -358,7 +362,7 @@
 <!-- ed:login footer info -->
 <!-- st:login div -->
 <div class="loginDiv h-100 formDiv" v-show="vueGlobal.loginSubView == 'login'">
-<section class="h-100 d-flex align-items-center justify-content-center">
+<section class="h-100 d-flex align-items-stretch justify-content-center">
 <div class="circuit-wrapper">
 
 <!-- ══ MAIN PANEL ═══════════════════════════════════ -->
