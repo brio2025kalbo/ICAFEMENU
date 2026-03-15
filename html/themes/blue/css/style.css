@@ -8314,3 +8314,388 @@ body {
 .blue-card-body .blue-form-row .form-group {
     flex: 1;
 }
+
+/* ========================================
+   Circuit Panel — Login Page Redesign
+   ======================================== */
+
+/* Full-height panel wrapping all login content */
+#page_login .circuit-panel {
+    display: flex;
+    flex-direction: column;
+    width: 412px;
+    max-width: 412px;
+    height: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* Scrollable main content area */
+#page_login .circuit-card-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 40px;
+    padding-bottom: 16px;
+}
+
+#page_login .circuit-card-area::-webkit-scrollbar {
+    display: none;
+}
+
+/* Brand section */
+#page_login .circuit-brand-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+#page_login .circuit-brand-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#page_login .circuit-brand-name {
+    font-family: "Rubik", sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+/* Subtitle under brand name */
+#page_login .circuit-subtitle {
+    font-family: "Rubik", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: #576081;
+    margin: 0 0 4px 0;
+    text-align: center;
+}
+
+/* Tab header row for non-account tabs */
+#page_login .circuit-tab-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+    background: rgba(24, 29, 39, 0.95);
+    border: 1px solid rgba(87, 96, 129, 0.3);
+    border-radius: 12px;
+    padding: 0 16px;
+}
+
+#page_login .circuit-tab-title {
+    font-family: "Rubik", sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Main content card-like wrapper (inherits blue-card-body styles via form-group etc.) */
+#page_login .circuit-card-area .form-group,
+#page_login .circuit-card-area .access-code-container,
+#page_login .circuit-card-area .reset-password-link,
+#page_login .circuit-card-area .blue-btn-primary,
+#page_login .circuit-card-area .circuit-divider,
+#page_login .circuit-card-area .circuit-social-row,
+#page_login .circuit-card-area .circuit-register-link,
+#page_login .circuit-card-area .booking-banner,
+#page_login .circuit-card-area .blue-form-row {
+    /* inherit from .blue-card-body via cascade */
+}
+
+/* Apply card-body form styles to the circuit area */
+#page_login .circuit-card-area .form-label {
+    color: #576081 !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    text-align: left !important;
+    display: block !important;
+    margin-bottom: 8px !important;
+    font-family: "Rubik", sans-serif !important;
+}
+
+#page_login .circuit-card-area .form-control,
+#page_login .circuit-card-area .login-input {
+    background-color: rgba(24, 29, 39, 0.95) !important;
+    border: 1px solid rgba(87, 96, 129, 0.3) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    height: 46px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease;
+    width: 100% !important;
+}
+
+#page_login .circuit-card-area .form-control:focus,
+#page_login .circuit-card-area .login-input:focus {
+    background-color: rgba(24, 29, 39, 1) !important;
+    border-color: rgba(87, 96, 129, 0.5) !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#page_login .circuit-card-area .password-wrapper {
+    position: relative;
+}
+
+#page_login .circuit-card-area .password-toggle {
+    position: absolute !important;
+    right: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+}
+
+#page_login .circuit-card-area .form-group {
+    margin-bottom: 12px;
+}
+
+#page_login .circuit-card-area .form-group:last-child {
+    margin-bottom: 0;
+}
+
+#page_login .circuit-card-area .reset-password-link {
+    text-align: left;
+    margin-top: -4px;
+    margin-bottom: 12px;
+}
+
+#page_login .circuit-card-area .reset-password-link a {
+    font-family: "Rubik", sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    color: #576081;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+#page_login .circuit-card-area .reset-password-link a:hover {
+    color: #7c8ab0;
+}
+
+#page_login .circuit-card-area .login-input.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+#page_login .circuit-card-area .blue-form-row {
+    display: flex;
+    gap: 10px;
+}
+
+#page_login .circuit-card-area .blue-form-row .form-group {
+    flex: 1;
+}
+
+#page_login .circuit-card-area .access-code-container {
+    display: grid;
+    grid-template-columns: repeat(4, 53px);
+    column-gap: 10px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+#page_login .circuit-card-area .access-code-input {
+    width: 53px !important;
+    height: 60px !important;
+    background: rgba(24, 29, 39, 0.95) !important;
+    border: 1px solid rgba(87, 96, 129, 0.3) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-family: "Rubik", sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    text-align: center;
+    transition: all 0.3s ease;
+    padding: 0 !important;
+}
+
+#page_login .circuit-card-area .access-code-input:focus {
+    background: rgba(24, 29, 39, 1) !important;
+    border-color: #3faa5e !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(63, 170, 94, 0.2) !important;
+}
+
+#page_login .circuit-card-area .error-message {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+#page_login .circuit-card-area .error-message.show {
+    display: block;
+}
+
+/* "Continue with" divider */
+#page_login .circuit-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 12px;
+}
+
+#page_login .circuit-divider-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(87, 96, 129, 0.3);
+}
+
+#page_login .circuit-divider-text {
+    font-family: "Rubik", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #576081;
+    white-space: nowrap;
+}
+
+/* Social login button row */
+#page_login .circuit-social-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+#page_login .circuit-social-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 44px;
+    background: rgba(24, 29, 39, 0.95);
+    border: 1px solid rgba(87, 96, 129, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: "Rubik", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#page_login .circuit-social-btn:hover {
+    background: rgba(35, 44, 69, 0.8);
+    border-color: rgba(87, 96, 129, 0.5);
+}
+
+#page_login .circuit-social-btn:focus {
+    outline: 2px solid rgba(63, 170, 94, 0.6);
+    outline-offset: 2px;
+}
+
+/* Register / create account link */
+#page_login .circuit-register-link {
+    font-family: "Rubik", sans-serif;
+    font-size: 13px;
+    color: #576081;
+    text-align: center;
+    margin: 8px 0 0;
+}
+
+#page_login .circuit-register-link a {
+    color: #3faa5e;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 4px;
+    transition: color 0.3s ease;
+}
+
+#page_login .circuit-register-link a:hover {
+    color: #4caf6a;
+    text-decoration: underline;
+}
+
+/* Quick icons row spacing inside circuit panel */
+#page_login .circuit-quick-icons-row {
+    margin-top: 8px;
+}
+
+/* Footer: Language | PC Name | Version */
+#page_login .circuit-pc-name-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: 0;
+    padding: 16px 0 24px;
+    flex-wrap: wrap;
+}
+
+#page_login .circuit-footer-separator {
+    display: inline-block;
+    width: 1px;
+    height: 14px;
+    background: #576081;
+    margin: 0 10px;
+    vertical-align: middle;
+}
+
+#page_login .circuit-footer-pc {
+    font-family: "Rubik", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #576081;
+    white-space: nowrap;
+}
+
+#page_login .circuit-pc-name-wrap .footer-item,
+#page_login .circuit-pc-name-wrap #language-selector,
+#page_login .circuit-pc-name-wrap #keyboard-indicator {
+    font-family: "Rubik", sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #576081 !important;
+    line-height: 1 !important;
+    position: static !important;
+    bottom: auto !important;
+    right: auto !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    height: auto !important;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+#page_login .circuit-pc-name-wrap #language-selector {
+    cursor: pointer;
+}
+
+#page_login .circuit-pc-name-wrap #language-selector:hover {
+    opacity: 0.8;
+}
+
+#page_login .circuit-pc-name-wrap #language-selector #current-language,
+#page_login .circuit-pc-name-wrap #language-selector span {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #576081 !important;
+    text-transform: uppercase !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+#page_login .circuit-pc-name-wrap #keyboard-indicator svg path {
+    fill: #576081 !important;
+}
+
+#page_login .circuit-pc-name-wrap #version_date {
+    color: #576081 !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    white-space: nowrap;
+}

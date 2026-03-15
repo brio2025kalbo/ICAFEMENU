@@ -58,61 +58,69 @@
 			<i class="fal fa-rotate-right"></i> 
 		</a>
 	</div>
-	<!-- st:login footer info: v. EN | keyboard -->
-	<div class="login-footer-info position-fixed d-flex flex-row align-items-center justify-content-end">
-		<span id="version_date" class="footer-item version-text d-inline-flex align-items-center justify-content-center">{{ vueGlobal.versionDate }}</span>
-		<span class="footer-item d-flex align-items-center justify-content-center" id="language-selector"><span id="current-language">{{  (theSettings && theSettings.license_lang) ? theSettings.license_lang.toUpperCase() : 'EN' }}</span></span>
-		<span class="footer-separator d-inline-block">|</span>
-		<span class="footer-item d-flex align-items-center justify-content-center" id="keyboard-indicator"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 0H1.5C0.675 0 0.00749999 0.675 0.00749999 1.5L0 9C0 9.825 0.675 10.5 1.5 10.5H13.5C14.325 10.5 15 9.825 15 9V1.5C15 0.675 14.325 0 13.5 0ZM6.75 2.25H8.25V3.75H6.75V2.25ZM6.75 4.5H8.25V6H6.75V4.5ZM4.5 2.25H6V3.75H4.5V2.25ZM4.5 4.5H6V6H4.5V4.5ZM3.75 6H2.25V4.5H3.75V6ZM3.75 3.75H2.25V2.25H3.75V3.75ZM10.5 9H4.5V7.5H10.5V9ZM10.5 6H9V4.5H10.5V6ZM10.5 3.75H9V2.25H10.5V3.75ZM12.75 6H11.25V4.5H12.75V6ZM12.75 3.75H11.25V2.25H12.75V3.75Z" fill="white"/></svg></span>
-	</div>
-	<!-- ed:login footer info -->
 	<!-- st:login div -->
-	<div class="pc_name normal-only" v-show="!vueGlobal.isHomeVersion" :style="{ fontSize: vueGlobal.pcNameFontSize }">{{ vueGlobal.pcName }}</div>
 	<div class="loginDiv h-100 formDiv" v-show="vueGlobal.loginSubView == 'login'">
-		<section class="h-100 d-flex align-items-center justify-content-center">
-			<div class="blue-card-container">
+		<section class="h-100 d-flex align-items-stretch justify-content-center">
+			<div class="circuit-panel">
+				<div class="circuit-card-area">
 
-				<!-- Main Card -->
-				<div class="blue-main-card">
-					<div class="blue-card-header">
-						<span class="blue-back-arrow" tabindex="99" v-show="vueLoginMode.active_tab !== 'account'" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
+					<!-- Brand section (account tab only) -->
+					<div class="circuit-brand-section" v-show="vueLoginMode.active_tab === 'account'">
+						<div class="circuit-brand-icons">
+							<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect x="2" y="2" width="8" height="8" rx="2" stroke="#3faa5e" stroke-width="1.5"/>
+								<rect x="12" y="2" width="8" height="8" rx="2" stroke="#3faa5e" stroke-width="1.5"/>
+								<rect x="2" y="12" width="8" height="8" rx="2" stroke="#3faa5e" stroke-width="1.5"/>
+								<path d="M16 10v2M16 12h-4v4h4v2" stroke="#3faa5e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+							<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<circle cx="11" cy="11" r="4" fill="#3faa5e" opacity="0.85"/>
+								<path d="M11 2v3M11 17v3M2 11h3M17 11h3M4.93 4.93l2.12 2.12M14.95 14.95l2.12 2.12M4.93 17.07l2.12-2.12M14.95 7.05l2.12-2.12" stroke="#3faa5e" stroke-width="1.5" stroke-linecap="round"/>
+							</svg>
+							<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M4 6h14M4 11h14M4 16h8" stroke="#3faa5e" stroke-width="1.5" stroke-linecap="round"/>
+								<circle cx="17" cy="16" r="3" stroke="#3faa5e" stroke-width="1.5"/>
+							</svg>
+						</div>
+						<span class="circuit-brand-name">CIRCUIT</span>
+					</div>
+
+					<!-- Tab header (non-account tabs) -->
+					<div class="circuit-tab-header" v-show="vueLoginMode.active_tab !== 'account'">
+						<span class="blue-back-arrow" tabindex="99" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 15L7.5 10L12.5 5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 						</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'account'">Log in</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'access_code'">Access code</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'social'">Social login</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'guest'">Guest</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'balance'">Top up balance</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'admin'">Admin password</span>
-						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'forgot_password'">Reset password</span>
-						<a tabindex="4" href="javascript:void(0)" 
-						   v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1)" 
-						   v-show="vueLoginMode.active_tab === 'account'"
-						   class="blue-signup-link lang" 
-						   onclick="((theSettings.client_register_member_way ?? 0) == 1) ? theMemberRegister.show_dialog() : theMemberRegister.show_client_register()" 
-						   title="Register">Register</a>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'access_code'">Access code</span>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'social'">Social login</span>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'guest'">Guest</span>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'balance'">Top up balance</span>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'admin'">Admin password</span>
+						<span class="circuit-tab-title lang" v-show="vueLoginMode.active_tab === 'forgot_password'">Reset password</span>
 					</div>
-					<div class="blue-card-body">
+
+					<!-- Subtitle (account tab only) -->
+					<p class="circuit-subtitle lang" v-show="vueLoginMode.active_tab === 'account'">Log in with your credentials</p>
+
+					<!-- Booking banner -->
+					<div v-if="vueLogin.recentBookingAt" class="booking-banner">
+						<div class="booking-banner-icon">
+							<i class="fal fa-flag"></i>
+						</div>
+						<div>
+							<div class="booking-banner-title">
+								<span class="lang">PC will be busy at</span>
+								<span class="booking-banner-time" v-if="vueLogin.recentBookingAt">&nbsp;{{ vueLogin.recentBookingAt }}</span>
+							</div>
+							<div class="booking-banner-sub" v-if="vueLogin.recentBookingLeft">
+								<span class="lang">in</span>
+								&nbsp;{{ vueLogin.recentBookingLeft }}
+							</div>
+						</div>
+					</div>
 
 					<!-- 1. Sign In -->
 					<div v-show="vueLoginMode.active_tab === 'account'">
 						<form method="post" id="loginForm" role="form" class="form-horizontal" @submit.prevent="multi_mode_login()">
-							<!-- 今日预定提示（在输入框上方） -->
-							<div v-if="vueLogin.recentBookingAt" class="booking-banner">
-								<div class="booking-banner-icon">
-									<i class="fal fa-flag"></i>
-								</div>
-								<div>
-									<div class="booking-banner-title">
-										<span class="lang">PC will be busy at</span>
-										<span class="booking-banner-time" v-if="vueLogin.recentBookingAt">&nbsp;{{ vueLogin.recentBookingAt }}</span>
-									</div>
-									<div class="booking-banner-sub" v-if="vueLogin.recentBookingLeft">
-										<span class="lang">in</span>
-										&nbsp;{{ vueLogin.recentBookingLeft }}
-									</div>
-								</div>
-							</div>
 							<div class="form-group">
 								<label class="form-label lang">Username</label>
 								<input tabindex="1" type="text" id="username" name="username" class="form-control login-input lang" v-model="vueLogin.username">
@@ -121,13 +129,32 @@
 								<label class="form-label lang">Password</label>
 								<div class="password-wrapper">
 									<input tabindex="2" :type="vueLogin.showPassword ? 'text' : 'password'" id="password" name="password" class="form-control login-input lang" :class="{'is-invalid': vueLogin.isKeyboardError}" v-model="vueLogin.password" @keydown="vueLogin.isKeyboardError = !isEnglishKeyboardInput($event)">
-									<svg class="password-toggle" @click="vueLogin.showPassword = !vueLogin.showPassword" @keydown.enter="vueLogin.showPassword = !vueLogin.showPassword" @keydown.space.prevent="vueLogin.showPassword = !vueLogin.showPassword" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" clip-path="url(#clip0_2074_11998)"><path d="M1.54639 9.26054C1.48389 9.09215 1.48389 8.90692 1.54639 8.73854C2.15517 7.26243 3.18853 6.00032 4.51547 5.11221C5.84241 4.22411 7.40317 3.75 8.99989 3.75C10.5966 3.75 12.1574 4.22411 13.4843 5.11221C14.8113 6.00032 15.8446 7.26243 16.4534 8.73854C16.5159 8.90692 16.5159 9.09215 16.4534 9.26054C15.8446 10.7366 14.8113 11.9988 13.4843 12.8869C12.1574 13.775 10.5966 14.2491 8.99989 14.2491C7.40317 14.2491 5.84241 13.775 4.51547 12.8869C3.18853 11.9988 2.15517 10.7366 1.54639 9.26054Z" stroke="#576081" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 11.25C10.2426 11.25 11.25 10.2426 11.25 9C11.25 7.75736 10.2426 6.75 9 6.75C7.75736 6.75 6.75 7.75736 6.75 9C6.75 10.2426 7.75736 11.25 9 11.25Z" stroke="#576081" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_2074_11998"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>
+									<svg class="password-toggle" tabindex="0" @click="vueLogin.showPassword = !vueLogin.showPassword" @keydown.enter="vueLogin.showPassword = !vueLogin.showPassword" @keydown.space.prevent="vueLogin.showPassword = !vueLogin.showPassword" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g opacity="0.4" clip-path="url(#clip0_2074_11998)"><path d="M1.54639 9.26054C1.48389 9.09215 1.48389 8.90692 1.54639 8.73854C2.15517 7.26243 3.18853 6.00032 4.51547 5.11221C5.84241 4.22411 7.40317 3.75 8.99989 3.75C10.5966 3.75 12.1574 4.22411 13.4843 5.11221C14.8113 6.00032 15.8446 7.26243 16.4534 8.73854C16.5159 8.90692 16.5159 9.09215 16.4534 9.26054C15.8446 10.7366 14.8113 11.9988 13.4843 12.8869C12.1574 13.775 10.5966 14.2491 8.99989 14.2491C7.40317 14.2491 5.84241 13.775 4.51547 12.8869C3.18853 11.9988 2.15517 10.7366 1.54639 9.26054Z" stroke="#576081" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 11.25C10.2426 11.25 11.25 10.2426 11.25 9C11.25 7.75736 10.2426 6.75 9 6.75C7.75736 6.75 6.75 7.75736 6.75 9C6.75 10.2426 7.75736 11.25 9 11.25Z" stroke="#576081" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g><defs><clipPath id="clip0_2074_11998"><rect width="18" height="18" fill="white"/></clipPath></defs></svg>
 								</div>
 							</div>
 							<div tabindex="5" class="reset-password-link" v-if="[RESET_PASSWORD_SMS, RESET_PASSWORD_EMAIL].includes(theSettings?.client_reset_password_way ?? 0)">
 								<a href="javascript:void(0)" class="lang" @click="login_switch_tab('forgot_password')">Forgot password?</a>
 							</div>
 							<button tabindex="3" type="submit" class="blue-btn-primary lang mt-2" :disabled="vueGlobal.isLoading">Log in</button>
+
+							<!-- Continue with social login -->
+							<div class="circuit-divider" v-if="theSettings.social_login == 1">
+								<span class="circuit-divider-line"></span>
+								<span class="circuit-divider-text lang">Continue with</span>
+								<span class="circuit-divider-line"></span>
+							</div>
+							<div class="circuit-social-row" v-if="theSettings.social_login == 1">
+								<button type="button" class="circuit-social-btn lang" tabindex="6" @click="login_switch_tab('social'); start_social_login()">
+									<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="7.5" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 9a2.5 2.5 0 005 0 2.5 2.5 0 00-5 0z" fill="currentColor" opacity="0.6"/><path d="M9 1.5v15M1.5 9h15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" opacity="0.5"/></svg>
+									Social login
+								</button>
+							</div>
+
+							<!-- Don't have an account yet? -->
+							<p class="circuit-register-link" v-if="theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1">
+								<span class="lang">Don't have an account yet?</span>
+								<a tabindex="4" href="javascript:void(0)" class="lang" onclick="((theSettings.client_register_member_way ?? 0) == 1) ? theMemberRegister.show_dialog() : theMemberRegister.show_client_register()">Create account</a>
+							</p>
 						</form>
 					</div>
 
@@ -271,92 +298,102 @@
 						</form>
 					</div>
 
-					</div><!-- /blue-card-body -->
-				</div><!-- /blue-main-card -->
+					<!-- Quick Icons (for switching modes) -->
+					<div class="blue-quick-icons circuit-quick-icons-row">
+						<!-- Default / Reset password / Admin password / Balance: Social login, Guest, Access code -->
+						<div class="blue-quick-icon-group" v-show="['account','forgot_password','admin','balance'].indexOf(vueLoginMode.active_tab) !== -1">
+							<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
+								<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Social login</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
+								<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Guest</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
+								<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
+								<label class="blue-quick-icon-label lang">Access code</label>
+							</div>
+						</div>
+						<!-- Social login: Log in, Guest, Access code -->
+						<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'social'">
+							<div class="blue-quick-icon-item" tabindex="10" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
+								<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Log in</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
+								<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Guest</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
+								<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
+								<label class="blue-quick-icon-label lang">Access code</label>
+							</div>
+						</div>
+						<!-- Guest: Social login, Log in, Access code -->
+						<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'guest'">
+							<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
+								<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Social login</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="11" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
+								<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Log in</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
+								<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
+								<label class="blue-quick-icon-label lang">Access code</label>
+							</div>
+						</div>
+						<!-- Access code: Social login, Guest, Log in -->
+						<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'access_code'">
+							<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
+								<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Social login</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
+								<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Guest</label>
+							</div>
+							<div class="blue-quick-icon-item" tabindex="12" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
+								<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
+								<label class="blue-quick-icon-label lang">Log in</label>
+							</div>
+						</div>
+					</div>
 
-				<!-- Quick Icons -->
-				<div class="blue-quick-icons">
-					<!-- Default / Reset password / Admin password / Balance: Social login, Guest, Access code -->
-					<div class="blue-quick-icon-group" v-show="['account','forgot_password','admin','balance'].indexOf(vueLoginMode.active_tab) !== -1">
-						<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
-							<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Social login</label>
+					<!-- Balance Row -->
+					<div class="blue-row-item" tabindex="20" v-if="theSettings.allow_topup_at_client == 1" v-show="vueLoginMode.active_tab !== 'balance'" @click="login_switch_tab('balance'); vueTopup.resetOutputs();" @keydown.enter="login_switch_tab('balance'); vueTopup.resetOutputs();" @keydown.space.prevent="login_switch_tab('balance'); vueTopup.resetOutputs();">
+						<div class="blue-row-item-left">
+							<span class="blue-row-item-icon"><img src="images/balance-login.svg" /></span>
+							<label class="lang">Balance</label>
 						</div>
-						<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
-							<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Guest</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
-							<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
-							<label class="blue-quick-icon-label lang">Access code</label>
-						</div>
+						<span class="blue-row-item-arrow">→</span>
 					</div>
-					<!-- Social login: Log in, Guest, Access code -->
-					<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'social'">
-						<div class="blue-quick-icon-item" tabindex="10" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
-							<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Log in</label>
+
+					<!-- Admin Row -->
+					<div class="blue-row-item" tabindex="21" v-show="vueLoginMode.active_tab !== 'admin'" @click="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.enter="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.space.prevent="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;">
+						<div class="blue-row-item-left">
+							<span class="blue-row-item-icon"><img src="images/admin-login.svg" /></span>
+							<label class="lang">Admin</label>
 						</div>
-						<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
-							<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Guest</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
-							<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
-							<label class="blue-quick-icon-label lang">Access code</label>
-						</div>
+						<span class="blue-row-item-arrow">→</span>
 					</div>
-					<!-- Guest: Social login, Log in, Access code -->
-					<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'guest'">
-						<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
-							<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Social login</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="11" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
-							<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Log in</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="12" v-if="(theSettings.access_code_login ?? 0) == 1" @click="login_switch_tab('access_code')" @keydown.enter="login_switch_tab('access_code')" @keydown.space.prevent="login_switch_tab('access_code')">
-							<div class="blue-quick-icon-circle"><img src="images/access-code.svg" /></div>
-							<label class="blue-quick-icon-label lang">Access code</label>
-						</div>
-					</div>
-					<!-- Access code: Social login, Guest, Log in -->
-					<div class="blue-quick-icon-group" v-show="vueLoginMode.active_tab === 'access_code'">
-						<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
-							<div class="blue-quick-icon-circle"><img src="images/social-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Social login</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="11" v-if="theSettings.topup_login_at_client == 1" @click="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.enter="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;" @keydown.space.prevent="login_switch_tab('guest'); vueTopupLogin.reset(); vueTopupLogin.showFormRows = true;">
-							<div class="blue-quick-icon-circle"><img src="images/guest-login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Guest</label>
-						</div>
-						<div class="blue-quick-icon-item" tabindex="12" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
-							<div class="blue-quick-icon-circle"><img src="images/login.svg" /></div>
-							<label class="blue-quick-icon-label lang">Log in</label>
-						</div>
-					</div>
+
+				</div><!-- /circuit-card-area -->
+
+				<!-- Footer: Language | PC Name | Version -->
+				<div class="circuit-pc-name-wrap">
+					<span class="footer-item d-flex align-items-center justify-content-center" id="language-selector"><span id="current-language">{{ (theSettings && theSettings.license_lang) ? theSettings.license_lang.toUpperCase() : 'EN' }}</span></span>
+					<span class="circuit-footer-separator"></span>
+					<span class="circuit-footer-pc normal-only" v-show="!vueGlobal.isHomeVersion">{{ vueGlobal.pcName }}</span>
+					<span class="circuit-footer-separator" v-show="!vueGlobal.isHomeVersion"></span>
+					<span id="version_date" class="footer-item version-text d-inline-flex align-items-center justify-content-center">{{ vueGlobal.versionDate }}</span>
+					<span class="circuit-footer-separator"></span>
+					<span class="footer-item d-flex align-items-center justify-content-center" id="keyboard-indicator"><svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.5 0H1.5C0.675 0 0.00749999 0.675 0.00749999 1.5L0 9C0 9.825 0.675 10.5 1.5 10.5H13.5C14.325 10.5 15 9.825 15 9V1.5C15 0.675 14.325 0 13.5 0ZM6.75 2.25H8.25V3.75H6.75V2.25ZM6.75 4.5H8.25V6H6.75V4.5ZM4.5 2.25H6V3.75H4.5V2.25ZM4.5 4.5H6V6H4.5V4.5ZM3.75 6H2.25V4.5H3.75V6ZM3.75 3.75H2.25V2.25H3.75V3.75ZM10.5 9H4.5V7.5H10.5V9ZM10.5 6H9V4.5H10.5V6ZM10.5 3.75H9V2.25H10.5V3.75ZM12.75 6H11.25V4.5H12.75V6ZM12.75 3.75H11.25V2.25H12.75V3.75Z" fill="white"/></svg></span>
 				</div>
 
-				<!-- Balance Row -->
-				<div class="blue-row-item" tabindex="20" v-if="theSettings.allow_topup_at_client == 1" v-show="vueLoginMode.active_tab !== 'balance'" @click="login_switch_tab('balance'); vueTopup.resetOutputs();" @keydown.enter="login_switch_tab('balance'); vueTopup.resetOutputs();" @keydown.space.prevent="login_switch_tab('balance'); vueTopup.resetOutputs();">
-					<div class="blue-row-item-left">
-						<span class="blue-row-item-icon"><img src="images/balance-login.svg" /></span>
-						<label class="lang">Balance</label>
-					</div>
-					<span class="blue-row-item-arrow">→</span>
-				</div>
-
-				<!-- Admin Row -->
-				<div class="blue-row-item" tabindex="21" v-show="vueLoginMode.active_tab !== 'admin'" @click="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.enter="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.space.prevent="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;">
-					<div class="blue-row-item-left">
-						<span class="blue-row-item-icon"><img src="images/admin-login.svg" /></span>
-						<label class="lang">Admin</label>
-					</div>
-					<span class="blue-row-item-arrow">→</span>
-				</div>
-
-			</div>
+			</div><!-- /circuit-panel -->
 		</section>
 	</div>
 	<!-- dd:login div -->
