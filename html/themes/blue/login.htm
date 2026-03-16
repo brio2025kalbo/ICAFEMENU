@@ -72,9 +72,9 @@
 		<section class="h-100 d-flex align-items-center justify-content-center">
 			<div class="blue-card-container">
 
-				<!-- Main Card -->
-				<div class="blue-main-card">
-					<div class="blue-card-header">
+					<!-- Main Card -->
+					<div class="blue-main-card">
+						<div class="blue-card-header" style="padding-top: 60px;">
 						<span class="blue-back-arrow" tabindex="99" v-show="vueLoginMode.active_tab !== 'account'" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 15L7.5 10L12.5 5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 						</span>
@@ -92,7 +92,7 @@
 						   onclick="((theSettings.client_register_member_way ?? 0) == 1) ? theMemberRegister.show_dialog() : theMemberRegister.show_client_register()" 
 						   title="Register">Register</a>
 					</div>
-					<div class="blue-card-body">
+						<div class="blue-card-body d-flex flex-column justify-content-center">
 
 					<!-- 1. Sign In -->
 					<div v-show="vueLoginMode.active_tab === 'account'">
@@ -271,11 +271,10 @@
 						</form>
 					</div>
 
-					</div><!-- /blue-card-body -->
-				</div><!-- /blue-main-card -->
-
-				<!-- Quick Icons -->
-				<div class="blue-quick-icons">
+						</div><!-- /blue-card-body -->
+	
+					<!-- Quick Icons -->
+					<div class="blue-quick-icons" style="padding: 0 20px 10px 20px;">
 					<!-- Default / Reset password / Admin password / Balance: Social login, Guest, Access code -->
 					<div class="blue-quick-icon-group" v-show="['account','forgot_password','admin','balance'].indexOf(vueLoginMode.active_tab) !== -1">
 						<div class="blue-quick-icon-item" tabindex="10" v-if="theSettings.social_login == 1" @click="login_switch_tab('social'); start_social_login()" @keydown.enter="login_switch_tab('social'); start_social_login()" @keydown.space.prevent="login_switch_tab('social'); start_social_login()">
@@ -347,16 +346,16 @@
 					<span class="blue-row-item-arrow">→</span>
 				</div>
 
-				<!-- Admin Row -->
-				<div class="blue-row-item" tabindex="21" v-show="vueLoginMode.active_tab !== 'admin'" @click="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.enter="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.space.prevent="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;">
-					<div class="blue-row-item-left">
-						<span class="blue-row-item-icon"><img src="images/admin-login.svg" /></span>
-						<label class="lang">Admin</label>
+					<!-- Admin Row -->
+					<div class="blue-row-item" tabindex="21" v-show="vueLoginMode.active_tab !== 'admin'" @click="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.enter="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" @keydown.space.prevent="login_switch_tab('admin'); vueAdminExit.password = ''; vueAdminExit.hasError = false;" style="margin-bottom: 60px;">
+						<div class="blue-row-item-left">
+							<span class="blue-row-item-icon"><img src="images/admin-login.svg" /></span>
+							<label class="lang">Admin</label>
+						</div>
+						<span class="blue-row-item-arrow">→</span>
 					</div>
-					<span class="blue-row-item-arrow">→</span>
+					</div><!-- /blue-main-card -->
 				</div>
-
-			</div>
 		</section>
 	</div>
 	<!-- dd:login div -->

@@ -7879,17 +7879,22 @@ body {
     max-width: 412px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 0 24px;
+    gap: 0;
+    padding: 0;
     box-sizing: border-box;
+    height: 100%;
 }
 
 /* Main Card */
 .blue-main-card {
     background: rgba(24, 29, 39, 0.95);
-    border: 1px solid rgba(87, 96, 129, 0.3);
-    border-radius: 12px;
+    border-left: 1px solid rgba(87, 96, 129, 0.3);
+    border-right: 1px solid rgba(87, 96, 129, 0.3);
+    border-radius: 0;
     overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Card Header */
@@ -7959,6 +7964,8 @@ body {
 /* Card Body */
 .blue-card-body {
     padding: 16px 20px 20px 20px;
+    flex: 1;
+    overflow-y: auto;
 }
 
 /* Quick Icons Row */
@@ -8038,6 +8045,7 @@ body {
     font-family: "Rubik", sans-serif;
     font-size: 14px;
     font-weight: 500;
+    margin: 0 20px 10px 20px;
 }
 
 .blue-row-item:hover {
