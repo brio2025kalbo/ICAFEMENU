@@ -48,6 +48,31 @@
 		font-size: 15px;
 		opacity: 0.85;
 	}
+
+	/* Login page center logo and cafe name */
+	.login-center-logo {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 32px 0 20px 0;
+	}
+	.login-center-logo img {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid rgba(87, 96, 129, 0.4);
+	}
+	.login-center-cafe-name {
+		margin-top: 12px;
+		font-family: "Rubik", sans-serif;
+		font-size: 18px;
+		font-weight: 700;
+		color: #ffffff;
+		text-align: center;
+		letter-spacing: 0.5px;
+	}
 </style>
 <div id="page_login" v-show="vueGlobal.currentView == 'login'">
 	<div class="feedback-icon d-flex align-items-center justify-content-start">
@@ -72,9 +97,15 @@
 		<section class="h-100 d-flex align-items-center justify-content-center">
 			<div class="blue-card-container">
 
+				<!-- Center Logo and Cafe Name -->
+				<div class="login-center-logo">
+					<img :src="ICAFEMENU_CORE.posters_path('cafe_info_cafe_logo.png')" onerror="this.src='images/logo-home.png';" alt="Cafe Logo">
+					<span class="login-center-cafe-name">{{ theCafe.name }}</span>
+				</div>
+
 				<!-- Main Card -->
 				<div class="blue-main-card">
-					<div class="blue-card-header" style="padding-top: 60px;">
+					<div class="blue-card-header">
 						<span class="blue-back-arrow" tabindex="99" v-show="vueLoginMode.active_tab !== 'account'" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 15L7.5 10L12.5 5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 						</span>
