@@ -90,6 +90,27 @@
 	.blue-create-account a:hover {
 		color: rgba(255, 255, 255, 0.85);
 	}
+
+	/* === Idle / wake-up animation for blue-main-card === */
+	@keyframes blueCardHide {
+		0%   { opacity: 1;   transform: scale(1)    translateY(0);     filter: blur(0px);  }
+		40%  { opacity: 0.6; transform: scale(0.95) translateY(-10px); filter: blur(3px);  }
+		100% { opacity: 0;   transform: scale(0.88) translateY(-20px); filter: blur(12px); }
+	}
+	@keyframes blueCardShow {
+		0%   { opacity: 0; transform: scale(0.9)  translateY(20px); filter: blur(10px); }
+		60%  { opacity: 1; transform: scale(1.03) translateY(-4px); filter: blur(0px);  }
+		80%  { opacity: 1; transform: scale(0.98) translateY(2px);  filter: blur(0px);  }
+		100% { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0px);  }
+	}
+	.blue-main-card--idle {
+		animation: blueCardHide 1.2s ease-in forwards;
+		pointer-events: none;
+	}
+	.blue-main-card--wakeup {
+		animation: blueCardShow 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		pointer-events: auto;
+	}
 </style>
 <div id="page_login" v-show="vueGlobal.currentView == 'login'">
 	<div class="feedback-icon d-flex align-items-center justify-content-start">
@@ -842,3 +863,109 @@
 	</div>
 </div>
 <!-- ed:modal:booking-password -->
+<!-- st:idle-animation -->
+<script>
+(function () {
+var IDLE_DELAY_MS = 30000; // milliseconds before going idle
+
+var idleTimer = null;
+var isIdle    = false;
+var activityEvents = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+
+function getCard() {
+return document.querySelector('.blue-main-card');
+}
+
+function isLoginVisible() {
+var page = document.getElementById('page_login');
+return page && getComputedStyle(page).display !== 'none';
+}
+
+function resetCardState() {
+var card = getCard();
+if (!card) return;
+card.classList.remove('blue-main-card--idle', 'blue-main-card--wakeup');
+isIdle = false;
+}
+
+function goIdle() {
+if (!isLoginVisible()) return;
+isIdle = true;
+var card = getCard();
+if (card) {
+card.classList.remove('blue-main-card--wakeup');
+void card.offsetWidth; // force reflow so animation restarts cleanly
+card.classList.add('blue-main-card--idle');
+}
+}
+
+function wakeUp() {
+if (!isIdle) return;
+isIdle = false;
+var card = getCard();
+if (card) {
+card.classList.remove('blue-main-card--idle');
+void card.offsetWidth;
+card.classList.add('blue-main-card--wakeup');
+card.addEventListener('animationend', function onEnd() {
+card.classList.remove('blue-main-card--wakeup');
+card.removeEventListener('animationend', onEnd);
+}, { once: true });
+}
+}
+
+function resetTimer() {
+if (isIdle) wakeUp();
+clearTimeout(idleTimer);
+if (isLoginVisible()) {
+idleTimer = setTimeout(goIdle, IDLE_DELAY_MS);
+}
+}
+
+// Listen for any user activity
+activityEvents.forEach(function (evt) {
+document.addEventListener(evt, resetTimer, { passive: true });
+});
+
+// Remove listeners on unload to prevent memory leaks
+window.addEventListener('unload', function () {
+clearTimeout(idleTimer);
+activityEvents.forEach(function (evt) {
+document.removeEventListener(evt, resetTimer);
+});
+});
+
+// Watch login page show/hide transitions (e.g. after login / logout)
+function watchLoginPage() {
+var page = document.getElementById('page_login');
+if (!page) return;
+new MutationObserver(function (mutations) {
+mutations.forEach(function (m) {
+if (m.attributeName === 'style') {
+if (isLoginVisible()) {
+// Page just became visible — reset card and restart idle timer
+resetCardState();
+clearTimeout(idleTimer);
+idleTimer = setTimeout(goIdle, IDLE_DELAY_MS);
+} else {
+// Page hidden — no need to run the idle timer
+clearTimeout(idleTimer);
+}
+}
+});
+}).observe(page, { attributes: true, attributeFilter: ['style'] });
+}
+
+function init() {
+watchLoginPage();
+resetTimer();
+}
+
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', init);
+} else {
+init();
+}
+}());
+</script>
+<!-- ed:idle-animation -->
