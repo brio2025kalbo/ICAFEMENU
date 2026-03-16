@@ -2,7 +2,7 @@
 <style>
 /* Gaming UI Styles - Circuit Imitation */
 :root {
-    --circuit-bg: #0b0e14;
+    --circuit-bg: transparent;
     --circuit-card-bg: rgba(15, 20, 28, 0.85);
     --circuit-input-bg: rgba(25, 32, 45, 0.6);
     --circuit-border: rgba(255, 255, 255, 0.1);
@@ -14,8 +14,6 @@
 }
 
 #page_login {
-    background: url('images/login-bg.jpg') no-repeat center center fixed;
-    background-size: cover;
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -23,16 +21,8 @@
     justify-content: center;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--circuit-text);
-}
-
-.circuit-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .circuit-login-container {
@@ -189,7 +179,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
 }
 
 .circuit-btn-social {
@@ -210,6 +200,34 @@
 
 .circuit-btn-social:hover {
     background: rgba(255, 255, 255, 0.05);
+}
+
+.circuit-extra-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.circuit-btn-extra {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--circuit-border);
+    border-radius: 8px;
+    padding: 10px;
+    color: var(--circuit-text-dim);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.circuit-btn-extra:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .circuit-footer-link {
@@ -250,40 +268,6 @@
     cursor: pointer;
 }
 
-/* Tabs for Admin and Balance */
-.circuit-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid var(--circuit-border);
-}
-
-.circuit-tab {
-    padding: 8px 0;
-    font-size: 13px;
-    color: var(--circuit-text-dim);
-    cursor: pointer;
-    position: relative;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-}
-
-.circuit-tab.active {
-    color: var(--circuit-text);
-}
-
-.circuit-tab.active::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--circuit-accent);
-}
-
 .feedback-icon {
     position: absolute;
     top: 20px;
@@ -321,8 +305,6 @@
 </style>
 
 <div id="page_login" v-show="vueGlobal.currentView == 'login'">
-    <div class="circuit-overlay"></div>
-    
     <div class="feedback-icon">
         <a href="javascript:void(0)" title="Shutdown" onclick="javascript:shutdown_click()">
             <i class="fal fa-power-off"></i> 
@@ -339,14 +321,7 @@
             <div class="circuit-subtitle lang">Log in with your credentials</div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="circuit-tabs">
-            <div class="circuit-tab" :class="{active: vueLoginMode.active_tab === 'account'}" @click="login_switch_tab('account')">User</div>
-            <div class="circuit-tab" :class="{active: vueLoginMode.active_tab === 'admin'}" @click="login_switch_tab('admin')">Admin</div>
-            <div class="circuit-tab" :class="{active: vueLoginMode.active_tab === 'balance'}" @click="login_switch_tab('balance')">Balance</div>
-        </div>
-
-        <!-- User Login Form -->
+        <!-- Main Login View -->
         <div v-show="vueLoginMode.active_tab === 'account'">
             <div class="circuit-info-box">
                 <i class="fal fa-info-circle"></i>
@@ -384,14 +359,28 @@
                 </button>
             </div>
 
+            <!-- Admin and Balance Buttons below Social Logins -->
+            <div class="circuit-extra-buttons">
+                <button class="circuit-btn-extra" @click="login_switch_tab('admin')">
+                    <i class="fal fa-shield-check"></i> Admin
+                </button>
+                <button class="circuit-btn-extra" @click="login_switch_tab('balance')">
+                    <i class="fal fa-coins"></i> Balance
+                </button>
+            </div>
+
             <div class="circuit-footer-link">
                 <span class="lang">Don't have an account yet?</span> 
                 <a href="javascript:void(0)" class="lang" onclick="theMemberRegister.show_client_register()">Create account</a>
             </div>
         </div>
 
-        <!-- Admin Login Form -->
+        <!-- Admin Login View -->
         <div v-show="vueLoginMode.active_tab === 'admin'">
+            <div class="circuit-logo">
+                <div class="circuit-title">Admin</div>
+                <div class="circuit-subtitle lang">Enter admin password to exit</div>
+            </div>
             <form @submit.prevent="admin_exit_form_submit()">
                 <div class="circuit-form-group">
                     <div class="circuit-input-wrapper">
@@ -400,11 +389,16 @@
                     </div>
                 </div>
                 <button type="submit" class="circuit-btn-primary lang" :disabled="vueGlobal.isLoading">Admin Login</button>
+                <button type="button" class="circuit-btn-extra w-100 mt-3" @click="login_switch_tab('account')">Back to Login</button>
             </form>
         </div>
 
-        <!-- Balance / Topup Form -->
+        <!-- Balance / Topup View -->
         <div v-show="vueLoginMode.active_tab === 'balance'">
+            <div class="circuit-logo">
+                <div class="circuit-title">Balance</div>
+                <div class="circuit-subtitle lang">Top up your account</div>
+            </div>
             <form @submit.prevent="theTopupLogin.create_topup_qrcode()">
                 <div class="circuit-form-group">
                     <div class="circuit-input-wrapper">
@@ -419,6 +413,7 @@
                     </div>
                 </div>
                 <button type="submit" class="circuit-btn-primary lang" :disabled="vueGlobal.isLoading">Top up</button>
+                <button type="button" class="circuit-btn-extra w-100 mt-3" @click="login_switch_tab('account')">Back to Login</button>
             </form>
         </div>
     </div>
