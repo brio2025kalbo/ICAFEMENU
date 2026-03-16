@@ -55,7 +55,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 32px 0 20px 0;
+		padding: 0 0 16px 0;
 	}
 	.login-center-logo img {
 		width: 80px;
@@ -97,12 +97,6 @@
 		<section class="h-100 d-flex align-items-center justify-content-center">
 			<div class="blue-card-container">
 
-				<!-- Center Logo and Cafe Name -->
-				<div class="login-center-logo">
-					<img :src="ICAFEMENU_CORE.posters_path('cafe_info_cafe_logo.png')" onerror="this.src='images/logo-home.png';" alt="Cafe Logo">
-					<span class="login-center-cafe-name">{{ theCafe.name }}</span>
-				</div>
-
 				<!-- Main Card -->
 				<div class="blue-main-card">
 					<div class="blue-card-header">
@@ -143,6 +137,10 @@
 											&nbsp;{{ vueLogin.recentBookingLeft }}
 										</div>
 									</div>
+								</div>
+								<div class="login-center-logo">
+									<img :src="ICAFEMENU_CORE.posters_path('cafe_info_cafe_logo.png')" onerror="this.src='images/logo-home.png';" alt="Cafe Logo">
+									<span class="login-center-cafe-name">{{ theCafe.name }}</span>
 								</div>
 								<div class="form-group">
 									<label class="form-label lang">Username</label>
