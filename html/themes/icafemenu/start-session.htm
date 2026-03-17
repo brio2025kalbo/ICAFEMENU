@@ -6,9 +6,9 @@
 				from var(--electric-border-color) 0.3 calc(c / 2) h / 0.4
 		);
 		--color-neutral-900: oklch(0.185 0 0);*/
-		--electric-border-color: #dd8448;
-		--electric-light-color: rgba(255,150,80,0.9);
-		--gradient-color: rgba(230,150,90,0.35);
+		--electric-border-color: #22c55e;
+		--electric-light-color: rgba(74,222,128,0.9);
+		--gradient-color: rgba(74,222,128,0.35);
 		--color-neutral-900: #2e2e2e;
 		--hover-glow-color: #22c55e;
 		--hover-glow-light: rgba(74,222,128,0.9);
@@ -39,7 +39,7 @@
 	}
 	
 	#page_start_session .border-outer {
-		border: 2px solid rgba(221, 132, 72, 0.5);
+		border: 2px solid rgba(34, 197, 94, 0.5);
 		border-radius: 24px;
 		/*padding-right: 4px;
 		padding-bottom: 4px;*/
@@ -54,7 +54,7 @@
 	}
 	
 	#page_start_session .glow-layer-1 {
-		border: 2px solid rgba(221, 132, 72, 0.6);
+		border: 2px solid rgba(34, 197, 94, 0.6);
 		border-radius: 24px;
 		width: 100%;
 		height: 100%;
@@ -217,109 +217,113 @@
 			</div>
 		</div>
 	</div>
-	<div class="d-flex align-items-center justify-content-center">
-		<div  v-for="item in vueOffers.items.splice(0, theSettings.allow_topup_at_client == 1 ? 3 : 3)" :key="item.product_id" class="mr-4">
-			<svg width="0" height="0">
-				<defs>
-					<filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
-						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
-						<feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
-							<animate attributeName="dy" values="300; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-						</feOffset>
-						
-						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
-						<feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
-							<animate attributeName="dy" values="0; -300" dur="6s" repeatCount="indefinite" calcMode="linear" />
-						</feOffset>
-						
-						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
-						<feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
-							<animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
-						</feOffset>
-						
-						<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
-						<feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
-							<animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
-						</feOffset>
-						
-						<feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
-						<feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
-						<feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
-						
-						<feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
-					</filter>
-				</defs>
-			</svg>
-			
-			<div class="card-container card-wh">
-				<div class="position-relative">
-					<div class="border-outer">
-						<div class="main-card card-wh"></div>
-					</div>
-					<div class="glow-layer-1"></div>
-					<div class="glow-layer-2"></div>
-				</div>
+	<div class="d-flex flex-column align-items-center justify-content-center">
+		<div class="d-flex align-items-center justify-content-center mb-4">
+			<div  v-for="item in vueOffers.items.splice(0, theSettings.allow_topup_at_client == 1 ? 3 : 3)" :key="item.product_id" class="mr-4">
+				<svg width="0" height="0">
+					<defs>
+						<filter id="turbulent-displace" colorInterpolationFilters="sRGB" x="-10%" y="-10%" width="120%" height="120%">
+							<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+							<feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
+								<animate attributeName="dy" values="300; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+							</feOffset>
+							
+							<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
+							<feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+								<animate attributeName="dy" values="0; -300" dur="6s" repeatCount="indefinite" calcMode="linear" />
+							</feOffset>
+							
+							<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
+							<feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+								<animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
+							</feOffset>
+							
+							<feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+							<feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
+								<animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
+							</feOffset>
+							
+							<feComposite in="offsetNoise1" in2="offsetNoise2" result="part1" />
+							<feComposite in="offsetNoise3" in2="offsetNoise4" result="part2" />
+							<feBlend in="part1" in2="part2" mode="color-dodge" result="combinedNoise" />
+							
+							<feDisplacementMap in="SourceGraphic" in2="combinedNoise" scale="30" xChannelSelector="R" yChannelSelector="B" />
+						</filter>
+					</defs>
+				</svg>
 				
-				<div class="overlay-1"></div>
-				<div class="overlay-2"></div>
-				<div class="background-glow"></div>
-				
-				<div style="height: 325px"  class="position-absolute t-0 l-0 r-0 b-0 p-3 ml-1 d-flex flex-column justify-content-between align-items-center card-wh">
-					<img :src="item.image" onerror="this.src='images/default-offer2.png'" style="width: 138px;max-height:138px;" class="c-pointer rounded" :alt="item.product_name">
-					
-					<label class="text-white text-center mt-2" style="width: 80%">{{item.product_name}}</label>
-					
-					<div class="font-weight-bold mt-2 text-center">
-						<template v-if="theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).showBothPrices">
-							<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)">
-								{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)}}
-							</div>
-						</template>
-						<template v-else>
-							{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount))}}
-						</template>
+				<div class="card-container card-wh">
+					<div class="position-relative">
+						<div class="border-outer">
+							<div class="main-card card-wh"></div>
+						</div>
+						<div class="glow-layer-1"></div>
+						<div class="glow-layer-2"></div>
 					</div>
 					
-					<div class="mt-2 w-100">
-						<button type="button" @click="delay_execute(function(){theStartSession.start_offer_session(item.product_id)})" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
-							<span class="lang text-white">Start</span>
-						</button>
+					<div class="overlay-1"></div>
+					<div class="overlay-2"></div>
+					<div class="background-glow"></div>
+					
+					<div style="height: 325px"  class="position-absolute t-0 l-0 r-0 b-0 p-3 ml-1 d-flex flex-column justify-content-between align-items-center card-wh">
+						<img :src="item.image" onerror="this.src='images/default-offer2.png'" style="width: 138px;max-height:138px;" class="c-pointer rounded" :alt="item.product_name">
+						
+						<label class="text-white text-center mt-2" style="width: 80%">{{item.product_name}}</label>
+						
+						<div class="font-weight-bold mt-2 text-center">
+							<template v-if="theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).showBothPrices">
+								<div :title="'Cash/Balance: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice) + ' | Credit: ' + formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)">
+									{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).originalPrice)}} / {{formatNumber(theShop.getPriceDisplay(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount)).creditPrice)}}
+								</div>
+							</template>
+							<template v-else>
+								{{(theSettings.currency ?? '$')}} {{formatNumber(theShop.getOfferDiscountedPrice(item.product_price, item.product_enable_discount))}}
+							</template>
+						</div>
+						
+						<div class="mt-2 w-100">
+							<button type="button" @click="delay_execute(function(){theStartSession.start_offer_session(item.product_id)})" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
+								<span class="lang text-white">Start</span>
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div style="height: 325px"  class="card-wh bd-highlight rounded rounded-2  d-flex flex-column justify-content-between  align-items-center p-3 mr-4 mt-4 border-block position-relative"
-			 v-if="theSettings.allow_balance_for_pc_time == 1">
-			<img src="images/pc-time.png"  style="width: 138px;max-height:138px;" class="rounded">
-			<div  class="d-flex justify-content-between align-items-center mt-2 w-100">
-				<label class="lang text-white font-weight-bold">Balance</label>
-				<span class="lang font-weight-bold">{{memberInfo.member_balance_realtime}}</span>
-			</div>
-			<div v-if="vuePcTime?.price_dynamic_enable === 0" class="d-flex justify-content-between mt-2 w-100">
-				<label class="lang text-white font-weight-bold">Fixed</label>
-				<span>{{(theSettings.currency ?? '$')}} {{formatNumber(vuePcTime.fixed_price)}} / h</span>
-			</div>
-			
-			<div v-if="vuePcTime?.price_dynamic_enable == 1" class="w-100">
-				<div v-for="(dynamic, index) in vuePcTime.dynamic.splice(0, 1)" class="d-flex justify-content-between mt-2 w-100">
-					<label class="lang text-white font-weight-bold">Dynamic</label>
-					<span class="ml-1">{{(theSettings.currency ?? '$')}} {{formatNumber(dynamic.price)}} / h</span>
+		<div class="d-flex align-items-center justify-content-center">
+			<div style="height: 325px"  class="card-wh bd-highlight rounded rounded-2  d-flex flex-column justify-content-between  align-items-center p-3 mr-4 border-block position-relative"
+				 v-if="theSettings.allow_balance_for_pc_time == 1">
+				<img src="images/pc-time.png"  style="width: 138px;max-height:138px;" class="rounded">
+				<div  class="d-flex justify-content-between align-items-center mt-2 w-100">
+					<label class="lang text-white font-weight-bold">Balance</label>
+					<span class="lang font-weight-bold">{{memberInfo.member_balance_realtime}}</span>
+				</div>
+				<div v-if="vuePcTime?.price_dynamic_enable === 0" class="d-flex justify-content-between mt-2 w-100">
+					<label class="lang text-white font-weight-bold">Fixed</label>
+					<span>{{(theSettings.currency ?? '$')}} {{formatNumber(vuePcTime.fixed_price)}} / h</span>
+				</div>
+				
+				<div v-if="vuePcTime?.price_dynamic_enable == 1" class="w-100">
+					<div v-for="(dynamic, index) in vuePcTime.dynamic.splice(0, 1)" class="d-flex justify-content-between mt-2 w-100">
+						<label class="lang text-white font-weight-bold">Dynamic</label>
+						<span class="ml-1">{{(theSettings.currency ?? '$')}} {{formatNumber(dynamic.price)}} / h</span>
+					</div>
+				</div>
+				<div class="mt-2 w-100">
+					<button type="button" @click="delay_execute(theStartSession.start)" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
+						<span class="lang text-white">Start</span>
+					</button>
 				</div>
 			</div>
-			<div class="mt-2 w-100">
-				<button type="button" @click="delay_execute(theStartSession.start)" class="btn btn-block rounded-4 text-center client-btn-success btn-start-session lang" data-placement="bottom" data-toggle="tooltip" title="Start session" onclick="javascript:theShop.cart_clear()" :disabled="vueGlobal.isLoading">
-					<span class="lang text-white">Start</span>
-				</button>
-			</div>
-		</div>
-		<div class="card-wh bd-highlight rounded rounded-2 d-flex flex-column align-items-center justify-content-between mr-4 mt-4 p-3 flex-shrink-1 border-block position-relative"
-			 v-if="theSettings.allow_topup_at_client == 1">
-			<img src="images/qr-topup.png" style="width: 138px;max-height:138px;" class="rounded">
-			<div class="mt-2">
-				<button @click="theShop.show_topup()" type="button" class="btn btn-block rounded-4 text-center client-btn-success lang" data-placement="bottom" data-toggle="tooltip" title="QR topup" onclick="javascript:theShop.cart_clear()">
-					<span class="lang text-white">QR topup</span>
-				</button>
+			<div class="card-wh bd-highlight rounded rounded-2 d-flex flex-column align-items-center justify-content-between mr-4 p-3 flex-shrink-1 border-block position-relative"
+				 v-if="theSettings.allow_topup_at_client == 1">
+				<img src="images/qr-topup.png" style="width: 138px;max-height:138px;" class="rounded">
+				<div class="mt-2">
+					<button @click="theShop.show_topup()" type="button" class="btn btn-block rounded-4 text-center client-btn-success lang" data-placement="bottom" data-toggle="tooltip" title="QR topup" onclick="javascript:theShop.cart_clear()">
+						<span class="lang text-white">QR topup</span>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
