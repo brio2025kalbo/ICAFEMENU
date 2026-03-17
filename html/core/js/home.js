@@ -196,7 +196,6 @@ function Home()
 		if (refreshBanance) {
 			refreshBalanceInfo();
 		}
-		theGameList.show(); //不显示首页了
 	}
 }
 

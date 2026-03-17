@@ -43,9 +43,14 @@
 				<img class="w-100 rounded-circle" id="cafe_info_cafe_logo" :src="ICAFEMENU_CORE.posters_path('cafe_info_cafe_logo.png')" onerror="this.src='images/logo-home.png';" style="aspect-ratio: 1/1;" >
 			</div>
 			<div class="header-menu text-white d-flex align-items-center justify-content-center" style="margin-left: 305px !important; margin-right: 0 !important;">
-			<a class="lang mr-1 menu-icon-link" :class="[vueGlobal.pageType == 'Games' ? 'active' : '' ]" href="javascript:theGameList.show()" data-toggle="tooltip" data-placement="bottom" title="Home">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="menu-icon" :class="[vueGlobal.pageType == 'Games' ? 'header-menu-active' : '' ]">
+			<a class="lang mr-1 menu-icon-link" :class="[vueGlobal.pageType == 'Home' ? 'active' : '' ]" href="javascript:theHome.show()" data-toggle="tooltip" data-placement="bottom" title="Home">
+				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="menu-icon" :class="[vueGlobal.pageType == 'Home' ? 'header-menu-active' : '' ]">
 					<path fill="currentColor" d="M4.99998 17.5003C4.54165 17.5003 4.14942 17.3373 3.82331 17.0112C3.49665 16.6845 3.33331 16.292 3.33331 15.8337V8.33366C3.33331 8.06977 3.39248 7.81977 3.51081 7.58366C3.62859 7.34755 3.79165 7.1531 3.99998 7.00033L8.99998 3.25033C9.15276 3.13921 9.31248 3.05588 9.47915 3.00033C9.64581 2.94477 9.81942 2.91699 9.99998 2.91699C10.1805 2.91699 10.3541 2.94477 10.5208 3.00033C10.6875 3.05588 10.8472 3.13921 11 3.25033L16 7.00033C16.2083 7.1531 16.3716 7.34755 16.49 7.58366C16.6078 7.81977 16.6666 8.06977 16.6666 8.33366V15.8337C16.6666 16.292 16.5036 16.6845 16.1775 17.0112C15.8508 17.3373 15.4583 17.5003 15 17.5003H11.6666V11.667H8.33331V17.5003H4.99998Z"/>
+				</svg>
+			</a>
+			<a class="lang mr-1 menu-icon-link" :class="[vueGlobal.pageType == 'Games' ? 'active' : '' ]" href="javascript:theGameList.show()" data-toggle="tooltip" data-placement="bottom" title="Games">
+				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="menu-icon" :class="[vueGlobal.pageType == 'Games' ? 'header-menu-active' : '' ]">
+					<path fill="currentColor" d="M16.5 5h-13A2.5 2.5 0 0 0 1 7.5v5A2.5 2.5 0 0 0 3.5 15h13a2.5 2.5 0 0 0 2.5-2.5v-5A2.5 2.5 0 0 0 16.5 5zM7 9H6v1H5V9H4V8h1V7h1v1h1v1zm6.5 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm1.5-1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm1.5 1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm-1.5 1.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"/>
 				</svg>
 			</a>
 			<a class="lang mr-1 menu-icon-link" :class="[vueGlobal.pageType == 'Shop' ? 'active' : '' ]" href="javascript:theShop.show()" data-toggle="tooltip" data-placement="bottom" title="Shop">
