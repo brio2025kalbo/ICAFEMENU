@@ -48,6 +48,69 @@
 		font-size: 15px;
 		opacity: 0.85;
 	}
+
+	/* Login page center logo and cafe name */
+	.login-center-logo {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 0 0 16px 0;
+	}
+	.login-center-logo img {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid rgba(87, 96, 129, 0.4);
+	}
+	.login-center-cafe-name {
+		margin-top: 12px;
+		font-family: "Rubik", sans-serif;
+		font-size: 18px;
+		font-weight: 700;
+		color: #ffffff;
+		text-align: center;
+		letter-spacing: 0.5px;
+	}
+
+	/* Create account prompt below login button */
+	.blue-create-account {
+		text-align: center;
+		margin-top: 16px;
+		font-size: 13px;
+		color: rgba(255, 255, 255, 0.6);
+	}
+	.blue-create-account a {
+		color: #ffffff;
+		font-weight: 600;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.blue-create-account a:hover {
+		color: rgba(255, 255, 255, 0.85);
+	}
+
+	/* === Idle / wake-up animation for blue-main-card === */
+	@keyframes blueCardHide {
+		0%   { opacity: 1;   transform: scale(1)    translateY(0);     filter: blur(0px);  }
+		40%  { opacity: 0.6; transform: scale(0.95) translateY(-10px); filter: blur(3px);  }
+		100% { opacity: 0;   transform: scale(0.88) translateY(-20px); filter: blur(12px); }
+	}
+	@keyframes blueCardShow {
+		0%   { opacity: 0; transform: scale(0.9)  translateY(20px); filter: blur(10px); }
+		60%  { opacity: 1; transform: scale(1.03) translateY(-4px); filter: blur(0px);  }
+		80%  { opacity: 1; transform: scale(0.98) translateY(2px);  filter: blur(0px);  }
+		100% { opacity: 1; transform: scale(1)    translateY(0);    filter: blur(0px);  }
+	}
+	.blue-main-card--idle {
+		animation: blueCardHide 1.2s ease-in forwards;
+		pointer-events: none;
+	}
+	.blue-main-card--wakeup {
+		animation: blueCardShow 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+		pointer-events: auto;
+	}
 </style>
 <div id="page_login" v-show="vueGlobal.currentView == 'login'">
 	<div class="feedback-icon d-flex align-items-center justify-content-start">
@@ -74,7 +137,7 @@
 
 				<!-- Main Card -->
 				<div class="blue-main-card">
-					<div class="blue-card-header" style="padding-top: 60px;">
+					<div class="blue-card-header">
 						<span class="blue-back-arrow" tabindex="99" v-show="vueLoginMode.active_tab !== 'account'" @click="login_switch_tab('account')" @keydown.enter="login_switch_tab('account')" @keydown.space.prevent="login_switch_tab('account')">
 							<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 15L7.5 10L12.5 5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
 						</span>
@@ -85,12 +148,6 @@
 						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'balance'">Top up balance</span>
 						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'admin'">Admin password</span>
 						<span class="blue-card-title lang" v-show="vueLoginMode.active_tab === 'forgot_password'">Reset password</span>
-						<a tabindex="4" href="javascript:void(0)"
-						   v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1)"
-						   v-show="vueLoginMode.active_tab === 'account'"
-						   class="blue-signup-link lang"
-						   onclick="((theSettings.client_register_member_way ?? 0) == 1) ? theMemberRegister.show_dialog() : theMemberRegister.show_client_register()"
-						   title="Register">Register</a>
 					</div>
 					<div class="blue-card-body d-flex flex-column justify-content-center">
 
@@ -113,6 +170,10 @@
 										</div>
 									</div>
 								</div>
+								<div class="login-center-logo">
+									<img :src="ICAFEMENU_CORE.posters_path('cafe_info_cafe_logo.png')" onerror="this.src='images/logo-home.png';" alt="Cafe Logo">
+									<span class="login-center-cafe-name">{{ theCafe.name }}</span>
+								</div>
 								<div class="form-group">
 									<label class="form-label lang">Username</label>
 									<input tabindex="1" type="text" id="username" name="username" class="form-control login-input lang" v-model="vueLogin.username">
@@ -128,6 +189,12 @@
 									<a href="javascript:void(0)" class="lang" @click="login_switch_tab('forgot_password')">Forgot password?</a>
 								</div>
 								<button tabindex="3" type="submit" class="blue-btn-primary lang mt-2" :disabled="vueGlobal.isLoading">Log in</button>
+								<div class="blue-create-account"
+								     v-if="(theSettings.register_member_at_client == 1 || theSettings.enable_icafesports == 1)">
+									<span class="lang">Don't have an account yet?</span>
+									<a href="javascript:void(0)" class="lang"
+									   onclick="((theSettings.client_register_member_way ?? 0) == 1) ? theMemberRegister.show_dialog() : theMemberRegister.show_client_register()">Create account</a>
+								</div>
 							</form>
 						</div>
 
@@ -796,3 +863,109 @@
 	</div>
 </div>
 <!-- ed:modal:booking-password -->
+<!-- st:idle-animation -->
+<script>
+(function () {
+var IDLE_DELAY_MS = 30000; // milliseconds before going idle
+
+var idleTimer = null;
+var isIdle    = false;
+var activityEvents = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+
+function getCard() {
+return document.querySelector('.blue-main-card');
+}
+
+function isLoginVisible() {
+var page = document.getElementById('page_login');
+return page && getComputedStyle(page).display !== 'none';
+}
+
+function resetCardState() {
+var card = getCard();
+if (!card) return;
+card.classList.remove('blue-main-card--idle', 'blue-main-card--wakeup');
+isIdle = false;
+}
+
+function goIdle() {
+if (!isLoginVisible()) return;
+isIdle = true;
+var card = getCard();
+if (card) {
+card.classList.remove('blue-main-card--wakeup');
+void card.offsetWidth; // force reflow so animation restarts cleanly
+card.classList.add('blue-main-card--idle');
+}
+}
+
+function wakeUp() {
+if (!isIdle) return;
+isIdle = false;
+var card = getCard();
+if (card) {
+card.classList.remove('blue-main-card--idle');
+void card.offsetWidth;
+card.classList.add('blue-main-card--wakeup');
+card.addEventListener('animationend', function onEnd() {
+card.classList.remove('blue-main-card--wakeup');
+card.removeEventListener('animationend', onEnd);
+}, { once: true });
+}
+}
+
+function resetTimer() {
+if (isIdle) wakeUp();
+clearTimeout(idleTimer);
+if (isLoginVisible()) {
+idleTimer = setTimeout(goIdle, IDLE_DELAY_MS);
+}
+}
+
+// Listen for any user activity
+activityEvents.forEach(function (evt) {
+document.addEventListener(evt, resetTimer, { passive: true });
+});
+
+// Remove listeners on unload to prevent memory leaks
+window.addEventListener('unload', function () {
+clearTimeout(idleTimer);
+activityEvents.forEach(function (evt) {
+document.removeEventListener(evt, resetTimer);
+});
+});
+
+// Watch login page show/hide transitions (e.g. after login / logout)
+function watchLoginPage() {
+var page = document.getElementById('page_login');
+if (!page) return;
+new MutationObserver(function (mutations) {
+mutations.forEach(function (m) {
+if (m.attributeName === 'style') {
+if (isLoginVisible()) {
+// Page just became visible — reset card and restart idle timer
+resetCardState();
+clearTimeout(idleTimer);
+idleTimer = setTimeout(goIdle, IDLE_DELAY_MS);
+} else {
+// Page hidden — no need to run the idle timer
+clearTimeout(idleTimer);
+}
+}
+});
+}).observe(page, { attributes: true, attributeFilter: ['style'] });
+}
+
+function init() {
+watchLoginPage();
+resetTimer();
+}
+
+if (document.readyState === 'loading') {
+document.addEventListener('DOMContentLoaded', init);
+} else {
+init();
+}
+}());
+</script>
+<!-- ed:idle-animation -->
