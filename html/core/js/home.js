@@ -53,15 +53,21 @@ function Home()
 					topFiveGames.push(game);
 				}
 			});
-		} else {
-			// 没有收藏时，显示热门游戏
+		}
+		// Fall back to hot games when favorites are empty or don't match any local game
+		if (topFiveGames.length === 0) {
 			theGames.sort(theGameList.local_hot_compare).forEach(game => {
 				if (game.pkg_name.toLowerCase() === 'icafemenu' || game.pkg_name.toLowerCase() === 'overwolf') return;
 				topFiveGames.push(game);
 			});
 		}
 		topFiveGames = topFiveGames.slice(0, 5);
-		vueGames.topFiveItems = JSON.parse(JSON.stringify(topFiveGames));
+		vueHome.heroGameIndex = 0;
+		// Defer hero content update to next tick so it applies after #page_games becomes visible
+		var topFiveSnapshot = JSON.parse(JSON.stringify(topFiveGames));
+		PetiteVue.nextTick(() => {
+			vueGames.topFiveItems = topFiveSnapshot;
+		});
 
 		// Promoted product
 		theShop.change_group(PRODUCT_GROUP_PROMOTED);
