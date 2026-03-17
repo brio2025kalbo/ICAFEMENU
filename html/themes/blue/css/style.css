@@ -8322,3 +8322,230 @@ body {
 .blue-card-body .blue-form-row .form-group {
     flex: 1;
 }
+
+/* ========================================
+   Home Hero Layout (Circuit-style)
+   ======================================== */
+
+/* Main container */
+#page-home .home-container {
+  overflow: hidden;
+}
+
+/* Hero area */
+#page-home .home-hero {
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* Hero background image */
+#page-home .home-hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.4s ease;
+}
+
+/* Dark gradient overlay: transparent top, dark at bottom */
+#page-home .home-hero-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 13, 20, 0.15) 0%,
+    rgba(10, 13, 20, 0.05) 35%,
+    rgba(10, 13, 20, 0.70) 70%,
+    rgba(10, 13, 20, 0.95) 100%
+  );
+}
+
+/* Thumbnail strip */
+#page-home .home-hero-strip {
+  padding: 20px 24px 0;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+/* Individual thumbnail cards */
+#page-home .home-hero-thumb {
+  width: 68px;
+  height: 92px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+#page-home .home-hero-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.6);
+  transition: filter 0.25s ease;
+}
+
+#page-home .home-hero-thumb.active {
+  border-color: #4CAF50;
+  box-shadow: 0 0 14px rgba(76, 175, 80, 0.55);
+  transform: translateY(-8px) scale(1.08);
+}
+
+#page-home .home-hero-thumb.active img {
+  filter: brightness(1);
+}
+
+#page-home .home-hero-thumb:hover img {
+  filter: brightness(0.85);
+}
+
+#page-home .home-hero-thumb:hover:not(.active) {
+  transform: translateY(-4px);
+}
+
+/* "All games" button */
+#page-home .home-hero-all-games {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background 0.2s ease;
+  text-decoration: none !important;
+  white-space: nowrap;
+  align-self: center;
+  color: #fff !important;
+}
+
+#page-home .home-hero-all-games:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hero bottom info: title + buttons */
+#page-home .home-hero-info {
+  padding: 0 28px 28px;
+}
+
+#page-home .home-hero-title {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+  margin: 0 0 16px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Play now button */
+#page-home .home-hero-play-btn {
+  background: linear-gradient(135deg, #4CAF50, #388E3C) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  padding: 10px 28px !important;
+  border-radius: 50px !important;
+  box-shadow: 0 4px 18px rgba(76, 175, 80, 0.45) !important;
+  transition: all 0.2s ease !important;
+}
+
+#page-home .home-hero-play-btn:hover {
+  background: linear-gradient(135deg, #66BB6A, #43A047) !important;
+  box-shadow: 0 6px 22px rgba(76, 175, 80, 0.65) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Free to play button */
+#page-home .home-hero-free-btn {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 10px 20px !important;
+  border-radius: 50px !important;
+  transition: all 0.2s ease !important;
+}
+
+#page-home .home-hero-free-btn:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ========================================
+   Home Right Side Panel
+   ======================================== */
+
+#page-home .home-side-panel {
+  width: 370px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: 10px;
+  padding: 16px 12px 16px 0;
+}
+
+#page-home .home-side-panel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Member info card */
+#page-home .home-side-member {
+  background: rgba(14, 18, 29, 0.55) !important;
+  border: 1px solid #1e2540 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-radius: 12px !important;
+  padding: 16px !important;
+  flex-shrink: 0;
+}
+
+/* Generic side panel block */
+#page-home .home-side-block {
+  background: rgba(14, 18, 29, 0.55) !important;
+  border: 1px solid #1e2540 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  flex-shrink: 0;
+}
+
+/* Promoted/offers list item */
+#page-home .home-promoted-item {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s;
+}
+
+#page-home .home-promoted-item:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Section tabs (PROMOTED / OFFERS) */
+#page-home .home-promoted .section-tab {
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 20px;
+  color: #8b92b0;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+#page-home .home-promoted .section-tab:hover {
+  color: #fff;
+}
+
+#page-home .home-promoted .section-tab.active {
+  background: #171e2f;
+  color: #fff;
+  border-color: #1e2540;
+}

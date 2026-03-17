@@ -235,7 +235,8 @@ var vueHome = PetiteVue.reactive({
 	currentShopTab: 'promoted',
 	currentRankNewsTab: 'news',
 	offersActivePage: 0,
-	newsActivePage: 0
+	newsActivePage: 0,
+	heroGameIndex: 0
 });
 var vueClasses = PetiteVue.reactive({
 	items: []
