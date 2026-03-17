@@ -435,6 +435,11 @@ async function wss_client_status(packet) {
 				vueHome.leaderboardItems = rankData.rank
 		}
 
+		// Set member info for the home page sidebar on first login
+		memberInfo.member_info_name = (thePCStatus.member_account || '').toUpperCase() + " / " + (thePCStatus.member_group_name || '').toUpperCase();
+		memberInfo.member_name = memberInfo.member_name || (thePCStatus.member_account || '').toUpperCase();
+		memberInfo.member_group_name = (thePCStatus.member_group_name || '').toUpperCase();
+
 		theHome.show(true);
 		
 		// [NEW] Initialize offers data for sidebar

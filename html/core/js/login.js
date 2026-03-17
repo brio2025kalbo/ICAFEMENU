@@ -803,6 +803,7 @@ async function handleLoginSuccess(data, strUserName) {
 		vuePcTime.dynamic = data?.client?.pc_time_info?.dynamic
 	} else {
 		await theStartSession.start();
+		theHome.show();
 	}
 
 	vueGlobal.isLoading = false;
