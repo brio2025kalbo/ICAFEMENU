@@ -214,24 +214,39 @@ async function loadHomeTopPlayers() {
 	const newItems = {};
 
 	const promises = gameCodes.map(async (gameCode) => {
-		const data = await theApiClient.callApi(
+		const raw = await theApiClient.callApi(
 			'https://as1.icafecloud.com/api/v2/rank/data',
 			'GET',
 			{ code: gameCode + '-cafe-player', icafe_id: theApiClient.icafeId }
 		).catch(ICafeApiError.skip);
 
-		if (data && Array.isArray(data)) {
-			newItems[gameCode] = data;
-		} else if (data && data.items && Array.isArray(data.items)) {
-			newItems[gameCode] = data.items;
-		} else {
-			newItems[gameCode] = [];
+		// Handle all common response shapes from the rank API:
+		// 1. direct array
+		// 2. { items: [...] }
+		// 3. { list: [...] }
+		// 4. { data: [...] }     – when callApi returns full json (result field present)
+		// 5. { data: { list: [...] } }
+		let items = null;
+		if (raw && Array.isArray(raw)) {
+			items = raw;
+		} else if (raw && Array.isArray(raw.items)) {
+			items = raw.items;
+		} else if (raw && Array.isArray(raw.list)) {
+			items = raw.list;
+		} else if (raw && Array.isArray(raw.data)) {
+			items = raw.data;
+		} else if (raw && raw.data && Array.isArray(raw.data.list)) {
+			items = raw.data.list;
+		} else if (raw && raw.data && Array.isArray(raw.data.items)) {
+			items = raw.data.items;
 		}
+		newItems[gameCode] = items || [];
 	});
 
 	await Promise.all(promises);
 
-	vueHomeRank.items = newItems;
+	// Use Object.assign so PetiteVue detects the property changes
+	Object.assign(vueHomeRank.items, newItems);
 	const firstNonEmpty = gameCodes.find(g => newItems[g] && newItems[g].length > 0);
 	if (firstNonEmpty) {
 		vueHomeRank.active_game = firstNonEmpty;
@@ -246,18 +261,26 @@ async function loadHomeTopSpenders() {
 	const dateStart = `${y}-${m}-01 00:00:00`;
 	const dateEnd = `${y}-${m}-${d} 23:59:59`;
 
-	const url = `https://api.icafecloud.com/api/v2/cafe/${theApiClient.icafeId}/billingLogs/action/memberRanking`;
-	const data = await theApiClient.callApi(url, 'GET', {
+	// Use callCafeApi so the correct server URL and auth token are used
+	const raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', {
 		limit: 10,
 		ranking_type: 'amount',
 		date_start: dateStart,
 		date_end: dateEnd
 	}).catch(ICafeApiError.skip);
 
-	if (data && Array.isArray(data)) {
-		vueHomeSpenders.items = data;
-	} else if (data && data.items && Array.isArray(data.items)) {
-		vueHomeSpenders.items = data.items;
+	let items = null;
+	if (raw && Array.isArray(raw)) {
+		items = raw;
+	} else if (raw && Array.isArray(raw.items)) {
+		items = raw.items;
+	} else if (raw && Array.isArray(raw.list)) {
+		items = raw.list;
+	} else if (raw && Array.isArray(raw.data)) {
+		items = raw.data;
+	}
+	if (items) {
+		vueHomeSpenders.items = items;
 	}
 }
 
