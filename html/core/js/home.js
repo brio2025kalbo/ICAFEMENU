@@ -257,13 +257,39 @@ async function loadHomeTopSpenders() {
 	const dateStart = `${y}-${m}-01 00:00:00`;
 	const dateEnd = `${y}-${m}-${d} 23:59:59`;
 
-	// Use callCafeApi so the correct server URL and auth token are used
-	const raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', {
+	// billingLogs/action/memberRanking requires a valid Bearer token.
+	// If no token is cached yet but a PC session token is available, obtain one first.
+	if (!theApiClient.getMemberInfo()?.token && thePCStatus?.status_pc_token) {
+		await theApiClient.memberLogin(
+			thePCStatus.member_account,
+			thePCStatus.status_pc_token,
+			null,
+			theCafe.license_name,
+			thePCInfo.pc_name
+		).catch(ICafeApiError.skip);
+	}
+
+	const params = {
 		limit: 10,
 		ranking_type: 'amount',
 		date_start: dateStart,
 		date_end: dateEnd
-	}).catch(ICafeApiError.skip);
+	};
+
+	let raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', params)
+		.catch(ICafeApiError.skip);
+
+	// On failure callApi triggers refreshApiToken() in the background; poll until the token
+	// in localStorage changes (meaning refreshApiToken finished), max 3 s, then retry once.
+	if (!raw && thePCStatus?.status_pc_token) {
+		const prevToken = theApiClient.getMemberInfo()?.token;
+		const pollInterval = 500, maxWait = 3000;
+		for (let elapsed = 0; elapsed < maxWait && theApiClient.getMemberInfo()?.token === prevToken; elapsed += pollInterval) {
+			await new Promise(r => setTimeout(r, pollInterval));
+		}
+		raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', params)
+			.catch(ICafeApiError.skip);
+	}
 
 	let items = null;
 	if (raw && Array.isArray(raw)) {
