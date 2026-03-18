@@ -220,27 +220,23 @@ async function loadHomeTopPlayers() {
 			{ code: gameCode + '-cafe-player', icafe_id: theApiClient.icafeId }
 		).catch(ICafeApiError.skip);
 
-		// Handle all common response shapes from the rank API:
-		// 1. direct array
-		// 2. { items: [...] }
-		// 3. { list: [...] }
-		// 4. { data: [...] }     – when callApi returns full json (result field present)
-		// 5. { data: { list: [...] } }
+		// Unwrap all known response shapes from the rank API:
+		// { code:200, data:{ game_code, ranks:[...] } } → callApi returns data obj
+		// direct array / { items } / { list } also handled for safety
 		let items = null;
 		if (raw && Array.isArray(raw)) {
 			items = raw;
+		} else if (raw && Array.isArray(raw.ranks)) {
+			items = raw.ranks;
 		} else if (raw && Array.isArray(raw.items)) {
 			items = raw.items;
 		} else if (raw && Array.isArray(raw.list)) {
 			items = raw.list;
 		} else if (raw && Array.isArray(raw.data)) {
 			items = raw.data;
-		} else if (raw && raw.data && Array.isArray(raw.data.list)) {
-			items = raw.data.list;
-		} else if (raw && raw.data && Array.isArray(raw.data.items)) {
-			items = raw.data.items;
 		}
-		newItems[gameCode] = items || [];
+		// Filter out placeholder rows with no player name
+		newItems[gameCode] = (items || []).filter(p => p.player_name && p.player_name !== '');
 	});
 
 	await Promise.all(promises);
