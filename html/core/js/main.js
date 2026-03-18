@@ -371,6 +371,15 @@ getEnabledGames().forEach(game => {
 	vueRank.items[game.key] = [];
 });
 
+var vueHomeRank = PetiteVue.reactive({
+	items: {},
+	active_game: 'pubg'
+});
+
+var vueHomeSpenders = PetiteVue.reactive({
+	items: []
+});
+
 var vueBalanceHistory = PetiteVue.reactive({
 	items: [],
 	paging_info: [],

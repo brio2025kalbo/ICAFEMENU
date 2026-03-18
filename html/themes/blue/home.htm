@@ -136,54 +136,63 @@
 			</div>
 		</div>
 
-		<!-- Promotions / Offers -->
-		<div class="text-white home-promoted home-side-block">
-			<div class="d-flex mb-2">
-				<button class="btn btn-sm section-tab lang mr-1" :class="vueHome.currentShopTab == 'promoted' ? 'active' : ''" id="promotions" @click="switchShopTab('promoted')">PROMOTED</button>
-				<button class="btn btn-sm section-tab lang" :class="vueHome.currentShopTab == 'offers' ? 'active' : ''" id="offers" @click="switchShopTab('offers')">OFFERS</button>
+		<!-- Top Players Per Game -->
+		<div class="text-white home-side-block home-top-players">
+			<div class="d-flex align-items-center mb-2">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYERS</span>
 			</div>
-			<div v-show="vueHome.currentShopTab == 'promoted'" id="game_promotes">
-				<div v-if="vueHome.promotedGoods.length > 0" class="d-flex flex-column">
-					<div v-for="goods in vueHome.promotedGoods.slice(vueHome.promotedActive * 3, vueHome.promotedActive * 3 + 3)" :key="goods.product_id"
-						class="d-flex align-items-center home-promoted-item c-pointer mb-1 p-2 rounded"
-						@click="theShop.buy(goods.product_id, 1)">
-						<img :src="goods.image" class="rounded mr-2" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='images/default-product.png';">
-						<div class="flex-grow-1 overflow-hidden">
-							<label class="text-white mb-0" style="font-size:12px;">{{goods.product_name}}</label>
-							<div style="font-size:11px;color:#576081;">
-								<span v-if="vueProductGroupList.current_group_id == -2">{{formatNumber(goods.product_coin_price)}} {{translate_string('coin')}}</span>
-								<span v-else>{{theSettings.currency ?? '$'}} {{formatNumber(goods.product_price)}}</span>
-							</div>
-						</div>
-						<i class="fal fa-cart-plus" style="color:#576081;font-size:14px;"></i>
-					</div>
-					<div v-if="Math.ceil(vueHome.promotedGoods.length / 3) > 1" class="d-flex justify-content-center mt-1">
-						<button class="btn btn-sm p-0 mr-2" style="color:#576081;" @click="prevShopPage()"><i class="fal fa-chevron-left"></i></button>
-						<button class="btn btn-sm p-0" style="color:#576081;" @click="nextShopPage()"><i class="fal fa-chevron-right"></i></button>
-					</div>
+			<!-- Game icons row -->
+			<div class="d-flex mb-3 home-player-game-icons flex-wrap">
+				<div v-for="(gameItems, gameCode) in vueHomeRank.items" :key="gameCode"
+					class="home-player-game-icon c-pointer"
+					:class="[vueHomeRank.active_game == gameCode ? 'active' : '']"
+					@click="vueHomeRank.active_game = gameCode">
+					<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
 				</div>
 			</div>
-			<div v-show="vueHome.currentShopTab == 'offers'" id="game_offers">
-				<div v-if="vueProducts.items.length > 0" class="d-flex flex-column">
-					<div v-for="goods in vueProducts.items.slice((vueHome.offersActivePage ?? 0) * 3, (vueHome.offersActivePage ?? 0) * 3 + 3)" :key="goods.product_id"
-						class="d-flex align-items-center home-promoted-item c-pointer mb-1 p-2 rounded"
-						@click="theShop.buy(goods.product_id, 1)">
-						<img :src="goods.image" class="rounded mr-2" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='images/default-product.png';">
-						<div class="flex-grow-1 overflow-hidden">
-							<label class="text-white mb-0" style="font-size:12px;">{{goods.product_name}}</label>
-							<div style="font-size:11px;color:#576081;">
-								<span v-if="vueProductGroupList.current_group_id == -2">{{formatNumber(goods.product_coin_price)}} {{translate_string('coin')}}</span>
-								<span v-else>{{theSettings.currency ?? '$'}} {{formatNumber(goods.product_price)}}</span>
-							</div>
-						</div>
-						<i class="fal fa-cart-plus" style="color:#576081;font-size:14px;"></i>
+			<!-- Top 3 Winners -->
+			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 0"
+				class="home-rank-winners d-flex justify-content-center align-items-end mb-3">
+				<!-- 2nd place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][1]" class="home-winner-item silver-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/silver-medal.svg" class="home-medal-icon" alt="Silver">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][1].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
 					</div>
-					<div v-if="Math.ceil(vueProducts.items.length / 3) > 1" class="d-flex justify-content-center mt-1">
-						<button class="btn btn-sm p-0 mr-2" style="color:#576081;" @click="prevOffersPage()"><i class="fal fa-chevron-left"></i></button>
-						<button class="btn btn-sm p-0" style="color:#576081;" @click="nextOffersPage()"><i class="fal fa-chevron-right"></i></button>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][1].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][1].points}} PTS</span>
+				</div>
+				<!-- 1st place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][0]" class="home-winner-item gold-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/gold-medal.svg" class="home-medal-icon" alt="Gold">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][0].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
 					</div>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][0].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][0].points}} PTS</span>
+				</div>
+				<!-- 3rd place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][2]" class="home-winner-item bronze-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/bronze-medal.svg" class="home-medal-icon" alt="Bronze">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][2].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+					</div>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][2].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][2].points}} PTS</span>
 				</div>
 			</div>
+			<!-- Positions 4–10 -->
+			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 3" class="home-rank-list">
+				<div v-for="(player, idx) in vueHomeRank.items[vueHomeRank.active_game].slice(3, 10)" :key="idx"
+					class="d-flex align-items-center home-rank-item">
+					<span class="home-rank-number">{{idx + 4}}</span>
+					<img :src="player.avatar_url || './images/default-avatar.png'" class="home-rank-avatar rounded-circle mr-2" onerror="this.src='./images/default-avatar.png'">
+					<span class="home-rank-name flex-grow-1">{{player.player_name}}</span>
+					<span class="home-rank-pts">{{player.points}} PTS</span>
+				</div>
+			</div>
+			<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
+				class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
 		</div>
 
 		<!-- News -->
@@ -220,23 +229,23 @@
 			</div>
 		</div>
 
-		<!-- Leaderboard -->
-		<div class="text-white home-leaderboard home-side-block" v-if="theSettings.license_start_game_tracker ?? 0">
-			<div class="ranking-div d-flex flex-column" v-if="vueHome.leaderboardItems">
-				<h4 class="text-uppercase pb-2 lang" id="current-month-name" style="font-size:11px;color:#8b92b0;font-weight:700;margin:0;">Last 30 days</h4>
-				<div class="d-flex flex-column" id="home_rank">
-					<div class="d-flex mb-1">
-						<div class="col-4 text-center"><label class="lang text-light font-weight-bold" style="font-size:11px;">RANK</label></div>
-						<div class="col-4 text-center"><label class="lang text-light font-weight-bold" style="font-size:11px;">PLAYER</label></div>
-						<div class="col-4 text-right"><label class="lang text-light font-weight-bold" style="font-size:11px;">SCORE</label></div>
-					</div>
-					<div class="d-flex" v-for="n in vueHome.leaderboardItems.current_month.length">
-						<div class="col-4 text-center"><label :class="[vueHome.leaderboardItems.current_month[n-1].track_member_account == 'ME' ? 'text-warning' : 'text-light']" style="font-size:11px;">{{vueHome.leaderboardItems.current_month[n-1].rank}}</label></div>
-						<div class="col-4 text-center"><label class="text-light" style="font-size:11px;">{{vueHome.leaderboardItems.current_month[n-1].track_member_account}}</label></div>
-						<div class="col-4 text-right"><label class="text-light" style="font-size:11px;">{{parseInt(vueHome.leaderboardItems.current_month[n-1].track_game_coins) || 0}}</label></div>
-					</div>
+		<!-- Top Spenders for the Month -->
+		<div class="text-white home-side-block home-top-spenders">
+			<div class="d-flex align-items-center mb-2">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
+				<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
+			</div>
+			<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
+				<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
+					class="d-flex align-items-center home-rank-item"
+					:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
+					<span class="home-rank-number"
+						:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+					<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
+					<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
 				</div>
 			</div>
+			<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
 		</div>
 
 	</div>

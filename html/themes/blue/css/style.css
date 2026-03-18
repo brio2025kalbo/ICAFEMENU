@@ -8550,3 +8550,183 @@ body {
   color: #fff;
   border-color: #1e2540;
 }
+
+/* ========================================
+   Home Right Panel – Top Players & Top Spenders
+   ======================================== */
+
+/* Game icon strip */
+#page-home .home-player-game-icons {
+  gap: 8px;
+}
+
+#page-home .home-player-game-icon {
+  width: 44px;
+  height: 22px;
+  filter: grayscale(100%) brightness(0.6);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#page-home .home-player-game-icon:hover {
+  filter: grayscale(0%) brightness(1);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+#page-home .home-player-game-icon.active {
+  filter: grayscale(0%) brightness(1.1);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+#page-home .home-player-game-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Winners podium row */
+#page-home .home-rank-winners {
+  gap: 12px;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+#page-home .home-winner-item {
+  gap: 4px;
+  flex: 1;
+}
+
+#page-home .home-winner-item.gold-place {
+  order: 2;
+}
+
+#page-home .home-winner-item.silver-place {
+  order: 1;
+}
+
+#page-home .home-winner-item.bronze-place {
+  order: 3;
+}
+
+#page-home .home-winner-medal {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+#page-home .home-medal-icon {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  transform: scale(2.4);
+  transform-origin: center center;
+}
+
+#page-home .home-medal-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+#page-home .home-winner-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+#page-home .home-winner-pts {
+  font-size: 10px;
+  color: #576081;
+  text-align: center;
+}
+
+#page-home .home-winner-item.gold-place .home-winner-medal {
+  width: 52px;
+  height: 52px;
+}
+
+#page-home .home-winner-item.gold-place .home-medal-icon {
+  transform: scale(2.8);
+}
+
+#page-home .home-winner-item.gold-place .home-medal-avatar {
+  width: 34px;
+  height: 34px;
+}
+
+/* Rank list (positions 4+) */
+#page-home .home-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#page-home .home-rank-item {
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+#page-home .home-rank-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#page-home .home-rank-item.home-rank-me {
+  background: rgba(172, 158, 149, 0.18);
+}
+
+#page-home .home-rank-number {
+  min-width: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b92b0;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+#page-home .home-rank-gold  { color: #ffd773; }
+#page-home .home-rank-silver { color: #c2c8d9; }
+#page-home .home-rank-bronze { color: #e89b6a; }
+
+#page-home .home-rank-avatar {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+#page-home .home-rank-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
+}
+
+#page-home .home-rank-pts {
+  font-size: 11px;
+  color: #576081;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
