@@ -257,18 +257,6 @@ async function loadHomeTopSpenders() {
 	const dateStart = `${y}-${m}-01 00:00:00`;
 	const dateEnd = `${y}-${m}-${d} 23:59:59`;
 
-	// billingLogs/action/memberRanking requires a valid Bearer token.
-	// If no token is cached yet but a PC session token is available, obtain one first.
-	if (!theApiClient.getMemberInfo()?.token && thePCStatus?.status_pc_token) {
-		await theApiClient.memberLogin(
-			thePCStatus.member_account,
-			thePCStatus.status_pc_token,
-			null,
-			theCafe.license_name,
-			thePCInfo.pc_name
-		).catch(ICafeApiError.skip);
-	}
-
 	const params = {
 		limit: 10,
 		ranking_type: 'amount',
@@ -276,20 +264,29 @@ async function loadHomeTopSpenders() {
 		date_end: dateEnd
 	};
 
-	let raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', params)
-		.catch(ICafeApiError.skip);
+	// billingLogs/action/memberRanking requires a cafe-level credential (license_name),
+	// not a per-member token.  Obtain a guest token via auth/guestLogin without
+	// overwriting the member's stored token in localStorage, then override the
+	// Authorization header for this single request.
+	const guestInfo = await theApiClient.callApi(
+		theApiClient.getServerUrl('auth/guestLogin'),
+		'POST',
+		{ license_name: theCafe.license_name, pc_name: thePCInfo.pc_name, is_client: 1 }
+	).catch(ICafeApiError.skip);
 
-	// On failure callApi triggers refreshApiToken() in the background; poll until the token
-	// in localStorage changes (meaning refreshApiToken finished), max 3 s, then retry once.
-	if (!raw && thePCStatus?.status_pc_token) {
-		const prevToken = theApiClient.getMemberInfo()?.token;
-		const pollInterval = 500, maxWait = 3000;
-		for (let elapsed = 0; elapsed < maxWait && theApiClient.getMemberInfo()?.token === prevToken; elapsed += pollInterval) {
-			await new Promise(r => setTimeout(r, pollInterval));
-		}
-		raw = await theApiClient.callCafeApi('billingLogs/action/memberRanking', 'GET', params)
-			.catch(ICafeApiError.skip);
+	if (!guestInfo?.token) {
+		console.warn('loadHomeTopSpenders: guestLogin failed, falling back to member token');
 	}
+	const opt = guestInfo?.token
+		? { headers: { 'Authorization': `Bearer ${guestInfo.token}` } }
+		: {};
+
+	const raw = await theApiClient.callApi(
+		theApiClient.getCafeUrl('billingLogs/action/memberRanking'),
+		'GET',
+		params,
+		opt
+	).catch(ICafeApiError.skip);
 
 	let items = null;
 	if (raw && Array.isArray(raw)) {
