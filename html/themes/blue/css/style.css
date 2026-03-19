@@ -8479,8 +8479,8 @@ body {
 /* Right-side column: wrapper that holds both cards evenly on the right */
 #page-home .home-hero-right-cards {
   right: 20px;
-  top: 130px;
-  bottom: 100px;
+  top: 60px;
+  bottom: 20px;
   width: calc(50% - 20px);
   display: flex;
   flex-direction: column;
