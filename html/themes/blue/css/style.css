@@ -8365,15 +8365,17 @@ body {
   flex-wrap: nowrap;
 }
 
-/* Individual thumbnail cards */
+/* Individual thumbnail cards – inactive/default (smaller, dimmed) */
 #page-home .home-hero-thumb {
-  width: 168px;
-  height: 240px;
+  width: 104px;
+  height: 150px;
   border-radius: 12px;
   overflow: hidden;
   border: 2px solid transparent;
-  transition: all 0.25s ease;
+  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease;
   flex-shrink: 0;
+  opacity: 0.72;
 }
 
 #page-home .home-hero-thumb img {
@@ -8386,9 +8388,11 @@ body {
 }
 
 #page-home .home-hero-thumb.active {
-  border-color: #4CAF50;
-  box-shadow: 0 0 14px rgba(76, 175, 80, 0.55);
-  transform: translateY(-8px) scale(1.08);
+  width: 168px;
+  height: 240px;
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
 }
 
 #page-home .home-hero-thumb.active img {
@@ -8400,28 +8404,37 @@ body {
 }
 
 #page-home .home-hero-thumb:hover:not(.active) {
-  transform: translateY(-4px);
+  opacity: 0.9;
 }
 
-/* "All games" button */
+/* "All games" card tile – same size as inactive game cards */
 #page-home .home-hero-all-games {
-  background: rgba(255, 255, 255, 0.1);
+  width: 104px;
+  height: 150px;
+  background: rgba(20, 24, 36, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 600;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: background 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, opacity 0.25s ease;
   text-decoration: none !important;
   white-space: nowrap;
-  align-self: center;
+  flex-shrink: 0;
+  opacity: 0.72;
   color: #fff !important;
+  padding: 0;
 }
 
 #page-home .home-hero-all-games:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
 }
 
 /* Hero bottom info: title + buttons */
