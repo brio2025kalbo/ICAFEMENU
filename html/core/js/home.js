@@ -202,6 +202,107 @@ function Home()
 		if (refreshBanance) {
 			refreshBalanceInfo();
 		}
+
+		// Load home panel rank and spender data
+		loadHomeTopPlayers();
+		loadHomeTopSpenders();
+	}
+}
+
+async function loadHomeTopPlayers() {
+	const gameCodes = ['pubg', 'lol', 'valorant', 'dota2', 'csgo', 'apex'];
+	const newItems = {};
+
+	const promises = gameCodes.map(async (gameCode) => {
+		const raw = await theApiClient.callApi(
+			'https://as1.icafecloud.com/api/v2/rank/data',
+			'GET',
+			{ code: gameCode + '-cafe-player', icafe_id: theApiClient.icafeId }
+		).catch(ICafeApiError.skip);
+
+		// Unwrap all known response shapes from the rank API:
+		// { code:200, data:{ game_code, ranks:[...] } } → callApi returns data obj
+		// direct array / { items } / { list } also handled for safety
+		let items = null;
+		if (raw && Array.isArray(raw)) {
+			items = raw;
+		} else if (raw && Array.isArray(raw.ranks)) {
+			items = raw.ranks;
+		} else if (raw && Array.isArray(raw.items)) {
+			items = raw.items;
+		} else if (raw && Array.isArray(raw.list)) {
+			items = raw.list;
+		} else if (raw && Array.isArray(raw.data)) {
+			items = raw.data;
+		}
+		// Filter out placeholder rows with no player name
+		newItems[gameCode] = (items || []).filter(p => p.player_name && p.player_name !== '');
+	});
+
+	await Promise.all(promises);
+
+	// Use Object.assign so PetiteVue detects the property changes
+	Object.assign(vueHomeRank.items, newItems);
+	const firstNonEmpty = gameCodes.find(g => newItems[g] && newItems[g].length > 0);
+	if (firstNonEmpty) {
+		vueHomeRank.active_game = firstNonEmpty;
+	}
+
+	// Start (or restart) the automatic game-tab rotation
+	startHomeRankAutoTab();
+}
+
+async function loadHomeTopSpenders() {
+	const now = new Date();
+	const y = now.getFullYear();
+	const m = String(now.getMonth() + 1).padStart(2, '0');
+	const d = String(now.getDate()).padStart(2, '0');
+	const dateStart = `${y}-${m}-01 00:00:00`;
+	const dateEnd = `${y}-${m}-${d} 23:59:59`;
+
+	const params = {
+		limit: 10,
+		ranking_type: 'amount',
+		date_start: dateStart,
+		date_end: dateEnd
+	};
+
+	// billingLogs/action/memberRanking requires a cafe-level credential (license_name),
+	// not a per-member token.  Obtain a guest token via auth/guestLogin without
+	// overwriting the member's stored token in localStorage, then override the
+	// Authorization header for this single request.
+	const guestInfo = await theApiClient.callApi(
+		theApiClient.getServerUrl('auth/guestLogin'),
+		'POST',
+		{ license_name: theCafe.license_name, pc_name: thePCInfo.pc_name, is_client: 1 }
+	).catch(ICafeApiError.skip);
+
+	if (!guestInfo?.token) {
+		console.warn('loadHomeTopSpenders: guestLogin failed, falling back to member token');
+	}
+	const opt = guestInfo?.token
+		? { headers: { 'Authorization': `Bearer ${guestInfo.token}` } }
+		: {};
+
+	const raw = await theApiClient.callApi(
+		theApiClient.getCafeUrl('billingLogs/action/memberRanking'),
+		'GET',
+		params,
+		opt
+	).catch(ICafeApiError.skip);
+
+	let items = null;
+	if (raw && Array.isArray(raw)) {
+		items = raw;
+	} else if (raw && Array.isArray(raw.items)) {
+		items = raw.items;
+	} else if (raw && Array.isArray(raw.list)) {
+		items = raw.list;
+	} else if (raw && Array.isArray(raw.data)) {
+		items = raw.data;
+	}
+	if (items) {
+		vueHomeSpenders.items = items;
 	}
 }
 
@@ -354,3 +455,42 @@ function initNewsCarousel() {
 $(document).ready(function() {
 	initNewsCarousel();
 });
+
+/* -----------------------------------------------------------------------
+ * Auto-tab rotation for the Top Players game tabs
+ * Cycles through every game that has at least one ranked player, pausing
+ * HOME_RANK_TAB_INTERVAL ms on each tab.  Calling startHomeRankAutoTab()
+ * always clears any existing timer first so it is safe to call repeatedly.
+ * Calling stopHomeRankAutoTab() cancels rotation (used when the page is
+ * navigated away from, or when the user manually picks a tab so the timer
+ * is restarted cleanly from the chosen tab).
+ * ---------------------------------------------------------------------- */
+var _homeRankAutoTabTimer = null;
+var HOME_RANK_TAB_INTERVAL = 5000; // milliseconds per tab
+
+function stopHomeRankAutoTab() {
+	if (_homeRankAutoTabTimer !== null) {
+		clearInterval(_homeRankAutoTabTimer);
+		_homeRankAutoTabTimer = null;
+	}
+}
+
+function startHomeRankAutoTab() {
+	stopHomeRankAutoTab();
+	_homeRankAutoTabTimer = setInterval(function() {
+		// Only rotate while the Home page is visible
+		if (typeof vueGlobal === 'undefined' || vueGlobal.pageType !== 'Home') return;
+		var games = Object.keys(vueHomeRank.items).filter(function(g) {
+			return vueHomeRank.items[g] && vueHomeRank.items[g].length > 0;
+		});
+		if (games.length < 2) return;
+		var idx = games.indexOf(vueHomeRank.active_game);
+		vueHomeRank.active_game = games[(idx + 1) % games.length];
+	}, HOME_RANK_TAB_INTERVAL);
+}
+
+function selectHomeRankTab(gameCode) {
+	vueHomeRank.active_game = gameCode;
+	// Restart so the selected tab shows for a full interval before advancing
+	startHomeRankAutoTab();
+}

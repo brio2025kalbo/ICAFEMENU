@@ -13,8 +13,131 @@
 		<!-- Dark gradient overlay (bottom-heavy for text readability) -->
 		<div class="home-hero-overlay position-absolute" style="top:0;left:0;right:0;bottom:0;z-index:1;"></div>
 
+		<!-- Right-side cards: Top Players + Top Spenders (evenly stacked) -->
+		<div class="home-hero-right-cards position-absolute" style="z-index:3;">
+
+			<!-- TOP PLAYERS card -->
+			<div class="home-hero-players text-white">
+				<div class="d-flex align-items-center mb-2">
+					<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYERS</span>
+				</div>
+				<!-- Game icons row -->
+				<div class="d-flex mb-3 home-player-game-icons flex-wrap">
+					<div v-for="(gameItems, gameCode) in vueHomeRank.items" :key="gameCode"
+						class="home-player-game-icon c-pointer"
+						:class="[vueHomeRank.active_game == gameCode ? 'active' : '']"
+						@click="selectHomeRankTab(gameCode)">
+						<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
+					</div>
+				</div>
+				<!-- Rank content (keyed so it fades in on each tab change) -->
+				<div class="home-rank-body" :key="vueHomeRank.active_game">
+				<!-- Top 3 Winners -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 0"
+					class="home-rank-winners d-flex justify-content-center align-items-end mb-3">
+					<!-- 2nd place -->
+					<div v-if="vueHomeRank.items[vueHomeRank.active_game][1]" class="home-winner-item silver-place d-flex flex-column align-items-center">
+						<div class="home-winner-medal position-relative">
+							<img src="./images/silver-medal.svg" class="home-medal-icon" alt="Silver">
+							<img :src="vueHomeRank.items[vueHomeRank.active_game][1].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+						</div>
+						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][1].player_name}}</span>
+						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][1].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>Wins</em>{{vueHomeRank.items[vueHomeRank.active_game][1].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>Losses</em>{{vueHomeRank.items[vueHomeRank.active_game][1].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>Kills</em>{{vueHomeRank.items[vueHomeRank.active_game][1].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>Deaths</em>{{vueHomeRank.items[vueHomeRank.active_game][1].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>Assists</em>{{vueHomeRank.items[vueHomeRank.active_game][1].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].assist : '-'}}</span>
+						</div>
+					</div>
+					<!-- 1st place -->
+					<div v-if="vueHomeRank.items[vueHomeRank.active_game][0]" class="home-winner-item gold-place d-flex flex-column align-items-center">
+						<div class="home-winner-medal position-relative">
+							<img src="./images/gold-medal.svg" class="home-medal-icon" alt="Gold">
+							<img :src="vueHomeRank.items[vueHomeRank.active_game][0].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+						</div>
+						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][0].player_name}}</span>
+						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][0].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>Wins</em>{{vueHomeRank.items[vueHomeRank.active_game][0].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>Losses</em>{{vueHomeRank.items[vueHomeRank.active_game][0].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>Kills</em>{{vueHomeRank.items[vueHomeRank.active_game][0].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>Deaths</em>{{vueHomeRank.items[vueHomeRank.active_game][0].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>Assists</em>{{vueHomeRank.items[vueHomeRank.active_game][0].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].assist : '-'}}</span>
+						</div>
+					</div>
+					<!-- 3rd place -->
+					<div v-if="vueHomeRank.items[vueHomeRank.active_game][2]" class="home-winner-item bronze-place d-flex flex-column align-items-center">
+						<div class="home-winner-medal position-relative">
+							<img src="./images/bronze-medal.svg" class="home-medal-icon" alt="Bronze">
+							<img :src="vueHomeRank.items[vueHomeRank.active_game][2].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+						</div>
+						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][2].player_name}}</span>
+						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][2].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>Wins</em>{{vueHomeRank.items[vueHomeRank.active_game][2].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>Losses</em>{{vueHomeRank.items[vueHomeRank.active_game][2].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>Kills</em>{{vueHomeRank.items[vueHomeRank.active_game][2].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>Deaths</em>{{vueHomeRank.items[vueHomeRank.active_game][2].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>Assists</em>{{vueHomeRank.items[vueHomeRank.active_game][2].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].assist : '-'}}</span>
+						</div>
+					</div>
+				</div>
+				<!-- Positions 4–10 -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 3" class="home-rank-list">
+					<div class="d-flex align-items-center home-rank-header">
+						<span class="home-rank-number"></span>
+						<span style="width:22px;flex-shrink:0;"></span>
+						<span class="home-rank-name flex-grow-1"></span>
+						<span class="home-rank-stat-hdr">Wins</span>
+						<span class="home-rank-stat-hdr">Losses</span>
+						<span class="home-rank-stat-hdr">Kills</span>
+						<span class="home-rank-stat-hdr">Deaths</span>
+						<span class="home-rank-stat-hdr">Assists</span>
+						<span class="home-rank-stat-hdr">Pts</span>
+					</div>
+					<div v-for="(player, idx) in vueHomeRank.items[vueHomeRank.active_game].slice(3, 10)" :key="idx"
+						class="d-flex align-items-center home-rank-item">
+						<span class="home-rank-number">{{idx + 4}}</span>
+						<img :src="player.avatar_url || './images/default-avatar.png'" class="home-rank-avatar rounded-circle mr-2" onerror="this.src='./images/default-avatar.png'">
+						<span class="home-rank-name flex-grow-1">{{player.player_name}}</span>
+						<span class="home-rank-stat">{{player.wins != undefined ? player.wins : '-'}}</span>
+						<span class="home-rank-stat">{{player.losses != undefined ? player.losses : '-'}}</span>
+						<span class="home-rank-stat">{{player.kills != undefined ? player.kills : '-'}}</span>
+						<span class="home-rank-stat">{{player.deaths != undefined ? player.deaths : '-'}}</span>
+						<span class="home-rank-stat">{{player.assist != undefined ? player.assist : '-'}}</span>
+						<span class="home-rank-pts">{{player.points}}</span>
+					</div>
+				</div>
+				<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
+					class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+				</div><!-- end home-rank-body -->
+			</div>
+
+			<!-- TOP SPENDERS card -->
+			<div class="home-hero-spenders text-white">
+				<div class="d-flex align-items-center mb-2">
+					<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
+					<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
+				</div>
+				<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
+					<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
+						class="d-flex align-items-center home-rank-item"
+						:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
+						<span class="home-rank-number"
+							:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+						<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
+						<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
+					</div>
+				</div>
+				<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+			</div>
+
+		</div>
+
 		<!-- Game thumbnail strip (top) -->
-		<div class="home-hero-strip position-relative d-flex align-items-end" style="z-index:2;">
+		<div class="home-hero-strip position-relative d-flex align-items-start" style="z-index:2;">
 			<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id"
 				class="home-hero-thumb c-pointer"
 				:class="{'active': index == vueHome.heroGameIndex}"
@@ -22,9 +145,9 @@
 				<img :src="ICAFEMENU_CORE.posters_path(game.pkg_id + '.jpg')"
 					onerror="this.src='images/default-poster.png';" class="rounded">
 			</div>
-			<a class="home-hero-all-games lang d-flex align-items-center text-white"
+			<a class="home-hero-all-games lang d-flex text-white"
 				href="javascript:theGameList.show()">
-				<i class="fal fa-th-large mr-1"></i> All games
+				<i class="fal fa-th-large"></i> All games
 			</a>
 		</div>
 
@@ -52,192 +175,4 @@
 
 	</div>
 
-	<!-- ============ Right Panel ============ -->
-	<div class="home-side-panel d-flex flex-column">
-
-		<!-- Member Info -->
-		<div class="home-side-member" id="home_member_info">
-			<div class="d-flex align-items-center mb-3">
-				<img :src="vueMemberAvatar.getAvatarUrl(memberInfo.member_photo)"
-					class="cafe_info_member_logo rounded-circle mr-3"
-					style="width:44px;height:44px;flex-shrink:0;"
-					onerror="this.src='images/default-avatar.png';">
-				<div class="normal-only flex-grow-1 overflow-hidden">
-					<label class="name text-white text-uppercase mb-0" style="font-size:13px;font-weight:700;" id="member_info_name">{{memberInfo.member_info_name}}</label>
-					<div class="lang" style="font-size:11px;color:#576081;">Welcome back</div>
-				</div>
-				<a class="lang" v-if="theSettings?.client_checklist_enable == 1" href="javascript:checklist()" data-toggle="tooltip" data-placement="left" title="Checklist">
-					<i class="fa fa-receipt text-muted"></i>
-				</a>
-			</div>
-
-			<div class="home-side-stats">
-				<div class="d-flex align-items-center mb-2 member_balance_realtime normal-only">
-					<i class="fal fa-wallet fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Balance"></i>
-					<label class="value text-white mb-0 flex-grow-1">{{memberInfo.member_balance_realtime}}</label>
-					<i class="fa-solid fa-rotate lang c-pointer" style="color:#576081;font-size:12px;" data-toggle="tooltip" title="Refresh" onclick="javascript:refreshBalanceInfo()"></i>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_loan normal-only" v-if="memberInfo.member_loan > 0">
-					<i class="fal fa-exclamation-triangle fa-fw mr-2 text-danger lang" data-toggle="tooltip" title="Loan"></i>
-					<label class="value text-danger mb-0">{{memberInfo.member_loan}}</label>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_balance_bonus_realtime normal-only">
-					<i class="fal fa-fw fa-award mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Bonus"></i>
-					<label class="value text-white mb-0">{{memberInfo.member_balance_bonus_realtime}}</label>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_coin_balance normal-only">
-					<i class="fal fa-gamepad fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Coins"></i>
-					<label class="value text-white mb-0">{{memberInfo.member_coin_balance}}</label>
-				</div>
-				<div v-if="memberInfo.price_per_hour && theSettings?.show_client_hourly_rate == 1" class="d-flex align-items-center mb-2 normal-only">
-					<i class="fal fa-barcode fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Price"></i>
-					<span class="text-white" style="font-size:13px;">{{theSettings.currency ?? '$'}} {{memberInfo.price_per_hour}}/H</span>
-				</div>
-				<div v-if="memberInfo.pc_cost > 0 && thePCStatus.member_group_id == MEMBER_GROUP_POSTPAID" class="d-flex align-items-center mb-2 normal-only">
-					<i class="fal fa-money-bill-wave fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Total spend"></i>
-					<span class="text-white" style="font-size:13px;">{{theSettings.currency ?? '$'}} {{memberInfo.pc_cost}}</span>
-				</div>
-			</div>
-
-			<!-- Member points/group -->
-			<div id="offers_div" class="text-white text-center" style="margin-top:8px;">
-				<div class="d-flex justify-content-center mb-1">
-					<div v-for="(item, index) in vueHome.memberGroup"
-						v-show="!theSettings || theSettings.show_member_points != 0"
-						:class="['member-group', item.mebmer_group_index == vueHome.memberCurrentGroup ? 'col-md-2 member-current-group' : 'col-md-3', vueHome.memberGroup.length == 1 ? 'group-left group-right' : (index == 0 ? 'group-left' : (index == vueHome.memberGroup.length - 1 ? 'group-right' : ''))]"
-						class="pl-0 pr-0">
-						{{item.mebmer_group_index}}
-					</div>
-				</div>
-				<div v-if="vueHome.memberGroup.length > 0" v-show="!theSettings || theSettings.show_member_points != 0" class="mb-2" style="font-size:12px;">
-					{{vueHome.memberPointValue}}
-				</div>
-				<div v-if="vueAvailableOffers.items.length > 0" id="carousel_main" class="carousel slide normal-only w-100" data-interval="false">
-					<div class="carousel-inner">
-						<div v-for="(item, index) in vueAvailableOffers.items" :key="item.id"
-							:class="['carousel-item', 'item', { 'active': index === vueAvailableOffers.currentIndex }]"
-							:id="'available-' + item.id">
-							<div class="progress mb-1" style="position:relative;height:1.4rem;background-color:#395A2A;border:1px solid #fff;border-radius:5px;">
-								<div class="progress-bar progress-bar-animated" role="progressbar" style="background-color:#43AE1D;" :style="{width:item.percent+'%'}"></div>
-								<span class="remaining" style="position:absolute;left:37%;height:1.4rem;line-height:1.4rem;font-size:11px;">{{item.remaining}}</span>
-							</div>
-							<div style="font-size:12px;">{{item.name}}</div>
-						</div>
-					</div>
-					<div v-if="vueAvailableOffers.items.length > 1">
-						<button class="carousel-control-prev c-pointer border-0" type="button" @click="prevOffer()" style="top:4%;bottom:auto;background:none;">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-						</button>
-						<button class="carousel-control-next c-pointer border-0" type="button" @click="nextOffer()" style="top:4%;bottom:auto;background:none;">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Promotions / Offers -->
-		<div class="text-white home-promoted home-side-block">
-			<div class="d-flex mb-2">
-				<button class="btn btn-sm section-tab lang mr-1" :class="vueHome.currentShopTab == 'promoted' ? 'active' : ''" id="promotions" @click="switchShopTab('promoted')">PROMOTED</button>
-				<button class="btn btn-sm section-tab lang" :class="vueHome.currentShopTab == 'offers' ? 'active' : ''" id="offers" @click="switchShopTab('offers')">OFFERS</button>
-			</div>
-			<div v-show="vueHome.currentShopTab == 'promoted'" id="game_promotes">
-				<div v-if="vueHome.promotedGoods.length > 0" class="d-flex flex-column">
-					<div v-for="goods in vueHome.promotedGoods.slice(vueHome.promotedActive * 3, vueHome.promotedActive * 3 + 3)" :key="goods.product_id"
-						class="d-flex align-items-center home-promoted-item c-pointer mb-1 p-2 rounded"
-						@click="theShop.buy(goods.product_id, 1)">
-						<img :src="goods.image" class="rounded mr-2" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='images/default-product.png';">
-						<div class="flex-grow-1 overflow-hidden">
-							<label class="text-white mb-0" style="font-size:12px;">{{goods.product_name}}</label>
-							<div style="font-size:11px;color:#576081;">
-								<span v-if="vueProductGroupList.current_group_id == -2">{{formatNumber(goods.product_coin_price)}} {{translate_string('coin')}}</span>
-								<span v-else>{{theSettings.currency ?? '$'}} {{formatNumber(goods.product_price)}}</span>
-							</div>
-						</div>
-						<i class="fal fa-cart-plus" style="color:#576081;font-size:14px;"></i>
-					</div>
-					<div v-if="Math.ceil(vueHome.promotedGoods.length / 3) > 1" class="d-flex justify-content-center mt-1">
-						<button class="btn btn-sm p-0 mr-2" style="color:#576081;" @click="prevShopPage()"><i class="fal fa-chevron-left"></i></button>
-						<button class="btn btn-sm p-0" style="color:#576081;" @click="nextShopPage()"><i class="fal fa-chevron-right"></i></button>
-					</div>
-				</div>
-			</div>
-			<div v-show="vueHome.currentShopTab == 'offers'" id="game_offers">
-				<div v-if="vueProducts.items.length > 0" class="d-flex flex-column">
-					<div v-for="goods in vueProducts.items.slice((vueHome.offersActivePage ?? 0) * 3, (vueHome.offersActivePage ?? 0) * 3 + 3)" :key="goods.product_id"
-						class="d-flex align-items-center home-promoted-item c-pointer mb-1 p-2 rounded"
-						@click="theShop.buy(goods.product_id, 1)">
-						<img :src="goods.image" class="rounded mr-2" style="width:40px;height:40px;object-fit:cover;" onerror="this.src='images/default-product.png';">
-						<div class="flex-grow-1 overflow-hidden">
-							<label class="text-white mb-0" style="font-size:12px;">{{goods.product_name}}</label>
-							<div style="font-size:11px;color:#576081;">
-								<span v-if="vueProductGroupList.current_group_id == -2">{{formatNumber(goods.product_coin_price)}} {{translate_string('coin')}}</span>
-								<span v-else>{{theSettings.currency ?? '$'}} {{formatNumber(goods.product_price)}}</span>
-							</div>
-						</div>
-						<i class="fal fa-cart-plus" style="color:#576081;font-size:14px;"></i>
-					</div>
-					<div v-if="Math.ceil(vueProducts.items.length / 3) > 1" class="d-flex justify-content-center mt-1">
-						<button class="btn btn-sm p-0 mr-2" style="color:#576081;" @click="prevOffersPage()"><i class="fal fa-chevron-left"></i></button>
-						<button class="btn btn-sm p-0" style="color:#576081;" @click="nextOffersPage()"><i class="fal fa-chevron-right"></i></button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- News -->
-		<div class="text-white home-news home-side-block" v-if="vueCafeNews.items.length > 0">
-			<div class="d-flex align-items-center mb-2">
-				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">NEWS</span>
-			</div>
-			<div id="home_carousel_news" class="carousel carousel-spotlight slide carousel-fade fl-scn mb-0" data-ride="carousel">
-				<ol v-if="vueCafeNews.items.length > 1" class="carousel-indicators">
-					<li v-for="(item, index) in vueCafeNews.items" data-target="#home_carousel_news" :data-slide-to="index" :class="item.active"></li>
-				</ol>
-				<div class="carousel-inner" style="height:120px;border-radius:8px;overflow:hidden;">
-					<div v-for="item in vueCafeNews.items" :key="item.news_id" class="carousel-item item h-100" :class="item.active" :data-bs-interval="item.news_duration">
-						<img v-if="!item.news_video" class="h-100 c-pointer m-auto w-100" style="object-fit:cover;"
-							:src="ICAFEMENU_CORE.posters_path('ns-'+item.news_id + '.jpg')"
-							onerror="this.src='images/default-news.jpg'"
-							@click="open_news(item.news_id)" />
-						<div v-else class="h-100 m-auto">
-							<div v-if="item.isYoutube" class="h-100 video-box align-middle embed-responsive">
-								<iframe :src="item.news_video" id="newsYoutubeVideo" class="embed-responsive-item" allow="autoplay" @click="open_news(item.news_id)" allowfullscreen></iframe>
-							</div>
-							<div v-else class="h-100 m-auto">
-								<video class="video-box h-100 c-pointer w-100" autoplay muted loop @click="open_news(item.news_id)">
-									<source :src="item.news_video" type="video/webm" id="newsUrlVideo">
-								</video>
-							</div>
-						</div>
-						<div v-show="item.news_show_qr" @click="handleQRClick(item.news_id)" style="cursor:pointer;"
-							v-effect="new QRCode(document.querySelector('.news-qr-box-'+ item.news_id), item.news_url);"
-							:class="'news-qr news-qr-box-' + item.news_id">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Leaderboard -->
-		<div class="text-white home-leaderboard home-side-block" v-if="theSettings.license_start_game_tracker ?? 0">
-			<div class="ranking-div d-flex flex-column" v-if="vueHome.leaderboardItems">
-				<h4 class="text-uppercase pb-2 lang" id="current-month-name" style="font-size:11px;color:#8b92b0;font-weight:700;margin:0;">Last 30 days</h4>
-				<div class="d-flex flex-column" id="home_rank">
-					<div class="d-flex mb-1">
-						<div class="col-4 text-center"><label class="lang text-light font-weight-bold" style="font-size:11px;">RANK</label></div>
-						<div class="col-4 text-center"><label class="lang text-light font-weight-bold" style="font-size:11px;">PLAYER</label></div>
-						<div class="col-4 text-right"><label class="lang text-light font-weight-bold" style="font-size:11px;">SCORE</label></div>
-					</div>
-					<div class="d-flex" v-for="n in vueHome.leaderboardItems.current_month.length">
-						<div class="col-4 text-center"><label :class="[vueHome.leaderboardItems.current_month[n-1].track_member_account == 'ME' ? 'text-warning' : 'text-light']" style="font-size:11px;">{{vueHome.leaderboardItems.current_month[n-1].rank}}</label></div>
-						<div class="col-4 text-center"><label class="text-light" style="font-size:11px;">{{vueHome.leaderboardItems.current_month[n-1].track_member_account}}</label></div>
-						<div class="col-4 text-right"><label class="text-light" style="font-size:11px;">{{parseInt(vueHome.leaderboardItems.current_month[n-1].track_game_coins) || 0}}</label></div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-	</div>
 </div>

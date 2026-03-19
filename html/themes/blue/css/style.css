@@ -8365,15 +8365,17 @@ body {
   flex-wrap: nowrap;
 }
 
-/* Individual thumbnail cards */
+/* Individual thumbnail cards – inactive/default (smaller, dimmed) */
 #page-home .home-hero-thumb {
-  width: 68px;
-  height: 92px;
-  border-radius: 8px;
+  width: 104px;
+  height: 150px;
+  border-radius: 12px;
   overflow: hidden;
   border: 2px solid transparent;
-  transition: all 0.25s ease;
+  transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease;
   flex-shrink: 0;
+  opacity: 0.72;
 }
 
 #page-home .home-hero-thumb img {
@@ -8386,9 +8388,11 @@ body {
 }
 
 #page-home .home-hero-thumb.active {
-  border-color: #4CAF50;
-  box-shadow: 0 0 14px rgba(76, 175, 80, 0.55);
-  transform: translateY(-8px) scale(1.08);
+  width: 168px;
+  height: 240px;
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
 }
 
 #page-home .home-hero-thumb.active img {
@@ -8400,33 +8404,42 @@ body {
 }
 
 #page-home .home-hero-thumb:hover:not(.active) {
-  transform: translateY(-4px);
+  opacity: 0.9;
 }
 
-/* "All games" button */
+/* "All games" card tile – same size as inactive game cards */
 #page-home .home-hero-all-games {
-  background: rgba(255, 255, 255, 0.1);
+  width: 104px;
+  height: 150px;
+  background: rgba(20, 24, 36, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
   font-weight: 600;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  transition: background 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, opacity 0.25s ease;
   text-decoration: none !important;
   white-space: nowrap;
-  align-self: center;
+  flex-shrink: 0;
+  opacity: 0.72;
   color: #fff !important;
+  padding: 0;
 }
 
 #page-home .home-hero-all-games:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  opacity: 1;
 }
 
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
-  padding: 0 28px 28px;
+  padding: 0 calc(50% + 8px) 28px 28px;
 }
 
 #page-home .home-hero-title {
@@ -8474,6 +8487,38 @@ body {
 
 #page-home .home-hero-free-btn:hover {
   background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Right-side column: wrapper that holds both cards evenly on the right */
+#page-home .home-hero-right-cards {
+  right: 20px;
+  top: 60px;
+  bottom: 20px;
+  width: calc(50% - 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Shared card style for Top Players and Top Spenders */
+#page-home .home-hero-players,
+#page-home .home-hero-spenders {
+  flex: 1;
+  min-height: 0;
+  background: rgba(10, 13, 20, 0.80);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#page-home .home-hero-players::-webkit-scrollbar,
+#page-home .home-hero-spenders::-webkit-scrollbar {
+  display: none;
 }
 
 /* ========================================
@@ -8549,4 +8594,251 @@ body {
   background: #171e2f;
   color: #fff;
   border-color: #1e2540;
+}
+
+/* ========================================
+   Home Right Panel – Top Players & Top Spenders
+   ======================================== */
+
+/* Game icon strip */
+#page-home .home-player-game-icons {
+  gap: 8px;
+}
+
+#page-home .home-player-game-icon {
+  width: 64px;
+  height: 64px;
+  filter: grayscale(100%) brightness(0.6);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#page-home .home-player-game-icon:hover {
+  filter: grayscale(0%) brightness(1);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+#page-home .home-player-game-icon.active {
+  filter: grayscale(0%) brightness(1.1);
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+#page-home .home-player-game-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Winners podium row */
+#page-home .home-rank-winners {
+  gap: 12px;
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+}
+
+#page-home .home-winner-item {
+  gap: 4px;
+  flex: 1;
+}
+
+#page-home .home-winner-item.gold-place {
+  order: 2;
+}
+
+#page-home .home-winner-item.silver-place {
+  order: 1;
+}
+
+#page-home .home-winner-item.bronze-place {
+  order: 3;
+}
+
+#page-home .home-winner-medal {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+#page-home .home-medal-icon {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  transform: scale(2.4);
+  transform-origin: center center;
+}
+
+#page-home .home-medal-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+#page-home .home-winner-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+#page-home .home-winner-pts {
+  font-size: 10px;
+  color: #576081;
+  text-align: center;
+}
+
+#page-home .home-winner-item.gold-place .home-winner-medal {
+  width: 52px;
+  height: 52px;
+}
+
+#page-home .home-winner-item.gold-place .home-medal-icon {
+  transform: scale(2.8);
+}
+
+#page-home .home-winner-item.gold-place .home-medal-avatar {
+  width: 34px;
+  height: 34px;
+}
+
+/* Rank list (positions 4+) */
+/* Fade-in animation for rank content on tab switch */
+@keyframes homeRankFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-home .home-rank-body {
+  animation: homeRankFadeIn 0.35s ease;
+}
+
+#page-home .home-rank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#page-home .home-rank-item {
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+#page-home .home-rank-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+#page-home .home-rank-item.home-rank-me {
+  background: rgba(172, 158, 149, 0.18);
+}
+
+#page-home .home-rank-number {
+  min-width: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8b92b0;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+#page-home .home-rank-gold  { color: #ffd773; }
+#page-home .home-rank-silver { color: #c2c8d9; }
+#page-home .home-rank-bronze { color: #e89b6a; }
+
+#page-home .home-rank-avatar {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+#page-home .home-rank-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 8px;
+}
+
+#page-home .home-rank-pts {
+  font-size: 11px;
+  color: #576081;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Stat column header in rank list */
+#page-home .home-rank-header {
+  padding: 2px 8px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 2px;
+}
+
+#page-home .home-rank-stat-hdr {
+  min-width: 38px;
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  color: #576081;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+/* Stat data cells in rank list rows */
+#page-home .home-rank-stat {
+  min-width: 38px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #8b92b0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Stats strip on top-3 winner cards */
+#page-home .home-winner-stats {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#page-home .home-winner-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 30px;
+  font-size: 10px;
+  color: #c2c8d9;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+#page-home .home-winner-stat em {
+  font-style: normal;
+  font-size: 8px;
+  color: #576081;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
