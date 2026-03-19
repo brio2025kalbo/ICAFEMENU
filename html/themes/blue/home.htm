@@ -13,8 +13,10 @@
 		<!-- Dark gradient overlay (bottom-heavy for text readability) -->
 		<div class="home-hero-overlay position-absolute" style="top:0;left:0;right:0;bottom:0;z-index:1;"></div>
 
-		<!-- Top Players overlay -->
+		<!-- Top Players + Top Spenders centered overlay -->
 		<div class="home-hero-players position-absolute text-white" style="z-index:3;">
+
+			<!-- Top Players -->
 			<div class="d-flex align-items-center mb-2">
 				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYERS</span>
 			</div>
@@ -70,6 +72,27 @@
 			</div>
 			<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
 				class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+
+			<!-- Divider -->
+			<div class="home-hero-players-divider"></div>
+
+			<!-- Top Spenders -->
+			<div class="d-flex align-items-center mb-2 mt-1">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
+				<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
+			</div>
+			<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
+				<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
+					class="d-flex align-items-center home-rank-item"
+					:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
+					<span class="home-rank-number"
+						:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+					<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
+					<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
+				</div>
+			</div>
+			<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+
 		</div>
 
 		<!-- Game thumbnail strip (top) -->
@@ -111,142 +134,4 @@
 
 	</div>
 
-	<!-- ============ Right Panel ============ -->
-	<div class="home-side-panel d-flex flex-column">
-
-		<!-- Member Info -->
-		<div class="home-side-member" id="home_member_info">
-			<div class="d-flex align-items-center mb-3">
-				<img :src="vueMemberAvatar.getAvatarUrl(memberInfo.member_photo)"
-					class="cafe_info_member_logo rounded-circle mr-3"
-					style="width:44px;height:44px;flex-shrink:0;"
-					onerror="this.src='images/default-avatar.png';">
-				<div class="normal-only flex-grow-1 overflow-hidden">
-					<label class="name text-white text-uppercase mb-0" style="font-size:13px;font-weight:700;" id="member_info_name">{{memberInfo.member_info_name}}</label>
-					<div class="lang" style="font-size:11px;color:#576081;">Welcome back</div>
-				</div>
-				<a class="lang" v-if="theSettings?.client_checklist_enable == 1" href="javascript:checklist()" data-toggle="tooltip" data-placement="left" title="Checklist">
-					<i class="fa fa-receipt text-muted"></i>
-				</a>
-			</div>
-
-			<div class="home-side-stats">
-				<div class="d-flex align-items-center mb-2 member_balance_realtime normal-only">
-					<i class="fal fa-wallet fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Balance"></i>
-					<label class="value text-white mb-0 flex-grow-1">{{memberInfo.member_balance_realtime}}</label>
-					<i class="fa-solid fa-rotate lang c-pointer" style="color:#576081;font-size:12px;" data-toggle="tooltip" title="Refresh" onclick="javascript:refreshBalanceInfo()"></i>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_loan normal-only" v-if="memberInfo.member_loan > 0">
-					<i class="fal fa-exclamation-triangle fa-fw mr-2 text-danger lang" data-toggle="tooltip" title="Loan"></i>
-					<label class="value text-danger mb-0">{{memberInfo.member_loan}}</label>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_balance_bonus_realtime normal-only">
-					<i class="fal fa-fw fa-award mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Bonus"></i>
-					<label class="value text-white mb-0">{{memberInfo.member_balance_bonus_realtime}}</label>
-				</div>
-				<div class="d-flex align-items-center mb-2 member_coin_balance normal-only">
-					<i class="fal fa-gamepad fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Coins"></i>
-					<label class="value text-white mb-0">{{memberInfo.member_coin_balance}}</label>
-				</div>
-				<div v-if="memberInfo.price_per_hour && theSettings?.show_client_hourly_rate == 1" class="d-flex align-items-center mb-2 normal-only">
-					<i class="fal fa-barcode fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Price"></i>
-					<span class="text-white" style="font-size:13px;">{{theSettings.currency ?? '$'}} {{memberInfo.price_per_hour}}/H</span>
-				</div>
-				<div v-if="memberInfo.pc_cost > 0 && thePCStatus.member_group_id == MEMBER_GROUP_POSTPAID" class="d-flex align-items-center mb-2 normal-only">
-					<i class="fal fa-money-bill-wave fa-fw mr-2 lang" style="color:#576081;" data-toggle="tooltip" title="Total spend"></i>
-					<span class="text-white" style="font-size:13px;">{{theSettings.currency ?? '$'}} {{memberInfo.pc_cost}}</span>
-				</div>
-			</div>
-
-			<!-- Member points/group -->
-			<div id="offers_div" class="text-white text-center" style="margin-top:8px;">
-				<div class="d-flex justify-content-center mb-1">
-					<div v-for="(item, index) in vueHome.memberGroup"
-						v-show="!theSettings || theSettings.show_member_points != 0"
-						:class="['member-group', item.mebmer_group_index == vueHome.memberCurrentGroup ? 'col-md-2 member-current-group' : 'col-md-3', vueHome.memberGroup.length == 1 ? 'group-left group-right' : (index == 0 ? 'group-left' : (index == vueHome.memberGroup.length - 1 ? 'group-right' : ''))]"
-						class="pl-0 pr-0">
-						{{item.mebmer_group_index}}
-					</div>
-				</div>
-				<div v-if="vueHome.memberGroup.length > 0" v-show="!theSettings || theSettings.show_member_points != 0" class="mb-2" style="font-size:12px;">
-					{{vueHome.memberPointValue}}
-				</div>
-				<div v-if="vueAvailableOffers.items.length > 0" id="carousel_main" class="carousel slide normal-only w-100" data-interval="false">
-					<div class="carousel-inner">
-						<div v-for="(item, index) in vueAvailableOffers.items" :key="item.id"
-							:class="['carousel-item', 'item', { 'active': index === vueAvailableOffers.currentIndex }]"
-							:id="'available-' + item.id">
-							<div class="progress mb-1" style="position:relative;height:1.4rem;background-color:#395A2A;border:1px solid #fff;border-radius:5px;">
-								<div class="progress-bar progress-bar-animated" role="progressbar" style="background-color:#43AE1D;" :style="{width:item.percent+'%'}"></div>
-								<span class="remaining" style="position:absolute;left:37%;height:1.4rem;line-height:1.4rem;font-size:11px;">{{item.remaining}}</span>
-							</div>
-							<div style="font-size:12px;">{{item.name}}</div>
-						</div>
-					</div>
-					<div v-if="vueAvailableOffers.items.length > 1">
-						<button class="carousel-control-prev c-pointer border-0" type="button" @click="prevOffer()" style="top:4%;bottom:auto;background:none;">
-							<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-						</button>
-						<button class="carousel-control-next c-pointer border-0" type="button" @click="nextOffer()" style="top:4%;bottom:auto;background:none;">
-							<span class="carousel-control-next-icon" aria-hidden="true"></span>
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- News -->
-		<div class="text-white home-news home-side-block" v-if="vueCafeNews.items.length > 0">
-			<div class="d-flex align-items-center mb-2">
-				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">NEWS</span>
-			</div>
-			<div id="home_carousel_news" class="carousel carousel-spotlight slide carousel-fade fl-scn mb-0" data-ride="carousel">
-				<ol v-if="vueCafeNews.items.length > 1" class="carousel-indicators">
-					<li v-for="(item, index) in vueCafeNews.items" data-target="#home_carousel_news" :data-slide-to="index" :class="item.active"></li>
-				</ol>
-				<div class="carousel-inner" style="height:120px;border-radius:8px;overflow:hidden;">
-					<div v-for="item in vueCafeNews.items" :key="item.news_id" class="carousel-item item h-100" :class="item.active" :data-bs-interval="item.news_duration">
-						<img v-if="!item.news_video" class="h-100 c-pointer m-auto w-100" style="object-fit:cover;"
-							:src="ICAFEMENU_CORE.posters_path('ns-'+item.news_id + '.jpg')"
-							onerror="this.src='images/default-news.jpg'"
-							@click="open_news(item.news_id)" />
-						<div v-else class="h-100 m-auto">
-							<div v-if="item.isYoutube" class="h-100 video-box align-middle embed-responsive">
-								<iframe :src="item.news_video" id="newsYoutubeVideo" class="embed-responsive-item" allow="autoplay" @click="open_news(item.news_id)" allowfullscreen></iframe>
-							</div>
-							<div v-else class="h-100 m-auto">
-								<video class="video-box h-100 c-pointer w-100" autoplay muted loop @click="open_news(item.news_id)">
-									<source :src="item.news_video" type="video/webm" id="newsUrlVideo">
-								</video>
-							</div>
-						</div>
-						<div v-show="item.news_show_qr" @click="handleQRClick(item.news_id)" style="cursor:pointer;"
-							v-effect="new QRCode(document.querySelector('.news-qr-box-'+ item.news_id), item.news_url);"
-							:class="'news-qr news-qr-box-' + item.news_id">
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Top Spenders for the Month -->
-		<div class="text-white home-side-block home-top-spenders">
-			<div class="d-flex align-items-center mb-2">
-				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
-				<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
-			</div>
-			<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
-				<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
-					class="d-flex align-items-center home-rank-item"
-					:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
-					<span class="home-rank-number"
-						:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
-					<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
-					<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
-				</div>
-			</div>
-			<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
-		</div>
-
-	</div>
 </div>

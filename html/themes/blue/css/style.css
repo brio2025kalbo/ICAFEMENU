@@ -8426,7 +8426,7 @@ body {
 
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
-  padding: 0 260px 28px 28px;
+  padding: 0 28px 28px;
 }
 
 #page-home .home-hero-title {
@@ -8476,18 +8476,19 @@ body {
   background: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Top Players panel overlaid on the right side of the hero */
+/* Top Players + Top Spenders centered overlay inside hero */
 #page-home .home-hero-players {
-  right: 20px;
+  left: 50%;
   top: 130px;
-  bottom: 140px;
-  width: 220px;
-  background: rgba(10, 13, 20, 0.75);
+  bottom: 100px;
+  transform: translateX(-50%);
+  width: 600px;
+  background: rgba(10, 13, 20, 0.80);
   border: 1px solid rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 12px;
-  padding: 12px;
+  padding: 16px 20px;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -8495,6 +8496,12 @@ body {
 
 #page-home .home-hero-players::-webkit-scrollbar {
   display: none;
+}
+
+/* Divider between Top Players and Top Spenders */
+#page-home .home-hero-players-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 12px 0;
 }
 
 /* ========================================
