@@ -309,7 +309,7 @@ async function loadHomeTopSpenders() {
 
 async function loadHomeTopGames() {
 	const today = new Date().toISOString().slice(0, 10);
-	const url = `http://localhost:5173/kiosk/${theCafe.id}/top-games`;
+	const url = `http://localhost:5173/api/kiosk/${theCafe.id}/top-games`;
 	const raw = await $.ajax({
 		url,
 		method: 'GET',
@@ -325,6 +325,8 @@ async function loadHomeTopGames() {
 	let items = null;
 	if (raw && Array.isArray(raw)) {
 		items = raw;
+	} else if (raw && Array.isArray(raw.games)) {
+		items = raw.games;
 	} else if (raw && Array.isArray(raw.data)) {
 		items = raw.data;
 	} else if (raw && Array.isArray(raw.items)) {
