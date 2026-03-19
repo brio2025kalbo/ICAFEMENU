@@ -8775,3 +8775,59 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
 }
+
+/* Stat column header in rank list */
+#page-home .home-rank-header {
+  padding: 2px 8px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 2px;
+}
+
+#page-home .home-rank-stat-hdr {
+  width: 26px;
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  color: #576081;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Stat data cells in rank list rows */
+#page-home .home-rank-stat {
+  width: 26px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: #8b92b0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Stats strip on top-3 winner cards */
+#page-home .home-winner-stats {
+  display: flex;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+#page-home .home-winner-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 22px;
+  font-size: 10px;
+  color: #c2c8d9;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+#page-home .home-winner-stat em {
+  font-style: normal;
+  font-size: 8px;
+  color: #576081;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}

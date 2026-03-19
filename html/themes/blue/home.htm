@@ -41,6 +41,13 @@
 						</div>
 						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][1].player_name}}</span>
 						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][1].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>W</em>{{vueHomeRank.items[vueHomeRank.active_game][1].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>L</em>{{vueHomeRank.items[vueHomeRank.active_game][1].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>K</em>{{vueHomeRank.items[vueHomeRank.active_game][1].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>D</em>{{vueHomeRank.items[vueHomeRank.active_game][1].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>A</em>{{vueHomeRank.items[vueHomeRank.active_game][1].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][1].assist : '-'}}</span>
+						</div>
 					</div>
 					<!-- 1st place -->
 					<div v-if="vueHomeRank.items[vueHomeRank.active_game][0]" class="home-winner-item gold-place d-flex flex-column align-items-center">
@@ -50,6 +57,13 @@
 						</div>
 						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][0].player_name}}</span>
 						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][0].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>W</em>{{vueHomeRank.items[vueHomeRank.active_game][0].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>L</em>{{vueHomeRank.items[vueHomeRank.active_game][0].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>K</em>{{vueHomeRank.items[vueHomeRank.active_game][0].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>D</em>{{vueHomeRank.items[vueHomeRank.active_game][0].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>A</em>{{vueHomeRank.items[vueHomeRank.active_game][0].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][0].assist : '-'}}</span>
+						</div>
 					</div>
 					<!-- 3rd place -->
 					<div v-if="vueHomeRank.items[vueHomeRank.active_game][2]" class="home-winner-item bronze-place d-flex flex-column align-items-center">
@@ -59,16 +73,37 @@
 						</div>
 						<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][2].player_name}}</span>
 						<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][2].points}} PTS</span>
+						<div class="home-winner-stats">
+							<span class="home-winner-stat"><em>W</em>{{vueHomeRank.items[vueHomeRank.active_game][2].wins != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].wins : '-'}}</span>
+							<span class="home-winner-stat"><em>L</em>{{vueHomeRank.items[vueHomeRank.active_game][2].losses != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].losses : '-'}}</span>
+							<span class="home-winner-stat"><em>K</em>{{vueHomeRank.items[vueHomeRank.active_game][2].kills != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].kills : '-'}}</span>
+							<span class="home-winner-stat"><em>D</em>{{vueHomeRank.items[vueHomeRank.active_game][2].deaths != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].deaths : '-'}}</span>
+							<span class="home-winner-stat"><em>A</em>{{vueHomeRank.items[vueHomeRank.active_game][2].assist != undefined ? vueHomeRank.items[vueHomeRank.active_game][2].assist : '-'}}</span>
+						</div>
 					</div>
 				</div>
 				<!-- Positions 4–10 -->
 				<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 3" class="home-rank-list">
+					<div class="d-flex align-items-center home-rank-header">
+						<span class="home-rank-number"></span>
+						<span style="width:22px;flex-shrink:0;"></span>
+						<span class="home-rank-name flex-grow-1"></span>
+						<span class="home-rank-stat-hdr">W</span>
+						<span class="home-rank-stat-hdr">L</span>
+						<span class="home-rank-stat-hdr">K</span>
+						<span class="home-rank-stat-hdr">D</span>
+						<span class="home-rank-stat-hdr">A</span>
+					</div>
 					<div v-for="(player, idx) in vueHomeRank.items[vueHomeRank.active_game].slice(3, 10)" :key="idx"
 						class="d-flex align-items-center home-rank-item">
 						<span class="home-rank-number">{{idx + 4}}</span>
 						<img :src="player.avatar_url || './images/default-avatar.png'" class="home-rank-avatar rounded-circle mr-2" onerror="this.src='./images/default-avatar.png'">
 						<span class="home-rank-name flex-grow-1">{{player.player_name}}</span>
-						<span class="home-rank-pts">{{player.points}} PTS</span>
+						<span class="home-rank-stat">{{player.wins != undefined ? player.wins : '-'}}</span>
+						<span class="home-rank-stat">{{player.losses != undefined ? player.losses : '-'}}</span>
+						<span class="home-rank-stat">{{player.kills != undefined ? player.kills : '-'}}</span>
+						<span class="home-rank-stat">{{player.deaths != undefined ? player.deaths : '-'}}</span>
+						<span class="home-rank-stat">{{player.assist != undefined ? player.assist : '-'}}</span>
 					</div>
 				</div>
 				<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
