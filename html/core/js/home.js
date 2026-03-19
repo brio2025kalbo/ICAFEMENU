@@ -204,11 +204,11 @@ function Home()
 		}
 
 		// Load home panel rank and spender data
-			loadHomeTopPlayers();
-			loadHomeTopSpenders();
-			loadHomeTopGames();
-		}
+		loadHomeTopPlayers();
+		loadHomeTopSpenders();
+		loadHomeTopGames();
 	}
+}
 
 async function loadHomeTopPlayers() {
 	const gameCodes = ['pubg', 'lol', 'valorant', 'dota2', 'csgo', 'apex'];
@@ -258,88 +258,73 @@ async function loadHomeTopSpenders() {
 	const y = now.getFullYear();
 	const m = String(now.getMonth() + 1).padStart(2, '0');
 	const d = String(now.getDate()).padStart(2, '0');
-	const dateStart = `${y}-${m}-01 00:00:00`;
-	const dateEnd = `${y}-${m}-${d} 23:59:59`;
+	const dateStr = `${y}-${m}-${d}`;
 
-	const params = {
-		limit: 10,
-		ranking_type: 'amount',
-		date_start: dateStart,
-		date_end: dateEnd
-	};
+	const params = new URLSearchParams({
+		date_start: dateStr,
+		date_end: dateStr
+	});
 
-	// billingLogs/action/memberRanking requires a cafe-level credential (license_name),
-	// not a per-member token.  Obtain a guest token via auth/guestLogin without
-	// overwriting the member's stored token in localStorage, then override the
-	// Authorization header for this single request.
-	const guestInfo = await theApiClient.callApi(
-		theApiClient.getServerUrl('auth/guestLogin'),
-		'POST',
-		{ license_name: theCafe.license_name, pc_name: thePCInfo.pc_name, is_client: 1 }
-	).catch(ICafeApiError.skip);
+	const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-members-topup');
+	const url = `${baseUrl}?${params.toString()}`;
 
-	if (!guestInfo?.token) {
-		console.warn('loadHomeTopSpenders: guestLogin failed, falling back to member token');
-	}
-	const opt = guestInfo?.token
-		? { headers: { 'Authorization': `Bearer ${guestInfo.token}` } }
-		: {};
+	try {
+		// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
+		const response = await fetch(url);
+		const raw = await response.json();
 
-	const raw = await theApiClient.callApi(
-		theApiClient.getCafeUrl('billingLogs/action/memberRanking'),
-		'GET',
-		params,
-		opt
-	).catch(ICafeApiError.skip);
-
-	let items = null;
-	if (raw && Array.isArray(raw)) {
-		items = raw;
-	} else if (raw && Array.isArray(raw.items)) {
-		items = raw.items;
-	} else if (raw && Array.isArray(raw.list)) {
-		items = raw.list;
-	} else if (raw && Array.isArray(raw.data)) {
-		items = raw.data;
-	}
-if (items) {
-			vueHomeSpenders.items = items;
+		if (raw && raw.ok && Array.isArray(raw.members)) {
+			// Transform members array to match expected spender format
+			const spenders = raw.members.map(m => ({
+				member_account: m.member,
+				total_amount: m.amount
+			}));
+			vueHomeSpenders.items = spenders;
+		} else if (raw && Array.isArray(raw)) {
+			vueHomeSpenders.items = raw;
+		} else if (raw && Array.isArray(raw.items)) {
+			vueHomeSpenders.items = raw.items;
+		} else if (raw && Array.isArray(raw.data)) {
+			vueHomeSpenders.items = raw.data;
 		}
+	} catch (err) {
+		console.error('loadHomeTopSpenders error:', err);
 	}
+}
 
-	async function loadHomeTopGames() {
-		const now = new Date();
-		const y = now.getFullYear();
-		const m = String(now.getMonth() + 1).padStart(2, '0');
-		const d = String(now.getDate()).padStart(2, '0');
-		const dateStr = `${y}-${m}-${d}`;
+async function loadHomeTopGames() {
+	const now = new Date();
+	const y = now.getFullYear();
+	const m = String(now.getMonth() + 1).padStart(2, '0');
+	const d = String(now.getDate()).padStart(2, '0');
+	const dateStr = `${y}-${m}-${d}`;
 
-		const params = new URLSearchParams({
-			date_start: dateStr,
-			date_end: dateStr,
-			time_start: '06:00',
-			time_end: '23:59'
-		});
+	const params = new URLSearchParams({
+		date_start: dateStr,
+		date_end: dateStr,
+		time_start: '06:00',
+		time_end: '23:59'
+	});
 
-		const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
-		const url = `${baseUrl}?${params.toString()}`;
+	const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
+	const url = `${baseUrl}?${params.toString()}`;
 
-		try {
-			// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
-			const response = await fetch(url);
-			const raw = await response.json();
+	try {
+		// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
+		const response = await fetch(url);
+		const raw = await response.json();
 
-			if (raw && raw.ok && Array.isArray(raw.games)) {
-				vueHomeGames.items = raw.games.slice(0, 10);
-			} else if (raw && Array.isArray(raw)) {
-				vueHomeGames.items = raw.slice(0, 10);
-			} else if (raw && Array.isArray(raw.data)) {
-				vueHomeGames.items = raw.data.slice(0, 10);
-			}
-		} catch (err) {
-			console.error('loadHomeTopGames error:', err);
+		if (raw && raw.ok && Array.isArray(raw.games)) {
+			vueHomeGames.items = raw.games.slice(0, 10);
+		} else if (raw && Array.isArray(raw)) {
+			vueHomeGames.items = raw.slice(0, 10);
+		} else if (raw && Array.isArray(raw.data)) {
+			vueHomeGames.items = raw.data.slice(0, 10);
 		}
+	} catch (err) {
+		console.error('loadHomeTopGames error:', err);
 	}
+}
 
 function open_news(id)
 {
