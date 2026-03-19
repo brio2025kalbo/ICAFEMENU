@@ -322,15 +322,17 @@ if (items) {
 		};
 
 		const url = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
-		const raw = await theApiClient.callApi(url, 'GET', params).catch(ICafeApiError.skip);
+		const raw = await theApiClient.callApi(url, 'GET', params).catch(err => {
+			console.error('loadHomeTopGames error:', err);
+			return null;
+		});
 
-		let items = null;
-		if (raw && Array.isArray(raw.games)) {
-			items = raw.games;
-		}
-
-		if (items) {
-			vueHomeGames.items = items.slice(0, 10);
+		if (raw && raw.ok && Array.isArray(raw.games)) {
+			vueHomeGames.items = raw.games.slice(0, 10);
+		} else if (raw && Array.isArray(raw)) {
+			vueHomeGames.items = raw.slice(0, 10);
+		} else if (raw && Array.isArray(raw.data)) {
+			vueHomeGames.items = raw.data.slice(0, 10);
 		}
 	}
 
