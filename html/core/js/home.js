@@ -308,18 +308,11 @@ async function loadHomeTopSpenders() {
 }
 
 async function loadHomeTopGames() {
-	const today = new Date().toISOString().slice(0, 10);
 	const url = `http://localhost:5173/api/kiosk/${theCafe.id}/top-games`;
 	const raw = await $.ajax({
 		url,
 		method: 'GET',
-		dataType: 'json',
-		data: {
-			date_start: today,
-			date_end: today,
-			time_start: '06:00',
-			time_end: '23:59'
-		}
+		dataType: 'json'
 	}).catch(ICafeApiError.skip);
 
 	let items = null;
