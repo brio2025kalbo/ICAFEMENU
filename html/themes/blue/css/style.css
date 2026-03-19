@@ -8426,7 +8426,7 @@ body {
 
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
-  padding: 0 28px 28px;
+  padding: 0 290px 28px 28px;
 }
 
 #page-home .home-hero-title {
@@ -8476,32 +8476,36 @@ body {
   background: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Top Players + Top Spenders centered overlay inside hero */
-#page-home .home-hero-players {
-  left: 50%;
+/* Right-side column: wrapper that holds both cards evenly on the right */
+#page-home .home-hero-right-cards {
+  right: 20px;
   top: 130px;
   bottom: 100px;
-  transform: translateX(-50%);
-  width: 600px;
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Shared card style for Top Players and Top Spenders */
+#page-home .home-hero-players,
+#page-home .home-hero-spenders {
+  flex: 1;
+  min-height: 0;
   background: rgba(10, 13, 20, 0.80);
   border: 1px solid rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 12px;
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-#page-home .home-hero-players::-webkit-scrollbar {
+#page-home .home-hero-players::-webkit-scrollbar,
+#page-home .home-hero-spenders::-webkit-scrollbar {
   display: none;
-}
-
-/* Divider between Top Players and Top Spenders */
-#page-home .home-hero-players-divider {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin: 12px 0;
 }
 
 /* ========================================
