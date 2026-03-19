@@ -8426,7 +8426,7 @@ body {
 
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
-  padding: 0 290px 28px 28px;
+  padding: 0 calc(50% + 8px) 28px 28px;
 }
 
 #page-home .home-hero-title {
@@ -8481,7 +8481,7 @@ body {
   right: 20px;
   top: 130px;
   bottom: 100px;
-  width: 260px;
+  width: calc(50% - 20px);
   display: flex;
   flex-direction: column;
   gap: 10px;
