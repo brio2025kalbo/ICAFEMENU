@@ -8426,7 +8426,7 @@ body {
 
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
-  padding: 0 28px 28px;
+  padding: 0 260px 28px 28px;
 }
 
 #page-home .home-hero-title {
@@ -8474,6 +8474,27 @@ body {
 
 #page-home .home-hero-free-btn:hover {
   background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Top Players panel overlaid on the right side of the hero */
+#page-home .home-hero-players {
+  right: 20px;
+  top: 130px;
+  bottom: 140px;
+  width: 220px;
+  background: rgba(10, 13, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 12px;
+  padding: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#page-home .home-hero-players::-webkit-scrollbar {
+  display: none;
 }
 
 /* ========================================

@@ -13,6 +13,65 @@
 		<!-- Dark gradient overlay (bottom-heavy for text readability) -->
 		<div class="home-hero-overlay position-absolute" style="top:0;left:0;right:0;bottom:0;z-index:1;"></div>
 
+		<!-- Top Players overlay -->
+		<div class="home-hero-players position-absolute text-white" style="z-index:3;">
+			<div class="d-flex align-items-center mb-2">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYERS</span>
+			</div>
+			<!-- Game icons row -->
+			<div class="d-flex mb-3 home-player-game-icons flex-wrap">
+				<div v-for="(gameItems, gameCode) in vueHomeRank.items" :key="gameCode"
+					class="home-player-game-icon c-pointer"
+					:class="[vueHomeRank.active_game == gameCode ? 'active' : '']"
+					@click="vueHomeRank.active_game = gameCode">
+					<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
+				</div>
+			</div>
+			<!-- Top 3 Winners -->
+			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 0"
+				class="home-rank-winners d-flex justify-content-center align-items-end mb-3">
+				<!-- 2nd place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][1]" class="home-winner-item silver-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/silver-medal.svg" class="home-medal-icon" alt="Silver">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][1].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+					</div>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][1].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][1].points}} PTS</span>
+				</div>
+				<!-- 1st place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][0]" class="home-winner-item gold-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/gold-medal.svg" class="home-medal-icon" alt="Gold">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][0].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+					</div>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][0].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][0].points}} PTS</span>
+				</div>
+				<!-- 3rd place -->
+				<div v-if="vueHomeRank.items[vueHomeRank.active_game][2]" class="home-winner-item bronze-place d-flex flex-column align-items-center">
+					<div class="home-winner-medal position-relative">
+						<img src="./images/bronze-medal.svg" class="home-medal-icon" alt="Bronze">
+						<img :src="vueHomeRank.items[vueHomeRank.active_game][2].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
+					</div>
+					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][2].player_name}}</span>
+					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][2].points}} PTS</span>
+				</div>
+			</div>
+			<!-- Positions 4–10 -->
+			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 3" class="home-rank-list">
+				<div v-for="(player, idx) in vueHomeRank.items[vueHomeRank.active_game].slice(3, 10)" :key="idx"
+					class="d-flex align-items-center home-rank-item">
+					<span class="home-rank-number">{{idx + 4}}</span>
+					<img :src="player.avatar_url || './images/default-avatar.png'" class="home-rank-avatar rounded-circle mr-2" onerror="this.src='./images/default-avatar.png'">
+					<span class="home-rank-name flex-grow-1">{{player.player_name}}</span>
+					<span class="home-rank-pts">{{player.points}} PTS</span>
+				</div>
+			</div>
+			<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
+				class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+		</div>
+
 		<!-- Game thumbnail strip (top) -->
 		<div class="home-hero-strip position-relative d-flex align-items-end" style="z-index:2;">
 			<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id"
@@ -134,65 +193,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Top Players Per Game -->
-		<div class="text-white home-side-block home-top-players">
-			<div class="d-flex align-items-center mb-2">
-				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYERS</span>
-			</div>
-			<!-- Game icons row -->
-			<div class="d-flex mb-3 home-player-game-icons flex-wrap">
-				<div v-for="(gameItems, gameCode) in vueHomeRank.items" :key="gameCode"
-					class="home-player-game-icon c-pointer"
-					:class="[vueHomeRank.active_game == gameCode ? 'active' : '']"
-					@click="vueHomeRank.active_game = gameCode">
-					<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
-				</div>
-			</div>
-			<!-- Top 3 Winners -->
-			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 0"
-				class="home-rank-winners d-flex justify-content-center align-items-end mb-3">
-				<!-- 2nd place -->
-				<div v-if="vueHomeRank.items[vueHomeRank.active_game][1]" class="home-winner-item silver-place d-flex flex-column align-items-center">
-					<div class="home-winner-medal position-relative">
-						<img src="./images/silver-medal.svg" class="home-medal-icon" alt="Silver">
-						<img :src="vueHomeRank.items[vueHomeRank.active_game][1].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
-					</div>
-					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][1].player_name}}</span>
-					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][1].points}} PTS</span>
-				</div>
-				<!-- 1st place -->
-				<div v-if="vueHomeRank.items[vueHomeRank.active_game][0]" class="home-winner-item gold-place d-flex flex-column align-items-center">
-					<div class="home-winner-medal position-relative">
-						<img src="./images/gold-medal.svg" class="home-medal-icon" alt="Gold">
-						<img :src="vueHomeRank.items[vueHomeRank.active_game][0].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
-					</div>
-					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][0].player_name}}</span>
-					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][0].points}} PTS</span>
-				</div>
-				<!-- 3rd place -->
-				<div v-if="vueHomeRank.items[vueHomeRank.active_game][2]" class="home-winner-item bronze-place d-flex flex-column align-items-center">
-					<div class="home-winner-medal position-relative">
-						<img src="./images/bronze-medal.svg" class="home-medal-icon" alt="Bronze">
-						<img :src="vueHomeRank.items[vueHomeRank.active_game][2].avatar_url || './images/default-avatar.png'" class="home-medal-avatar" onerror="this.src='./images/default-avatar.png'">
-					</div>
-					<span class="home-winner-name">{{vueHomeRank.items[vueHomeRank.active_game][2].player_name}}</span>
-					<span class="home-winner-pts">{{vueHomeRank.items[vueHomeRank.active_game][2].points}} PTS</span>
-				</div>
-			</div>
-			<!-- Positions 4–10 -->
-			<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 3" class="home-rank-list">
-				<div v-for="(player, idx) in vueHomeRank.items[vueHomeRank.active_game].slice(3, 10)" :key="idx"
-					class="d-flex align-items-center home-rank-item">
-					<span class="home-rank-number">{{idx + 4}}</span>
-					<img :src="player.avatar_url || './images/default-avatar.png'" class="home-rank-avatar rounded-circle mr-2" onerror="this.src='./images/default-avatar.png'">
-					<span class="home-rank-name flex-grow-1">{{player.player_name}}</span>
-					<span class="home-rank-pts">{{player.points}} PTS</span>
-				</div>
-			</div>
-			<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
-				class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
 		</div>
 
 		<!-- News -->
