@@ -8593,8 +8593,8 @@ body {
 }
 
 #page-home .home-player-game-icon {
-  width: 44px;
-  height: 22px;
+  width: 64px;
+  height: 32px;
   filter: grayscale(100%) brightness(0.6);
   opacity: 0.7;
   transition: all 0.3s ease;
