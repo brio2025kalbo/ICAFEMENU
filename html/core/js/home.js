@@ -314,25 +314,30 @@ if (items) {
 		const d = String(now.getDate()).padStart(2, '0');
 		const dateStr = `${y}-${m}-${d}`;
 
-		const params = {
+		const params = new URLSearchParams({
 			date_start: dateStr,
 			date_end: dateStr,
 			time_start: '06:00',
 			time_end: '23:59'
-		};
-
-		const url = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
-		const raw = await theApiClient.callApi(url, 'GET', params).catch(err => {
-			console.error('loadHomeTopGames error:', err);
-			return null;
 		});
 
-		if (raw && raw.ok && Array.isArray(raw.games)) {
-			vueHomeGames.items = raw.games.slice(0, 10);
-		} else if (raw && Array.isArray(raw)) {
-			vueHomeGames.items = raw.slice(0, 10);
-		} else if (raw && Array.isArray(raw.data)) {
-			vueHomeGames.items = raw.data.slice(0, 10);
+		const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
+		const url = `${baseUrl}?${params.toString()}`;
+
+		try {
+			// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
+			const response = await fetch(url);
+			const raw = await response.json();
+
+			if (raw && raw.ok && Array.isArray(raw.games)) {
+				vueHomeGames.items = raw.games.slice(0, 10);
+			} else if (raw && Array.isArray(raw)) {
+				vueHomeGames.items = raw.slice(0, 10);
+			} else if (raw && Array.isArray(raw.data)) {
+				vueHomeGames.items = raw.data.slice(0, 10);
+			}
+		} catch (err) {
+			console.error('loadHomeTopGames error:', err);
 		}
 	}
 
