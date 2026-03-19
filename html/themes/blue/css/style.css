@@ -8719,6 +8719,16 @@ body {
 }
 
 /* Rank list (positions 4+) */
+/* Fade-in animation for rank content on tab switch */
+@keyframes homeRankFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#page-home .home-rank-body {
+  animation: homeRankFadeIn 0.35s ease;
+}
+
 #page-home .home-rank-list {
   display: flex;
   flex-direction: column;

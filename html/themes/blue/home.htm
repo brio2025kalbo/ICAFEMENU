@@ -26,10 +26,12 @@
 					<div v-for="(gameItems, gameCode) in vueHomeRank.items" :key="gameCode"
 						class="home-player-game-icon c-pointer"
 						:class="[vueHomeRank.active_game == gameCode ? 'active' : '']"
-						@click="vueHomeRank.active_game = gameCode">
+						@click="selectHomeRankTab(gameCode)">
 						<img :src="'./images/' + gameCode + '.png'" :alt="gameCode" onerror="this.parentElement.style.display='none'">
 					</div>
 				</div>
+				<!-- Rank content (keyed so it fades in on each tab change) -->
+				<div class="home-rank-body" :key="vueHomeRank.active_game">
 				<!-- Top 3 Winners -->
 				<div v-if="vueHomeRank.items[vueHomeRank.active_game] && vueHomeRank.items[vueHomeRank.active_game].length > 0"
 					class="home-rank-winners d-flex justify-content-center align-items-end mb-3">
@@ -110,6 +112,7 @@
 				</div>
 				<div v-if="!vueHomeRank.items[vueHomeRank.active_game] || vueHomeRank.items[vueHomeRank.active_game].length == 0"
 					class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+				</div><!-- end home-rank-body -->
 			</div>
 
 			<!-- TOP SPENDERS card -->

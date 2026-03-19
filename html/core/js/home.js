@@ -247,6 +247,9 @@ async function loadHomeTopPlayers() {
 	if (firstNonEmpty) {
 		vueHomeRank.active_game = firstNonEmpty;
 	}
+
+	// Start (or restart) the automatic game-tab rotation
+	startHomeRankAutoTab();
 }
 
 async function loadHomeTopSpenders() {
@@ -452,3 +455,42 @@ function initNewsCarousel() {
 $(document).ready(function() {
 	initNewsCarousel();
 });
+
+/* -----------------------------------------------------------------------
+ * Auto-tab rotation for the Top Players game tabs
+ * Cycles through every game that has at least one ranked player, pausing
+ * HOME_RANK_TAB_INTERVAL ms on each tab.  Calling startHomeRankAutoTab()
+ * always clears any existing timer first so it is safe to call repeatedly.
+ * Calling stopHomeRankAutoTab() cancels rotation (used when the page is
+ * navigated away from, or when the user manually picks a tab so the timer
+ * is restarted cleanly from the chosen tab).
+ * ---------------------------------------------------------------------- */
+var _homeRankAutoTabTimer = null;
+var HOME_RANK_TAB_INTERVAL = 5000; // milliseconds per tab
+
+function stopHomeRankAutoTab() {
+	if (_homeRankAutoTabTimer !== null) {
+		clearInterval(_homeRankAutoTabTimer);
+		_homeRankAutoTabTimer = null;
+	}
+}
+
+function startHomeRankAutoTab() {
+	stopHomeRankAutoTab();
+	_homeRankAutoTabTimer = setInterval(function() {
+		// Only rotate while the Home page is visible
+		if (typeof vueGlobal === 'undefined' || vueGlobal.pageType !== 'Home') return;
+		var games = Object.keys(vueHomeRank.items).filter(function(g) {
+			return vueHomeRank.items[g] && vueHomeRank.items[g].length > 0;
+		});
+		if (games.length < 2) return;
+		var idx = games.indexOf(vueHomeRank.active_game);
+		vueHomeRank.active_game = games[(idx + 1) % games.length];
+	}, HOME_RANK_TAB_INTERVAL);
+}
+
+function selectHomeRankTab(gameCode) {
+	vueHomeRank.active_game = gameCode;
+	// Restart so the selected tab shows for a full interval before advancing
+	startHomeRankAutoTab();
+}
