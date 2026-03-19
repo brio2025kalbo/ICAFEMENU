@@ -308,8 +308,19 @@ async function loadHomeTopSpenders() {
 }
 
 async function loadHomeTopGames() {
-	const raw = await $.ajax({ url: '/api/kiosk/', method: 'GET', dataType: 'json' })
-		.catch(ICafeApiError.skip);
+	const today = new Date().toISOString().slice(0, 10);
+	const url = `http://localhost:5173/kiosk/${theCafe.id}/top-games`;
+	const raw = await $.ajax({
+		url,
+		method: 'GET',
+		dataType: 'json',
+		data: {
+			date_start: today,
+			date_end: today,
+			time_start: '06:00',
+			time_end: '23:59'
+		}
+	}).catch(ICafeApiError.skip);
 
 	let items = null;
 	if (raw && Array.isArray(raw)) {
