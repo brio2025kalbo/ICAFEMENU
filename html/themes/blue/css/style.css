@@ -8594,7 +8594,7 @@ body {
 
 #page-home .home-player-game-icon {
   width: 64px;
-  height: 32px;
+  height: 64px;
   filter: grayscale(100%) brightness(0.6);
   opacity: 0.7;
   transition: all 0.3s ease;
