@@ -97,7 +97,7 @@
 		</div>
 
 		<!-- Game thumbnail strip (top) -->
-		<div class="home-hero-strip position-relative d-flex align-items-end" style="z-index:2;">
+		<div class="home-hero-strip position-relative d-flex align-items-start" style="z-index:2;">
 			<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id"
 				class="home-hero-thumb c-pointer"
 				:class="{'active': index == vueHome.heroGameIndex}"
