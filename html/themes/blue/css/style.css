@@ -8515,6 +8515,17 @@ body {
   overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+#page-home .home-top-games-iframe {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
 }
 
 #page-home .home-hero-players::-webkit-scrollbar,

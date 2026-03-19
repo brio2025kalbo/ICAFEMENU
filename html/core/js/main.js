@@ -381,7 +381,7 @@ var vueHomeSpenders = PetiteVue.reactive({
 });
 
 var vueHomeTopGames = PetiteVue.reactive({
-	items: []
+	iframeSrc: ''
 });
 
 var vueBalanceHistory = PetiteVue.reactive({

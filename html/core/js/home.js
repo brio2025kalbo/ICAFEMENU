@@ -309,34 +309,13 @@ async function loadHomeTopSpenders() {
 
 async function loadHomeTopGames() {
 	const today = new Date().toISOString().slice(0, 10);
-	const url = `http://localhost:5173/kiosk/${theCafe.id}/top-games`;
-	const raw = await $.ajax({
-		url,
-		method: 'GET',
-		dataType: 'json',
-		data: {
-			date_start: today,
-			date_end: today,
-			time_start: '06:00',
-			time_end: '23:59'
-		}
-	}).catch(ICafeApiError.skip);
-
-	let items = null;
-	if (raw && Array.isArray(raw)) {
-		items = raw;
-	} else if (raw && Array.isArray(raw.games)) {
-		items = raw.games;
-	} else if (raw && Array.isArray(raw.data)) {
-		items = raw.data;
-	} else if (raw && Array.isArray(raw.items)) {
-		items = raw.items;
-	} else if (raw && Array.isArray(raw.list)) {
-		items = raw.list;
-	}
-	if (items) {
-		vueHomeTopGames.items.splice(0, vueHomeTopGames.items.length, ...items.slice(0, 10));
-	}
+	const params = new URLSearchParams({
+		date_start: today,
+		date_end: today,
+		time_start: '06:00',
+		time_end: '23:59'
+	});
+	vueHomeTopGames.iframeSrc = `http://localhost:5173/kiosk/${theCafe.id}/top-games?${params}`;
 }
 
 function open_news(id)
