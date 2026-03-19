@@ -380,6 +380,10 @@ var vueHomeSpenders = PetiteVue.reactive({
 	items: []
 });
 
+var vueHomeTopGames = PetiteVue.reactive({
+	items: []
+});
+
 var vueBalanceHistory = PetiteVue.reactive({
 	items: [],
 	paging_info: [],

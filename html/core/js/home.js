@@ -206,6 +206,7 @@ function Home()
 		// Load home panel rank and spender data
 		loadHomeTopPlayers();
 		loadHomeTopSpenders();
+		loadHomeTopGames();
 	}
 }
 
@@ -303,6 +304,25 @@ async function loadHomeTopSpenders() {
 	}
 	if (items) {
 		vueHomeSpenders.items = items;
+	}
+}
+
+async function loadHomeTopGames() {
+	const raw = await $.ajax({ url: '/api/kiosk/', method: 'GET', dataType: 'json' })
+		.catch(ICafeApiError.skip);
+
+	let items = null;
+	if (raw && Array.isArray(raw)) {
+		items = raw;
+	} else if (raw && Array.isArray(raw.data)) {
+		items = raw.data;
+	} else if (raw && Array.isArray(raw.items)) {
+		items = raw.items;
+	} else if (raw && Array.isArray(raw.list)) {
+		items = raw.list;
+	}
+	if (items) {
+		vueHomeTopGames.items = items.slice(0, 10);
 	}
 }
 

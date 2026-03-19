@@ -8500,9 +8500,10 @@ body {
   gap: 10px;
 }
 
-/* Shared card style for Top Players and Top Spenders */
+/* Shared card style for Top Players, Top Spenders, and Top Played Games */
 #page-home .home-hero-players,
-#page-home .home-hero-spenders {
+#page-home .home-hero-spenders,
+#page-home .home-hero-top-games {
   flex: 1;
   min-height: 0;
   background: rgba(10, 13, 20, 0.80);
@@ -8517,7 +8518,8 @@ body {
 }
 
 #page-home .home-hero-players::-webkit-scrollbar,
-#page-home .home-hero-spenders::-webkit-scrollbar {
+#page-home .home-hero-spenders::-webkit-scrollbar,
+#page-home .home-hero-top-games::-webkit-scrollbar {
   display: none;
 }
 

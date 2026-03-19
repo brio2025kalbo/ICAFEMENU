@@ -134,6 +134,23 @@
 				<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
 			</div>
 
+			<!-- TOP PLAYED GAMES card -->
+			<div class="home-hero-top-games text-white">
+				<div class="d-flex align-items-center mb-2">
+					<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYED GAMES</span>
+				</div>
+				<div v-if="vueHomeTopGames.items.length > 0" class="home-rank-list">
+					<div v-for="(game, idx) in vueHomeTopGames.items" :key="idx"
+						class="d-flex align-items-center home-rank-item">
+						<span class="home-rank-number"
+							:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+						<span class="home-rank-name flex-grow-1">{{game.pkg_name || game.name || game.game_name}}</span>
+						<span class="home-rank-pts">{{game.play_count || game.played || game.count}} plays</span>
+					</div>
+				</div>
+				<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+			</div>
+
 		</div>
 
 		<!-- Game thumbnail strip (top) -->
