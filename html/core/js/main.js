@@ -377,6 +377,10 @@ var vueHomeRank = PetiteVue.reactive({
 });
 
 var vueHomeSpenders = PetiteVue.reactive({
+		items: []
+	});
+
+var vueHomeGames = PetiteVue.reactive({
 	items: []
 });
 

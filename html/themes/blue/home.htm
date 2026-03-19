@@ -115,24 +115,42 @@
 				</div><!-- end home-rank-body -->
 			</div>
 
-			<!-- TOP SPENDERS card -->
-			<div class="home-hero-spenders text-white">
-				<div class="d-flex align-items-center mb-2">
-					<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
-					<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
-				</div>
-				<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
-					<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
-						class="d-flex align-items-center home-rank-item"
-						:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
-						<span class="home-rank-number"
-							:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
-						<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
-						<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
+				<!-- TOP SPENDERS card -->
+				<div class="home-hero-spenders text-white mb-3">
+					<div class="d-flex align-items-center mb-2">
+						<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP SPENDERS</span>
+						<span class="ml-2" style="font-size:10px;color:#576081;">This Month</span>
 					</div>
+					<div v-if="vueHomeSpenders.items.length > 0" class="home-rank-list">
+						<div v-for="(spender, idx) in vueHomeSpenders.items" :key="idx"
+							class="d-flex align-items-center home-rank-item"
+							:class="[spender.member_account == thePCStatus.member_account ? 'home-rank-me' : '']">
+							<span class="home-rank-number"
+								:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+							<span class="home-rank-name flex-grow-1">{{spender.member_account}}</span>
+							<span class="home-rank-pts">{{theSettings.currency ?? '$'}} {{spender.total_amount}}</span>
+						</div>
+					</div>
+					<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
 				</div>
-				<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
-			</div>
+
+				<!-- TOP PLAYED GAMES card -->
+				<div class="home-hero-games text-white">
+					<div class="d-flex align-items-center mb-2">
+						<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYED GAMES</span>
+						<span class="ml-2" style="font-size:10px;color:#576081;">Today</span>
+					</div>
+					<div v-if="vueHomeGames.items.length > 0" class="home-rank-list">
+						<div v-for="(game, idx) in vueHomeGames.items" :key="idx"
+							class="d-flex align-items-center home-rank-item">
+							<span class="home-rank-number"
+								:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
+							<span class="home-rank-name flex-grow-1">{{game.name}}</span>
+							<span class="home-rank-pts">{{game.local_times}} Plays</span>
+						</div>
+					</div>
+					<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>
+				</div>
 
 		</div>
 

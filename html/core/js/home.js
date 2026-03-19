@@ -204,10 +204,11 @@ function Home()
 		}
 
 		// Load home panel rank and spender data
-		loadHomeTopPlayers();
-		loadHomeTopSpenders();
+			loadHomeTopPlayers();
+			loadHomeTopSpenders();
+			loadHomeTopGames();
+		}
 	}
-}
 
 async function loadHomeTopPlayers() {
 	const gameCodes = ['pubg', 'lol', 'valorant', 'dota2', 'csgo', 'apex'];
@@ -301,10 +302,37 @@ async function loadHomeTopSpenders() {
 	} else if (raw && Array.isArray(raw.data)) {
 		items = raw.data;
 	}
-	if (items) {
-		vueHomeSpenders.items = items;
+if (items) {
+			vueHomeSpenders.items = items;
+		}
 	}
-}
+
+	async function loadHomeTopGames() {
+		const now = new Date();
+		const y = now.getFullYear();
+		const m = String(now.getMonth() + 1).padStart(2, '0');
+		const d = String(now.getDate()).padStart(2, '0');
+		const dateStr = `${y}-${m}-${d}`;
+
+		const params = {
+			date_start: dateStr,
+			date_end: dateStr,
+			time_start: '06:00',
+			time_end: '23:59'
+		};
+
+		const url = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-games');
+		const raw = await theApiClient.callApi(url, 'GET', params).catch(ICafeApiError.skip);
+
+		let items = null;
+		if (raw && Array.isArray(raw.games)) {
+			items = raw.games;
+		}
+
+		if (items) {
+			vueHomeGames.items = items.slice(0, 10);
+		}
+	}
 
 function open_news(id)
 {
