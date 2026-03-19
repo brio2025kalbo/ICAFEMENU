@@ -334,7 +334,7 @@ async function loadHomeTopGames() {
 		items = raw.list;
 	}
 	if (items) {
-		vueHomeTopGames.items = items.slice(0, 10);
+		vueHomeTopGames.items.splice(0, vueHomeTopGames.items.length, ...items.slice(0, 10));
 	}
 }
 
