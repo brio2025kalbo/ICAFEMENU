@@ -164,7 +164,7 @@
 							<span class="home-rank-number"
 								:class="[idx == 0 ? 'home-rank-gold' : (idx == 1 ? 'home-rank-silver' : (idx == 2 ? 'home-rank-bronze' : ''))]">{{idx + 1}}</span>
 							<span class="home-rank-name flex-grow-1">{{product.name}}</span>
-							<span class="home-rank-pts">{{product.total_sold}} Sold</span>
+							<span class="home-rank-pts">{{product.order_item_qty}} Sold</span>
 						</div>
 					</div>
 					<div v-else class="text-center" style="font-size:11px;color:#576081;padding:10px 0;">No data available</div>

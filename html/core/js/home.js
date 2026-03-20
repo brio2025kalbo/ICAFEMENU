@@ -347,12 +347,19 @@ async function loadHomeTopProducts() {
 		const response = await fetch(url);
 		const raw = await response.json();
 
+		let products = null;
 		if (raw && raw.ok && Array.isArray(raw.products)) {
-			vueHomeProducts.items = raw.products.slice(0, 10);
+			products = raw.products;
 		} else if (raw && Array.isArray(raw)) {
-			vueHomeProducts.items = raw.slice(0, 10);
+			products = raw;
 		} else if (raw && Array.isArray(raw.data)) {
-			vueHomeProducts.items = raw.data.slice(0, 10);
+			products = raw.data;
+		}
+
+		if (products) {
+			vueHomeProducts.items = products
+				.sort((a, b) => (b.order_item_qty || 0) - (a.order_item_qty || 0))
+				.slice(0, 10);
 		}
 	} catch (err) {
 		console.error('loadHomeTopProducts error:', err);
