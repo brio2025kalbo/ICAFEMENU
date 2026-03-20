@@ -207,6 +207,7 @@ function Home()
 		loadHomeTopPlayers();
 		loadHomeTopSpenders();
 		loadHomeTopGames();
+		loadHomeTopProducts();
 	}
 }
 
@@ -323,6 +324,72 @@ async function loadHomeTopGames() {
 		}
 	} catch (err) {
 		console.error('loadHomeTopGames error:', err);
+	}
+}
+
+async function loadHomeTopProducts() {
+	const now = new Date();
+	const y = now.getFullYear();
+	const m = String(now.getMonth() + 1).padStart(2, '0');
+	const d = String(now.getDate()).padStart(2, '0');
+	const dateStr = `${y}-${m}-${d}`;
+
+	const params = new URLSearchParams({
+		date_start: dateStr,
+		date_end: dateStr
+	});
+
+	const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-products');
+	const url = `${baseUrl}?${params.toString()}`;
+
+	try {
+		// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
+		const response = await fetch(url);
+		const raw = await response.json();
+
+		let products = null;
+		if (raw && raw.ok && Array.isArray(raw.products)) {
+			products = raw.products;
+		} else if (raw && Array.isArray(raw)) {
+			products = raw;
+		} else if (raw && Array.isArray(raw.data)) {
+			products = raw.data;
+		}
+
+		if (products) {
+			vueHomeProducts.items = products
+				.sort((a, b) => (b.order_item_qty || 0) - (a.order_item_qty || 0))
+				.slice(0, 10)
+				.map(p => {
+					// API returns order_product_id (numeric) and product_name
+					const name = p.product_name || p.name || '';
+					const rawId = p.order_product_id || p.product_id || p.id;
+					// Build "p-{number}" if the id is purely numeric, otherwise use as-is
+					// Guard against double-prefixing if API already returns "p-{number}"
+					const pid = rawId
+						? (/^\d+$/.test(String(rawId)) ? ('p-' + rawId) : String(rawId))
+						: null;
+
+					const fullProduct = pid
+						? theProductList.find(fp => fp.product_id === pid)
+						: (name ? theProductList.find(fp => fp.product_name === name) : null);
+
+					let image = 'images/default-product.jpg';
+					const resolvedId = (fullProduct && fullProduct.product_id) || pid;
+
+					if (fullProduct) {
+						if (resolvedId && resolvedId.startsWith('o-')) {
+							image = 'images/default-offer.jpg';
+						} else if (fullProduct.product_has_image) {
+							image = ICAFEMENU_CORE.posters_path(resolvedId + '.jpg');
+						}
+					}
+
+					return { ...p, product_id: resolvedId, name, image };
+				});
+		}
+	} catch (err) {
+		console.error('loadHomeTopProducts error:', err);
 	}
 }
 

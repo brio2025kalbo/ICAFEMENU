@@ -8358,9 +8358,19 @@ body {
   );
 }
 
+/* Thumbnail strip wrapper + header */
+#page-home .home-hero-strip-wrapper {
+  padding: 20px 24px 0;
+  z-index: 2;
+}
+
+#page-home .home-hero-strip-header {
+  margin-bottom: 8px;
+}
+
 /* Thumbnail strip */
 #page-home .home-hero-strip {
-  padding: 20px 24px 0;
+  padding: 0;
   gap: 8px;
   flex-wrap: nowrap;
 }
@@ -8435,6 +8445,137 @@ body {
 #page-home .home-hero-all-games:hover {
   background: rgba(255, 255, 255, 0.18);
   opacity: 1;
+}
+
+/* Top Products carousel wrapper */
+#page-home .home-top-products-wrapper {
+  padding: 10px 24px 0;
+  z-index: 2;
+}
+
+#page-home .home-top-products-header {
+  margin-bottom: 8px;
+}
+
+#page-home .home-top-products-nav {
+  display: flex;
+  gap: 4px;
+}
+
+#page-home .home-carousel-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  padding: 0;
+}
+
+#page-home .home-carousel-btn:hover {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Top Products scrollable strip */
+#page-home .home-top-products-strip {
+  gap: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#page-home .home-top-products-strip::-webkit-scrollbar {
+  display: none;
+}
+
+#page-home .home-product-thumb {
+  width: 120px;
+  flex-shrink: 0;
+  text-align: center;
+  position: relative;
+}
+
+#page-home .home-product-rank-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.45);
+}
+
+#page-home .home-product-rank-badge.rank-1 {
+  background: #FFD700;
+  color: #3a2800;
+}
+
+#page-home .home-product-rank-badge.rank-2 {
+  background: #C0C0C0;
+  color: #2a2a2a;
+}
+
+#page-home .home-product-rank-badge.rank-3 {
+  background: #CD7F32;
+  color: #fff;
+}
+
+#page-home .home-product-thumb img {
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease, transform 0.25s ease;
+}
+
+#page-home .home-product-thumb:hover img {
+  border-color: #28a745;
+  transform: scale(1.07);
+}
+
+#page-home .home-product-thumb-name {
+  font-size: 10px;
+  color: #c2c8d9;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 120px;
+}
+
+/* "All Products" tile */
+#page-home .home-product-all-icon {
+  width: 120px;
+  height: 120px;
+  background: rgba(20, 24, 36, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #c2c8d9;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+#page-home .home-product-all:hover .home-product-all-icon {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.30);
+  color: #fff;
 }
 
 /* Hero bottom info: title + buttons */
