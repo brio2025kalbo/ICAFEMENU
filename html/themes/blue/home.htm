@@ -187,6 +187,19 @@
 			</a>
 		</div>
 
+		<!-- Top Products clickable strip -->
+		<div class="home-top-products-strip d-flex" v-if="vueHomeProducts.items.length > 0" style="z-index:2;">
+			<div v-for="(product, idx) in vueHomeProducts.items"
+				:key="product.product_id || ('product-' + idx)"
+				class="home-product-thumb c-pointer"
+				@click="product.product_id && theShop.buy(product.product_id, 1)"
+				:title="product.name">
+				<img :src="product.image || 'images/default-product.jpg'"
+					onerror="this.src='images/default-product.jpg';" class="rounded">
+				<div class="home-product-thumb-name">{{product.name}}</div>
+			</div>
+		</div>
+
 		<!-- Spacer -->
 		<div class="flex-grow-1"></div>
 

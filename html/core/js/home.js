@@ -359,7 +359,26 @@ async function loadHomeTopProducts() {
 		if (products) {
 			vueHomeProducts.items = products
 				.sort((a, b) => (b.order_item_qty || 0) - (a.order_item_qty || 0))
-				.slice(0, 10);
+				.slice(0, 10)
+				.map(p => {
+					const pid = p.product_id || p.id;
+					const fullProduct = pid
+						? theProductList.find(fp => fp.product_id === pid)
+						: theProductList.find(fp => fp.product_name === p.name);
+
+					let image = 'images/default-product.jpg';
+					const resolvedId = pid || (fullProduct && fullProduct.product_id);
+
+					if (fullProduct) {
+						if (resolvedId && resolvedId.startsWith('o-')) {
+							image = 'images/default-offer.jpg';
+						} else if (fullProduct.product_has_image) {
+							image = ICAFEMENU_CORE.posters_path(resolvedId + '.jpg');
+						}
+					}
+
+					return { ...p, product_id: resolvedId, image };
+				});
 		}
 	} catch (err) {
 		console.error('loadHomeTopProducts error:', err);

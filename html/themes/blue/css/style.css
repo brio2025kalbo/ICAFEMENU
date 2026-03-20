@@ -8437,6 +8437,51 @@ body {
   opacity: 1;
 }
 
+/* Top Products clickable horizontal strip */
+#page-home .home-top-products-strip {
+  padding: 10px 24px 0;
+  gap: 8px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+#page-home .home-top-products-strip::-webkit-scrollbar {
+  display: none;
+}
+
+#page-home .home-product-thumb {
+  width: 80px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+#page-home .home-product-thumb img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease, transform 0.25s ease;
+}
+
+#page-home .home-product-thumb:hover img {
+  border-color: #28a745;
+  transform: scale(1.07);
+}
+
+#page-home .home-product-thumb-name {
+  font-size: 10px;
+  color: #c2c8d9;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 80px;
+}
+
 /* Hero bottom info: title + buttons */
 #page-home .home-hero-info {
   padding: 0 calc(50% + 8px) 28px 28px;
