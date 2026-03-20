@@ -190,8 +190,9 @@
 		<!-- Top Products clickable strip -->
 		<div class="home-top-products-strip d-flex" v-if="vueHomeProducts.items.length > 0" style="z-index:2;">
 			<div v-for="(product, idx) in vueHomeProducts.items"
-				:key="product.product_id || ('product-' + idx)"
-				class="home-product-thumb c-pointer"
+				:key="product.order_product_id || product.product_id || ('product-' + idx)"
+				class="home-product-thumb"
+				:class="product.product_id ? 'c-pointer' : ''"
 				@click="product.product_id && theShop.buy(product.product_id, 1)"
 				:title="product.name">
 				<img :src="product.image || 'images/default-product.jpg'"

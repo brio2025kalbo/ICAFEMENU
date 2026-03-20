@@ -361,13 +361,21 @@ async function loadHomeTopProducts() {
 				.sort((a, b) => (b.order_item_qty || 0) - (a.order_item_qty || 0))
 				.slice(0, 10)
 				.map(p => {
-					const pid = p.product_id || p.id;
+					// API returns order_product_id (numeric) and product_name
+					const name = p.product_name || p.name || '';
+					const rawId = p.order_product_id || p.product_id || p.id;
+					// Build "p-{number}" if the id is purely numeric, otherwise use as-is
+					// Guard against double-prefixing if API already returns "p-{number}"
+					const pid = rawId
+						? (/^\d+$/.test(String(rawId)) ? ('p-' + rawId) : String(rawId))
+						: null;
+
 					const fullProduct = pid
 						? theProductList.find(fp => fp.product_id === pid)
-						: theProductList.find(fp => fp.product_name === p.name);
+						: (name ? theProductList.find(fp => fp.product_name === name) : null);
 
 					let image = 'images/default-product.jpg';
-					const resolvedId = pid || (fullProduct && fullProduct.product_id);
+					const resolvedId = (fullProduct && fullProduct.product_id) || pid;
 
 					if (fullProduct) {
 						if (resolvedId && resolvedId.startsWith('o-')) {
@@ -377,7 +385,7 @@ async function loadHomeTopProducts() {
 						}
 					}
 
-					return { ...p, product_id: resolvedId, image };
+					return { ...p, product_id: resolvedId, name, image };
 				});
 		}
 	} catch (err) {
