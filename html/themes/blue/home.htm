@@ -173,18 +173,23 @@
 		</div>
 
 		<!-- Game thumbnail strip (top) -->
-		<div class="home-hero-strip position-relative d-flex align-items-start" style="z-index:2;">
-			<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id"
-				class="home-hero-thumb c-pointer"
-				:class="{'active': index == vueHome.heroGameIndex}"
-				@click="vueHome.heroGameIndex = index">
-				<img :src="ICAFEMENU_CORE.posters_path(game.pkg_id + '.jpg')"
-					onerror="this.src='images/default-poster.png';" class="rounded">
+		<div class="home-hero-strip-wrapper" style="z-index:2;">
+			<div class="home-hero-strip-header d-flex align-items-center">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PLAYED GAMES</span>
 			</div>
-			<a class="home-hero-all-games lang d-flex text-white"
-				href="javascript:theGameList.show()">
-				<i class="fal fa-th-large"></i> All games
-			</a>
+			<div class="home-hero-strip position-relative d-flex align-items-start">
+				<div v-for="(game, index) in vueGames.topFiveItems" :key="game.pkg_id"
+					class="home-hero-thumb c-pointer"
+					:class="{'active': index == vueHome.heroGameIndex}"
+					@click="vueHome.heroGameIndex = index">
+					<img :src="ICAFEMENU_CORE.posters_path(game.pkg_id + '.jpg')"
+						onerror="this.src='images/default-poster.png';" class="rounded">
+				</div>
+				<a class="home-hero-all-games lang d-flex text-white"
+					href="javascript:theGameList.show()">
+					<i class="fal fa-th-large"></i> All games
+				</a>
+			</div>
 		</div>
 
 		<!-- Top Products carousel strip -->

@@ -8358,9 +8358,19 @@ body {
   );
 }
 
+/* Thumbnail strip wrapper + header */
+#page-home .home-hero-strip-wrapper {
+  padding: 20px 24px 0;
+  z-index: 2;
+}
+
+#page-home .home-hero-strip-header {
+  margin-bottom: 8px;
+}
+
 /* Thumbnail strip */
 #page-home .home-hero-strip {
-  padding: 20px 24px 0;
+  padding: 0;
   gap: 8px;
   flex-wrap: nowrap;
 }
