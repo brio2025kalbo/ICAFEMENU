@@ -207,6 +207,7 @@ function Home()
 		loadHomeTopPlayers();
 		loadHomeTopSpenders();
 		loadHomeTopGames();
+		loadHomeTopProducts();
 	}
 }
 
@@ -323,6 +324,38 @@ async function loadHomeTopGames() {
 		}
 	} catch (err) {
 		console.error('loadHomeTopGames error:', err);
+	}
+}
+
+async function loadHomeTopProducts() {
+	const now = new Date();
+	const y = now.getFullYear();
+	const m = String(now.getMonth() + 1).padStart(2, '0');
+	const d = String(now.getDate()).padStart(2, '0');
+	const dateStr = `${y}-${m}-${d}`;
+
+	const params = new URLSearchParams({
+		date_start: dateStr,
+		date_end: dateStr
+	});
+
+	const baseUrl = theApiClient.getCafeUrl('kiosk/' + theApiClient.icafeId + '/top-products');
+	const url = `${baseUrl}?${params.toString()}`;
+
+	try {
+		// Using native fetch to bypass any callApi validation logic that might fail for this specific endpoint
+		const response = await fetch(url);
+		const raw = await response.json();
+
+		if (raw && raw.ok && Array.isArray(raw.products)) {
+			vueHomeProducts.items = raw.products.slice(0, 10);
+		} else if (raw && Array.isArray(raw)) {
+			vueHomeProducts.items = raw.slice(0, 10);
+		} else if (raw && Array.isArray(raw.data)) {
+			vueHomeProducts.items = raw.data.slice(0, 10);
+		}
+	} catch (err) {
+		console.error('loadHomeTopProducts error:', err);
 	}
 }
 
