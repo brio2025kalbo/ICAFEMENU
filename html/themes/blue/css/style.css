@@ -8437,10 +8437,45 @@ body {
   opacity: 1;
 }
 
-/* Top Products clickable horizontal strip */
-#page-home .home-top-products-strip {
+/* Top Products carousel wrapper */
+#page-home .home-top-products-wrapper {
   padding: 10px 24px 0;
-  gap: 8px;
+  z-index: 2;
+}
+
+#page-home .home-top-products-header {
+  margin-bottom: 8px;
+}
+
+#page-home .home-top-products-nav {
+  display: flex;
+  gap: 4px;
+}
+
+#page-home .home-carousel-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  padding: 0;
+}
+
+#page-home .home-carousel-btn:hover {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.30);
+}
+
+/* Top Products scrollable strip */
+#page-home .home-top-products-strip {
+  gap: 10px;
   flex-wrap: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
@@ -8452,14 +8487,14 @@ body {
 }
 
 #page-home .home-product-thumb {
-  width: 80px;
+  width: 120px;
   flex-shrink: 0;
   text-align: center;
 }
 
 #page-home .home-product-thumb img {
-  width: 80px;
-  height: 80px;
+  width: 120px;
+  height: 120px;
   border-radius: 10px;
   object-fit: cover;
   display: block;
@@ -8479,7 +8514,26 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 80px;
+  width: 120px;
+}
+
+/* "All Products" tile */
+#page-home .home-product-all-icon {
+  width: 120px;
+  height: 120px;
+  background: rgba(20, 24, 36, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: #c2c8d9;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+#page-home .home-product-all:hover .home-product-all-icon {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.30);
+  color: #fff;
 }
 
 /* Hero bottom info: title + buttons */

@@ -187,17 +187,34 @@
 			</a>
 		</div>
 
-		<!-- Top Products clickable strip -->
-		<div class="home-top-products-strip d-flex" v-if="vueHomeProducts.items.length > 0" style="z-index:2;">
-			<div v-for="(product, idx) in vueHomeProducts.items"
-				:key="product.order_product_id || product.product_id || ('product-' + idx)"
-				class="home-product-thumb"
-				:class="product.product_id ? 'c-pointer' : ''"
-				@click="product.product_id && theShop.buy(product.product_id, 1)"
-				:title="product.name">
-				<img :src="product.image || 'images/default-product.jpg'"
-					onerror="this.src='images/default-product.jpg';" class="rounded">
-				<div class="home-product-thumb-name">{{product.name}}</div>
+		<!-- Top Products carousel strip -->
+		<div class="home-top-products-wrapper" v-if="vueHomeProducts.items.length > 0" style="z-index:2;">
+			<div class="home-top-products-header d-flex align-items-center">
+				<span class="text-uppercase font-weight-bold lang" style="font-size:11px;color:#8b92b0;letter-spacing:1px;">TOP PRODUCTS</span>
+				<div class="home-top-products-nav ml-auto">
+					<button class="home-carousel-btn" @click="document.getElementById('top-products-carousel').scrollBy({left: -260, behavior: 'smooth'})"><i class="fal fa-chevron-left"></i></button>
+					<button class="home-carousel-btn" @click="document.getElementById('top-products-carousel').scrollBy({left: 260, behavior: 'smooth'})"><i class="fal fa-chevron-right"></i></button>
+				</div>
+			</div>
+			<div id="top-products-carousel" class="home-top-products-strip d-flex">
+				<div v-for="(product, idx) in vueHomeProducts.items"
+					:key="product.order_product_id || product.product_id || ('product-' + idx)"
+					class="home-product-thumb"
+					:class="product.product_id ? 'c-pointer' : ''"
+					@click="product.product_id && theShop.buy(product.product_id, 1)"
+					:title="product.name">
+					<img :src="product.image || 'images/default-product.jpg'"
+						onerror="this.src='images/default-product.jpg';" class="rounded">
+					<div class="home-product-thumb-name">{{product.name}}</div>
+				</div>
+				<!-- All Products tile -->
+				<div class="home-product-thumb home-product-all c-pointer" @click="theShop.show()" title="All Products">
+					<div class="home-product-all-icon rounded d-flex flex-column align-items-center justify-content-center">
+						<i class="fal fa-store" style="font-size:26px;margin-bottom:6px;"></i>
+						<span style="font-size:11px;font-weight:600;">All Products</span>
+					</div>
+					<div class="home-product-thumb-name">All Products</div>
+				</div>
 			</div>
 		</div>
 
