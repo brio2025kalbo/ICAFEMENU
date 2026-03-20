@@ -8500,6 +8500,38 @@ body {
   width: 120px;
   flex-shrink: 0;
   text-align: center;
+  position: relative;
+}
+
+#page-home .home-product-rank-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.45);
+}
+
+#page-home .home-product-rank-badge.rank-1 {
+  background: #FFD700;
+  color: #3a2800;
+}
+
+#page-home .home-product-rank-badge.rank-2 {
+  background: #C0C0C0;
+  color: #2a2a2a;
+}
+
+#page-home .home-product-rank-badge.rank-3 {
+  background: #CD7F32;
+  color: #fff;
 }
 
 #page-home .home-product-thumb img {
